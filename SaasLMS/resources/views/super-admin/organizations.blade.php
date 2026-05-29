@@ -940,9 +940,7 @@
 </head>
 
 <body>
-
     <div class="app-container">
-
         <!-- Sidebar Overlay -->
         <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
@@ -955,7 +953,6 @@
                     <small>CORE REALM v2.4</small>
                 </div>
             </div>
-
             <div class="sidebar-section">
                 <div class="sidebar-label">Overview</div>
                 <a class="nav-item" href="#"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
@@ -964,7 +961,6 @@
                 <a class="nav-item" href="#"><i class="bi bi-people-fill"></i> Users</a>
                 <a class="nav-item" href="#"><i class="bi bi-cpu-fill"></i> Nodes</a>
             </div>
-
             <div class="sidebar-section">
                 <div class="sidebar-label">System</div>
                 <a class="nav-item" href="#"><i class="bi bi-bar-chart-fill"></i> Analytics</a>
@@ -972,7 +968,6 @@
                 <a class="nav-item" href="#"><i class="bi bi-shield-check"></i> Security</a>
                 <a class="nav-item" href="#"><i class="bi bi-gear-fill"></i> Settings</a>
             </div>
-
             <div class="sidebar-footer">
                 <div class="admin-card">
                     <div class="admin-avatar">SA</div>
@@ -987,7 +982,6 @@
 
         <!-- Main Content -->
         <div class="main-wrapper">
-
             <!-- Mobile Header -->
             <header class="mobile-header">
                 <div class="brand-mobile">
@@ -1001,14 +995,13 @@
             <!-- Dashboard -->
             <div class="dashboard-scroll">
                 <div class="dashboard-content">
-
                     <!-- Title -->
                     <div class="title-section">
                         <div class="title-group">
                             <div class="badge-tag"><span class="badge-dot"></span> CORE REALM v2.4</div>
                             <h1>Organizations</h1>
-                            <p class="subtitle">Multi-tenant orchestration &bull; Global policy control &bull;
-                                Enterprise infrastructure matrix</p>
+                            <p class="subtitle">Multi-tenant orchestration • Global policy control • Enterprise
+                                infrastructure matrix</p>
                         </div>
                         <button class="register-btn" onclick="openModal('addOrgModal')">
                             <i class="bi bi-plus-lg"></i> REGISTER ORGANIZATION
@@ -1220,7 +1213,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -1360,6 +1352,7 @@
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('sidebarOverlay').classList.remove('show');
         }
+
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
