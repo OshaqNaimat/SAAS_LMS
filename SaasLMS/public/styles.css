@@ -3291,3 +3291,26 @@ td {
         flex: 1;
     }
 }
+
+.nav-item {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ccc;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+/* ONLY clicked item */
+.nav-item.active {
+    background: #2563eb;
+    color: #fff;
+}
+
+/* optional: remove hover effect completely */
+.nav-item:hover {
+    background: transparent;
+    color: inherit;
+}
