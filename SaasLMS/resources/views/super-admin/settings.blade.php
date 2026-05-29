@@ -1107,41 +1107,7 @@
         <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-brand">
-                <div class="brand-icon"><i class="bi bi-shield-lock-fill"></i></div>
-                <div>
-                    <span>NEXUS</span>
-                    <small>CORE REALM v2.4</small>
-                </div>
-            </div>
-            <div class="sidebar-section">
-                <div class="sidebar-label">Overview</div>
-                <a class="nav-item" href="#"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-                <a class="nav-item" href="#"><i class="bi bi-building"></i> Organizations <span
-                        class="nav-badge">12</span></a>
-                <a class="nav-item" href="#"><i class="bi bi-people-fill"></i> Users <span
-                        class="nav-badge">1,248</span></a>
-                <a class="nav-item" href="#"><i class="bi bi-cpu-fill"></i> Nodes</a>
-            </div>
-            <div class="sidebar-section">
-                <div class="sidebar-label">System</div>
-                <a class="nav-item" href="#"><i class="bi bi-bar-chart-fill"></i> Analytics</a>
-                <a class="nav-item" href="#"><i class="bi bi-bell-fill"></i> Notifications</a>
-                <a class="nav-item" href="#"><i class="bi bi-shield-check"></i> Security</a>
-                <a class="nav-item active" href="#"><i class="bi bi-gear-fill"></i> Settings</a>
-            </div>
-            <div class="sidebar-footer">
-                <div class="admin-card">
-                    <div class="admin-avatar">SA</div>
-                    <div class="admin-info">
-                        <strong>Super Admin</strong>
-                        <small>admin@nexus.io</small>
-                    </div>
-                    <i class="bi bi-three-dots-vertical" style="color:var(--text-muted);cursor:pointer;"></i>
-                </div>
-            </div>
-        </aside>
+        <x-superadmin-sidebar />
 
         <!-- Main Content -->
         <div class="main-wrapper">
@@ -1211,8 +1177,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Support Email</label>
-                                    <input type="email" value="support@nexus.io"
-                                        placeholder="support@yourdomain.com">
+                                    <input type="email" value="support@nexus.io" placeholder="support@yourdomain.com">
                                 </div>
                                 <div class="form-group">
                                     <label>Platform URL</label>
@@ -1532,7 +1497,8 @@
                                     <div style="display:flex;gap:10px;align-items:center;">
                                         <div
                                             style="width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0;">
-                                            <i class="bi bi-shield-lock-fill"></i></div>
+                                            <i class="bi bi-shield-lock-fill"></i>
+                                        </div>
                                         <button class="btn-sm"><i class="bi bi-upload"></i> Upload Logo</button>
                                     </div>
                                 </div>
@@ -1541,7 +1507,8 @@
                                     <div style="display:flex;gap:10px;align-items:center;">
                                         <div
                                             style="width:32px;height:32px;border-radius:6px;background:linear-gradient(135deg,#7c3aed,#4f46e5);display:flex;align-items:center;justify-content:center;font-size:14px;color:white;flex-shrink:0;">
-                                            <i class="bi bi-shield-lock-fill"></i></div>
+                                            <i class="bi bi-shield-lock-fill"></i>
+                                        </div>
                                         <button class="btn-sm"><i class="bi bi-upload"></i> Upload Favicon</button>
                                     </div>
                                 </div>
@@ -1913,7 +1880,8 @@
                                 <div class="int-card">
                                     <div class="int-header">
                                         <div class="int-icon" style="background:rgba(124,58,237,0.12);color:#a78bfa;">
-                                            <i class="bi bi-slack"></i></div>
+                                            <i class="bi bi-slack"></i>
+                                        </div>
                                         <div>
                                             <div class="int-name">Slack</div><span class="status-badge warning"><span
                                                     class="status-dot"></span>Pending</span>
@@ -2236,7 +2204,8 @@
 
                             <div class="audit-item">
                                 <div class="audit-icon" style="background:rgba(52,211,153,0.12);color:var(--green);">
-                                    <i class="bi bi-person-check-fill"></i></div>
+                                    <i class="bi bi-person-check-fill"></i>
+                                </div>
                                 <div class="audit-body">
                                     <div class="audit-action">User Enrolled — Jane Cooper added to "Advanced React
                                         2026"</div>
@@ -2257,7 +2226,8 @@
                             </div>
                             <div class="audit-item">
                                 <div class="audit-icon" style="background:rgba(251,191,36,0.12);color:var(--yellow);">
-                                    <i class="bi bi-award-fill"></i></div>
+                                    <i class="bi bi-award-fill"></i>
+                                </div>
                                 <div class="audit-body">
                                     <div class="audit-action">Certificate Issued — Ahmed Khan completed "Data Science
                                         Bootcamp"</div>
@@ -2268,7 +2238,8 @@
                             </div>
                             <div class="audit-item">
                                 <div class="audit-icon" style="background:rgba(244,114,182,0.12);color:var(--pink);">
-                                    <i class="bi bi-credit-card-fill"></i></div>
+                                    <i class="bi bi-credit-card-fill"></i>
+                                </div>
                                 <div class="audit-body">
                                     <div class="audit-action">Plan Upgraded — TechVantage Solutions → Professional Plan
                                     </div>
@@ -2312,7 +2283,8 @@
                             </div>
                             <div class="audit-item">
                                 <div class="audit-icon" style="background:rgba(251,146,60,0.12);color:var(--orange);">
-                                    <i class="bi bi-person-x-fill"></i></div>
+                                    <i class="bi bi-person-x-fill"></i>
+                                </div>
                                 <div class="audit-body">
                                     <div class="audit-action">User Suspended — account@spammer.io flagged and suspended
                                     </div>

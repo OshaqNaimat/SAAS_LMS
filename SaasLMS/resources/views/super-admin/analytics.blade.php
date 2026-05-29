@@ -642,41 +642,7 @@
         <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-brand">
-                <div class="brand-icon"><i class="bi bi-shield-lock-fill"></i></div>
-                <div>
-                    <span>NEXUS</span>
-                    <small>CORE REALM v2.4</small>
-                </div>
-            </div>
-            <div class="sidebar-section">
-                <div class="sidebar-label">Overview</div>
-                <a class="nav-item" href="#"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-                <a class="nav-item" href="#"><i class="bi bi-building"></i> Organizations <span
-                        class="nav-badge">12</span></a>
-                <a class="nav-item" href="#"><i class="bi bi-people-fill"></i> Users <span
-                        class="nav-badge">1,248</span></a>
-                <a class="nav-item" href="#"><i class="bi bi-cpu-fill"></i> Nodes</a>
-            </div>
-            <div class="sidebar-section">
-                <div class="sidebar-label">System</div>
-                <a class="nav-item active" href="#"><i class="bi bi-bar-chart-fill"></i> Analytics</a>
-                <a class="nav-item" href="#"><i class="bi bi-bell-fill"></i> Notifications</a>
-                <a class="nav-item" href="#"><i class="bi bi-shield-check"></i> Security</a>
-                <a class="nav-item" href="#"><i class="bi bi-gear-fill"></i> Settings</a>
-            </div>
-            <div class="sidebar-footer">
-                <div class="admin-card">
-                    <div class="admin-avatar">SA</div>
-                    <div class="admin-info">
-                        <strong>Super Admin</strong>
-                        <small>admin@nexus.io</small>
-                    </div>
-                    <i class="bi bi-three-dots-vertical" style="color:var(--text-muted); cursor:pointer;"></i>
-                </div>
-            </div>
-        </aside>
+        <x-superadmin-sidebar />
 
         <!-- Main Content -->
         <div class="main-wrapper">
@@ -712,7 +678,8 @@
                             <div class="kpi-header">
                                 <span class="kpi-label">Total Revenue</span>
                                 <div class="kpi-icon-box" style="background:rgba(96,165,250,0.12); color:var(--blue);">
-                                    <i class="bi bi-currency-dollar"></i></div>
+                                    <i class="bi bi-currency-dollar"></i>
+                                </div>
                             </div>
                             <div class="kpi-value">$24,847</div>
                             <span class="kpi-change up"><i class="bi bi-arrow-up-short"></i> +12.5% vs last month</span>
@@ -721,7 +688,8 @@
                             <div class="kpi-header">
                                 <span class="kpi-label">Active Users</span>
                                 <div class="kpi-icon-box" style="background:rgba(52,211,153,0.12); color:var(--green);">
-                                    <i class="bi bi-people-fill"></i></div>
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
                             </div>
                             <div class="kpi-value">8,421</div>
                             <span class="kpi-change up"><i class="bi bi-arrow-up-short"></i> +8.2% this month</span>
@@ -739,9 +707,8 @@
                         <div class="kpi-card">
                             <div class="kpi-header">
                                 <span class="kpi-label">Bounce Rate</span>
-                                <div class="kpi-icon-box"
-                                    style="background:rgba(244,114,182,0.12); color:var(--pink);"><i
-                                        class="bi bi-graph-down"></i></div>
+                                <div class="kpi-icon-box" style="background:rgba(244,114,182,0.12); color:var(--pink);">
+                                    <i class="bi bi-graph-down"></i></div>
                             </div>
                             <div class="kpi-value">18.4%</div>
                             <span class="kpi-change down"><i class="bi bi-arrow-down-short"></i> -2.1%
