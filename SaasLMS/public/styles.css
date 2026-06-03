@@ -505,7 +505,7 @@ body {
 /* ── CHART GRID ── */
 .chart-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
     margin-bottom: 1.8rem;
 }
@@ -936,4 +936,30 @@ svg {
         flex: 1;
         justify-content: center;
     }
+}
+
+body {
+    background-color: #0b0f19;
+    color: #f8fafc;
+    font-family: sans-serif;
+}
+
+.sidebar-bg {
+    background-color: #111827;
+    border-right: 1px solid #1f2937;
+}
+
+.card-bg {
+    background-color: #111c2a;
+    border: 1px solid #1e293b;
+}
+
+.header-bg {
+    background-color: #172237;
+    border-b: 1px solid #1e293b;
+}
+
+.nav-active {
+    background-color: #1d4ed8;
+    color: white;
 }

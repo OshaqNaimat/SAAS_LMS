@@ -18,3 +18,4 @@ Route::get('/', function () {
 
 // admin dashbaord
 Route::view("/admin-dashboard",'admin.dashboard');
+Route::view("/admin-faculty",'admin.faculty');

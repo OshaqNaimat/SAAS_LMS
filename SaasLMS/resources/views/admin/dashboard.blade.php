@@ -10,46 +10,7 @@
             <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
             <!-- Sidebar -->
-            <aside class="sidebar" id="sidebar">
-                <div class="sidebar-brand">
-                    <div class="brand-icon"><i class="bi bi-building"></i></div>
-                    <div class="brand-text">
-                        <span class="org-name">Apex Global Institute</span>
-                        <span class="org-plan">Enterprise Plan</span>
-                    </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="sidebar-label">Main</div>
-                    <a class="nav-item active" href="#"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-                    <a class="nav-item" href="#"><i class="bi bi-people-fill"></i> Team Members <span
-                            class="nav-badge">1,240</span></a>
-                    <a class="nav-item" href="#"><i class="bi bi-folder-fill"></i> Projects <span
-                            class="nav-badge">18</span></a>
-                    <a class="nav-item" href="#"><i class="bi bi-calendar-check-fill"></i> Tasks</a>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="sidebar-label">Management</div>
-                    <a class="nav-item" href="#"><i class="bi bi-bar-chart-fill"></i> Reports</a>
-                    <a class="nav-item" href="#"><i class="bi bi-credit-card-fill"></i> Billing</a>
-                    <a class="nav-item" href="#"><i class="bi bi-shield-check"></i> Security</a>
-                    <a class="nav-item" href="#"><i class="bi bi-gear-fill"></i> Settings</a>
-                </div>
-
-                <div class="sidebar-spacer"></div>
-
-                <div class="sidebar-footer">
-                    <div class="user-card">
-                        <div class="user-avatar">AM</div>
-                        <div class="user-info">
-                            <strong>Alex Mercer</strong>
-                            <small>Org Admin</small>
-                        </div>
-                        <button class="logout-btn" title="Sign Out"><i class="bi bi-box-arrow-right"></i></button>
-                    </div>
-                </div>
-            </aside>
+            <x-admin-sidebar />
 
             <!-- Main Content -->
             <div class="main-wrapper">
@@ -87,36 +48,36 @@
                         <div class="kpi-grid">
                             <div class="kpi-card">
                                 <div class="kpi-info">
-                                    <h4>Team Members</h4>
-                                    <div class="kpi-value">1,240</div>
-                                    <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 12 this week</div>
+                                    <h4>Total Revenue</h4>
+                                    <div class="kpi-value">Rs 10,000</div>
+                                    {{-- <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 12 new</div> --}}
                                 </div>
-                                <div class="kpi-icon" style="color:#60a5fa;"><i class="bi bi-people-fill"></i></div>
+                                <div class="kpi-icon" style="color:#60a5fa;"><i class="bi bi-currency-dollar"></i></div>
                             </div>
                             <div class="kpi-card">
                                 <div class="kpi-info">
-                                    <h4>Active Projects</h4>
-                                    <div class="kpi-value">18</div>
-                                    <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 3 new</div>
+                                    <h4>Total Teachers</h4>
+                                    <div class="kpi-value">50</div>
+                                    {{-- <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 3 new</div> --}}
                                 </div>
-                                <div class="kpi-icon" style="color:var(--green);"><i class="bi bi-folder-fill"></i>
+                                <div class="kpi-icon" style="color:var(--green);"><i class="bi bi-people-fill"></i>
                                 </div>
                             </div>
-                            <div class="kpi-card">
+                            {{-- <div class="kpi-card">
                                 <div class="kpi-info">
-                                    <h4>Tasks Completed</h4>
-                                    <div class="kpi-value">842</div>
-                                    <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 85% completion</div>
-                                </div>
+                                    <h4>Teacher Attendence Rate</h4>
+                                    <div class="kpi-value">90%</div> --}}
+                            {{-- <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 85% completion</div> --}}
+                            {{-- </div>
                                 <div class="kpi-icon" style="color:var(--yellow);"><i class="bi bi-check2-circle"></i>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="kpi-card">
                                 <div class="kpi-info">
-                                    <h4>Storage Used</h4>
-                                    <div class="kpi-value">487 GB</div>
-                                    <div class="kpi-change down"><i class="bi bi-arrow-down-short"></i> 62% of 1 TB
-                                    </div>
+                                    <h4>Total Students</h4>
+                                    <div class="kpi-value">500</div>
+                                    {{-- <div class="kpi-change down"><i class="bi bi-arrow-down-short"></i> 62%
+                                    </div> --}}
                                 </div>
                                 <div class="kpi-icon" style="color:var(--pink);"><i class="bi bi-cloud-fill"></i>
                                 </div>
@@ -124,31 +85,66 @@
                         </div>
 
                         <!-- Charts Row -->
-                        <div class="chart-grid">
+                        <div class="chart-grid grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                             <!-- Project Progress Chart -->
-                            <div class="chart-card">
-                                <div class="chart-card-header">
-                                    <h3>Project Progress</h3>
-                                    <select>
+                            <div class="chart-card w-full border rounded-xl p-4 bg-white shadow-sm">
+                                <div class="chart-card-header flex justify-between items-center mb-4">
+                                    <h3 class="font-semibold text-lg">Teacher Attendence</h3>
+                                    <select class="border rounded p-1 text-sm bg-gray-50">
                                         <option>This Month</option>
                                         <option>Last Month</option>
                                         <option>Last Quarter</option>
                                     </select>
                                 </div>
-                                <div class="chart-canvas tall">
-                                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
+                                <div class="chart-canvas tall w-full">
+                                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet"
+                                        class="w-full h-auto">
                                         <defs>
-                                            <linearGradient id="projGrad" x1="0%" y1="0%"
-                                                x2="0%" y2="100%">
+                                            <linearGradient id="projGrad1" x1="0%" y1="0%" x2="0%"
+                                                y2="100%">
                                                 <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.3" />
                                                 <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0" />
                                             </linearGradient>
                                         </defs>
                                         <line x1="30" y1="160" x2="390" y2="160"
-                                            stroke="rgba(148,163,184,0.08)" stroke-width="1" />
+                                            stroke="rgba(148,163,184,0.15)" stroke-width="1" />
                                         <polygon
                                             points="30,130 70,115 110,120 150,95 190,100 230,75 270,85 310,60 350,70 390,50 390,160 30,160"
-                                            fill="url(#projGrad)" />
+                                            fill="url(#projGrad1)" />
+                                        <polyline
+                                            points="30,130 70,115 110,120 150,95 190,100 230,75 270,85 310,60 350,70 390,50"
+                                            fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <circle cx="310" cy="60" r="4" fill="#3b82f6" />
+                                        <circle cx="390" cy="50" r="4" fill="#3b82f6" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="chart-card w-full border rounded-xl p-4 bg-white shadow-sm">
+                                <div class="chart-card-header flex justify-between items-center mb-4">
+                                    <h3 class="font-semibold text-lg">Student Attendence</h3>
+                                    <select class="border rounded p-1 text-sm bg-gray-50">
+                                        <option>This Month</option>
+                                        <option>Last Month</option>
+                                        <option>Last Quarter</option>
+                                    </select>
+                                </div>
+                                <div class="chart-canvas tall w-full">
+                                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet"
+                                        class="w-full h-auto">
+                                        <defs>
+                                            <linearGradient id="projGrad2" x1="0%" y1="0%" x2="0%"
+                                                y2="100%">
+                                                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.3" />
+                                                <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0" />
+                                            </linearGradient>
+                                        </defs>
+                                        <line x1="30" y1="160" x2="390" y2="160"
+                                            stroke="rgba(148,163,184,0.15)" stroke-width="1" />
+                                        <polygon
+                                            points="30,130 70,115 110,120 150,95 190,100 230,75 270,85 310,60 350,70 390,50 390,160 30,160"
+                                            fill="url(#projGrad2)" />
                                         <polyline
                                             points="30,130 70,115 110,120 150,95 190,100 230,75 270,85 310,60 350,70 390,50"
                                             fill="none" stroke="#3b82f6" stroke-width="2.5"
@@ -159,53 +155,11 @@
                                 </div>
                             </div>
 
-                            <!-- Recent Activity -->
-                            <div class="chart-card">
-                                <div class="chart-card-header">
-                                    <h3>Recent Activity</h3>
-                                    <span style="font-size:0.65rem; color:var(--text-muted);">Live</span>
-                                </div>
-                                <div class="activity-list">
-                                    <div class="activity-item">
-                                        <div class="activity-dot" style="background:var(--green);"></div>
-                                        <div class="activity-content">
-                                            <p><strong style="color:white;">Emma Brooks</strong> completed task <strong
-                                                    style="color:white;">Q4 Report</strong></p>
-                                            <span>5 minutes ago</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item">
-                                        <div class="activity-dot" style="background:var(--blue);"></div>
-                                        <div class="activity-content">
-                                            <p><strong style="color:white;">James Wilson</strong> joined <strong
-                                                    style="color:white;">Marketing Project</strong></p>
-                                            <span>22 minutes ago</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item">
-                                        <div class="activity-dot" style="background:var(--yellow);"></div>
-                                        <div class="activity-content">
-                                            <p><strong style="color:white;">3 new members</strong> invited by Sarah
-                                                Jenkins
-                                            </p>
-                                            <span>1 hour ago</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item">
-                                        <div class="activity-dot" style="background:var(--accent);"></div>
-                                        <div class="activity-content">
-                                            <p><strong style="color:white;">Storage alert:</strong> 62% capacity
-                                                reached
-                                            </p>
-                                            <span>3 hours ago</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
 
                         <!-- Quick Stats Row -->
-                        <div class="quick-stats-row">
+                        {{-- <div class="quick-stats-row">
                             <div class="quick-stat">
                                 <div class="quick-stat-icon"
                                     style="background:rgba(52,211,153,0.1); color:var(--green);">
@@ -246,7 +200,7 @@
                                     <strong>94%</strong>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <!-- Recent Members Table -->
                         <div class="chart-card">
