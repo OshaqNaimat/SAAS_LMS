@@ -10,8 +10,8 @@
 
         <div class="sidebar-section">
             <div class="sidebar-label">Main</div>
-            <a class="nav-item active" href="#"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-            <a class="nav-item" href="#"><i class="bi bi-people-fill"></i> Faculty
+            <a href="/admin-dashboard" class="nav-item active"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+            <a class="nav-item" href="/admin-faculty"><i class="bi bi-people-fill"></i> Faculty
                 <span class="nav-badge">1,240</span>
             </a>
             <a class="nav-item" href="#"><i class="bi bi-mortarboard-fill"></i> Classes <span
