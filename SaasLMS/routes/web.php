@@ -19,3 +19,5 @@ Route::get('/', function () {
 // admin dashbaord
 Route::view("/admin-dashboard",'admin.dashboard');
 Route::view("/admin-faculty",'admin.faculty');
+Route::view("/admin-classes-control",'admin.classes');
+Route::view("/admin-attendence-control",'admin.attendence');

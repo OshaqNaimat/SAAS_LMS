@@ -14,9 +14,10 @@
             <a class="nav-item" href="/admin-faculty"><i class="bi bi-people-fill"></i> Faculty
                 <span class="nav-badge">1,240</span>
             </a>
-            <a class="nav-item" href="#"><i class="bi bi-mortarboard-fill"></i> Classes <span
+            <a class="nav-item" href="/admin-classes-control"><i class="bi bi-mortarboard-fill"></i> Classes <span
                     class="nav-badge">18</span></a>
-            <a class="nav-item" href="#"><i class="bi bi-calendar-check-fill"></i> Attendence</a>
+            <a class="nav-item" href="/admin-attendence-control"><i class="bi bi-calendar-check-fill"></i>
+                Attendence</a>
         </div>
 
         <div class="sidebar-section">
