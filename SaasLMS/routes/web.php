@@ -29,3 +29,7 @@ Route::view("/teacher-attendance",'teacher.attendence-registry');
 Route::view("/teacher-batches",'teacher.assigned-batches');
 Route::view("/teacher-announcements",'teacher.notice-board');
 
+// student routes
+Route::view("/student-dashboard",'student.dashboard');
+Route::view("/student-timetable",'student.student-timetable');
+Route::view("/student-attendance",'student.student-attendence');
