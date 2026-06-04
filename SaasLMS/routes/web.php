@@ -27,4 +27,5 @@ Route::view("/teacher-dashboard",'teacher.dashboard');
 Route::view("/teacher-schedules",'teacher.Schedule');
 Route::view("/teacher-attendance",'teacher.attendence-registry');
 Route::view("/teacher-batches",'teacher.assigned-batches');
+Route::view("/teacher-announcements",'teacher.notice-board');
 

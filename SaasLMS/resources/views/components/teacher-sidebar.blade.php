@@ -34,10 +34,10 @@
             <span class="nav-badge">4</span>
         </a>
 
-        <a href="/teacher-appraisals" class="nav-item {{ request()->is('teacher-appraisals') ? 'active' : '' }}">
+        {{-- <a href="/teacher-appraisals" class="nav-item {{ request()->is('teacher-appraisals') ? 'active' : '' }}">
             <i class="bi bi-file-earmark-ruled-fill"></i> Labs & Appraisals
             <span class="nav-badge bg-amber-500/10 text-amber-400 border border-amber-500/20">18 New</span>
-        </a>
+        </a> --}}
 
         <a href="/teacher-announcements" class="nav-item {{ request()->is('teacher-announcements') ? 'active' : '' }}">
             <i class="bi bi-megaphone-fill"></i> Class Noticeboard
