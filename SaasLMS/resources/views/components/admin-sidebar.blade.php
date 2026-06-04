@@ -22,8 +22,8 @@
 
         <div class="sidebar-section">
             <div class="sidebar-label">Management</div>
-            <a class="nav-item" href="#"><i class="bi bi-bar-chart-fill"></i> Reports</a>
-            <a class="nav-item" href="#"><i class="bi bi-credit-card-fill"></i> Billing</a>
+            <a class="nav-item" href="/admin-reports-control"><i class="bi bi-bar-chart-fill"></i> Reports</a>
+            <a class="nav-item" href="/admin-billings-control"><i class="bi bi-credit-card-fill"></i> Billing</a>
             {{-- <a class="nav-item" href="#"><i class="bi bi-shield-check"></i> Security</a> --}}
             <a class="nav-item" href="#"><i class="bi bi-gear-fill"></i> Settings</a>
         </div>

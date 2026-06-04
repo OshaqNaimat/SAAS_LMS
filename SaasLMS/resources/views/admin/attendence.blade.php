@@ -208,7 +208,7 @@
                                     <td class="p-4">
                                         <div class="flex flex-col">
                                             <span class="font-semibold text-white">Amara Sterling</span>
-                                            <span class="text-xs font-mono text-blue-400">#AGI-2026-089</span>
+                                            <span class="text-xs font-mono text-blue-400">Roll No. 123</span>
                                         </div>
                                     </td>
                                     <td class="p-4 text-gray-400">Grade 11 - Alpha</td>
@@ -231,7 +231,7 @@
                                     <td class="p-4">
                                         <div class="flex flex-col">
                                             <span class="font-semibold text-white">Ethan Brooks</span>
-                                            <span class="text-xs font-mono text-blue-400">#AGI-2026-104</span>
+                                            <span class="text-xs font-mono text-blue-400">Roll No. 104</span>
                                         </div>
                                     </td>
                                     <td class="p-4 text-gray-400">Grade 12 - Omega</td>

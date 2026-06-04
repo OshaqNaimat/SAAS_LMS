@@ -21,3 +21,5 @@ Route::view("/admin-dashboard",'admin.dashboard');
 Route::view("/admin-faculty",'admin.faculty');
 Route::view("/admin-classes-control",'admin.classes');
 Route::view("/admin-attendence-control",'admin.attendence');
+Route::view("/admin-reports-control",'admin.reports');
+Route::view("/admin-billings-control",'admin.billings');
