@@ -37,7 +37,7 @@
                             <div class="header-actions">
                                 <button class="btn-secondary" onclick="openModal('inviteModal')"><i
                                         class="bi bi-person-plus"></i>
-                                    Invite Memeber</button>
+                                    Add Memeber</button>
                                 <button class="btn-primary" onclick="openModal('projectModal')"><i
                                         class="bi bi-plus-lg"></i>
                                     Add New Student</button>
@@ -270,48 +270,58 @@
         <div id="inviteModal" class="modal-overlay" role="dialog" aria-modal="true">
             <div class="modal">
                 <div class="modal-header">
-                    <h3><i class="bi bi-person-plus" style="color:#3b82f6;"></i> Invite Team Member</h3>
-                    <button class="modal-close" onclick="closeModal('inviteModal')" aria-label="Close"><i
+                    <h3><i class="bi bi-person-plus" style="color:#3b82f6;"></i> Add New Teacher</h3>
+                    <button class="modal-close" onclick="closeModal('inviteModal')"><i
                             class="bi bi-x-lg"></i></button>
                 </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <input type="email" placeholder="colleague@example.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" placeholder="abc@123...">
-                    </div>
-                    <div class="form-row">
+
+                <form action="{{ route('admin.add-teacher') }}" method="POST">
+                    @csrf
+
+                    <input type="hidden" name="role" value="teacher">
+
+                    <div class="modal-body space-y-4">
                         <div class="form-group">
-                            <label>Role</label>
-                            <select>
-                                <option>Select Role...</option>
-                                <option>Teacher</option>
-                                <option>Admin</option>
-                            </select>
+                            <label class="block text-xs font-semibold text-gray-400 mb-1">Teacher Full Name</label>
+                            <input type="text" name="name" placeholder="Prof. Mashood" required
+                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500 transition">
                         </div>
+
                         <div class="form-group">
-                            <label>Classes</label>
-                            <select>
-                                <option>Select Class...</option>
-                                <option>Class 1</option>
-                                <option>Class 2</option>
-                                <option>Class 3</option>
-                            </select>
+                            <label class="block text-xs font-semibold text-gray-400 mb-1">Email Address</label>
+                            <input type="email" name="email" placeholder="teacher@apex.edu" required
+                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500 transition">
+                        </div>
+
+                        <div class="form-row grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label class="block text-xs font-semibold text-gray-400 mb-1">Security Password</label>
+                                <input type="password" name="password" placeholder="••••••••" required
+                                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500 transition">
+                            </div>
+                            <div class="form-group">
+                                <label class="block text-xs font-semibold text-gray-400 mb-1">Assigned Classes</label>
+                                <select name="assigned_class"
+                                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-gray-400 focus:outline-none focus:border-blue-500 transition">
+                                    <option value="">Select Class...</option>
+                                    <option value="Class 1">Class 1</option>
+                                    <option value="Class 2">Class 2</option>
+                                    <option value="Class 3">Class 3</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>Message (optional)</label>
-                        <input type="text" placeholder="Add a personal message...">
+
+                    <div class="modal-footer flex justify-end gap-2 pt-4 border-t border-slate-800/60 mt-4">
+                        <button type="button"
+                            class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-gray-400 text-xs font-medium"
+                            onclick="closeModal('inviteModal')">Cancel</button>
+                        <button type="submit"
+                            class="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold hover:bg-blue-500 transition shadow-lg shadow-blue-600/10">
+                            Register Teacher
+                        </button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal('inviteModal')">Cancel</button>
-                    <button class="btn-submit" onclick="closeModal('inviteModal')"><i class="bi bi-send"></i> Send
-                        Invite</button>
-                </div>
+                </form>
             </div>
         </div>
 

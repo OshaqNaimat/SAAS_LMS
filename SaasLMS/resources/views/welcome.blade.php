@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="min-h-screen bg-[#090d16] flex flex-col justify-center items-center p-4 relative overflow-y-auto">
+    <div class="min-h-screen bg-[#090d16] flex flex-col justify-center items-center p-4 relative overflow-y-hidden">
 
         <div id="roleGlow"
             class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px] pointer-events-none transition-all duration-500">
@@ -62,15 +62,16 @@
                         </div>
                     @endif
 
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5 ">
                         <label id="identifierLabel" class="block text-xs font-semibold text-gray-400">
                             Administrative Email
                         </label>
                         <div class="relative">
                             <span id="identifierIcon"
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none">
-                                <i class="bi bi-envelope"></i>
+                                class="absolute left-4 inset-y-0 flex items-center text-gray-500 pointer-events-none">
+                                <i class="bi bi-envelope text-xs"></i>
                             </span>
+
                             <input type="text" id="identifierInput" name="login_identity"
                                 value="{{ old('login_identity') }}" placeholder="admin@apex.edu"
                                 class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500 transition"
@@ -81,14 +82,14 @@
                     <div class="space-y-1.5">
                         <div class="flex items-center justify-between">
                             <label class="block text-xs font-semibold text-gray-400">Security Password</label>
-                            <a href="/forgot-password"
+                            {{-- <a href="/forgot-password"
                                 class="text-[11px] font-medium text-blue-400 hover:text-blue-300 id-accent-text transition">
                                 Forgot Key?
-                            </a>
+                            </a> --}}
                         </div>
                         <div class="relative">
                             <span
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none">
+                                class="absolute left-4 inset-y-0 flex items-center text-gray-500 text-xs pointer-events-none">
                                 <i class="bi bi-shield-lock"></i>
                             </span>
                             <input type="password" id="authPassword" name="password" placeholder="••••••••••••"
@@ -96,13 +97,13 @@
                                 required>
 
                             <button type="button" onclick="togglePasswordVisibility()"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition px-1">
+                                class="absolute right-3 inset-y-0 flex items-center text-gray-500 hover:text-gray-300 transition px-1">
                                 <i id="visibilityIcon" class="bi bi-eye text-xs"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between pt-1">
+                    {{-- <div class="flex items-center justify-between pt-1">
                         <label class="flex items-center gap-2 cursor-pointer group">
                             <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}
                                 class="rounded bg-[#090d16] border-slate-800 text-blue-600 focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer">
@@ -110,12 +111,12 @@
                                 Keep session keys active
                             </span>
                         </label>
-                    </div>
+                    </div> --}}
 
                     <div class="pt-2">
                         <button type="submit" id="authSubmitBtn"
                             class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-semibold transition text-white shadow-lg shadow-blue-600/10">
-                            Initialize Secure Access <i class="bi bi-arrow-right-short text-sm"></i>
+                            Access Dashboard <i class="bi bi-arrow-right-short text-sm"></i>
                         </button>
                     </div>
                 </form>
@@ -188,8 +189,9 @@
             identityField.type = config.type;
             identityField.value = ""; // Clean input across swaps
 
-            // Update focused visual border tokens dynamically
-            identityField.className = identityField.className.replace(/focus:border-\w+-\d+/, config.focusBorder);
+            // SAFELY MUTATE TAILWIND FOCUS BORDERS WITHOUT REGEX BREAKS
+            identityField.classList.remove('focus:border-blue-500', 'focus:border-emerald-500', 'focus:border-amber-500');
+            identityField.classList.add(config.focusBorder);
 
             // 3. Update dynamic layout icons
             document.getElementById('brandIcon').className = `bi ${config.icon}`;

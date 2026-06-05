@@ -10,35 +10,41 @@ class AuthController extends Controller
     /**
      * Handle incoming administrative authentication attempts.
      */
- public function login(Request $request)
+public function login(Request $request)
 {
-    // 1. Validate using the exact input name from your form layout
+    // Validate structural form input field formats
     $request->validate([
         'login_identity' => 'required|email',
         'password'       => 'required|string',
+        'role'           => 'required|string',
     ]);
 
-    // 2. Map your form's "login_identity" string to your table's "email" column
     $credentials = [
         'email'    => $request->input('login_identity'),
         'password' => $request->input('password'),
     ];
 
-    // 3. Attempt secure structural session authentication
-    if (Auth::attempt($credentials, $request->boolean('remember'))) {
-        $request->session()->regenerate();
+    // Check credentials against database tables
+   if (Auth::attempt($credentials, $request->boolean('remember'))) {
+    $request->session()->regenerate();
+    $user = Auth::user();
 
-        $user = Auth::user();
-        if ($user->role === 'admin') {
-            return redirect()->route('dashboard')->with('success', 'Welcome back, Admin!');
-        }
-
-        return redirect()->intended('/dashboard');
+    // Route users to their specific authorized dashboard URLs
+    if ($user->role === 'admin') {
+        return redirect()->route('dashboard');
     }
 
-    // 4. Return custom validation error using your exact form field name
+    if ($user->role === 'teacher') {
+        return redirect()->route('teacher.dashboard');
+    }
+
+    if ($user->role === 'student') {
+        return redirect()->route('student.dashboard');
+    }
+}
+    // Explicit validation matching failure states
     return back()->withErrors([
-        'login_identity' => 'The provided credentials do not match our recorded system logs.',
+        'login_identity' => 'The provided security credentials do not match our logs.',
     ])->onlyInput('login_identity');
 }
 
