@@ -279,6 +279,10 @@
                         <label>Email Address</label>
                         <input type="email" placeholder="colleague@example.com">
                     </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" placeholder="abc@123...">
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Role</label>
@@ -289,9 +293,9 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Project</label>
+                            <label>Classes</label>
                             <select>
-                                <option>Select project...</option>
+                                <option>Select Class...</option>
                                 <option>Class 1</option>
                                 <option>Class 2</option>
                                 <option>Class 3</option>

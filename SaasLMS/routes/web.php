@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,3 +34,13 @@ Route::view("/teacher-announcements",'teacher.notice-board');
 Route::view("/student-dashboard",'student.dashboard');
 Route::view("/student-timetable",'student.student-timetable');
 Route::view("/student-attendance",'student.student-attendence');
+
+
+// Form Actions Handling Authentication Tasks
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Dashboard Route Protection Setup Blueprint
+Route::get('/dashboard', function () {
+    return view('admin.dashboard'); // Replace with your actual dashboard controller mapping later
+})->middleware('auth')->name('dashboard');
