@@ -97,3 +97,5 @@ Route::middleware(['auth', 'role:student'])->group(function () {
         return view('student.dashboard');
     })->name('student.dashboard');
 });
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

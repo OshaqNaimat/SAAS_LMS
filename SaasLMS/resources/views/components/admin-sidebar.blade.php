@@ -37,7 +37,17 @@
                     <strong>Alex Mercer</strong>
                     <small>Org Admin</small>
                 </div>
-                <button class="logout-btn" title="Sign Out"><i class="bi bi-box-arrow-right"></i></button>
+                <div class="logout-wrapper">
+                    <button type="button" class="logout-btn" title="Sign Out"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden"
+                        style="display: none;">
+                        @csrf
+                    </form>
+                </div>
             </div>
         </div>
     </aside>
