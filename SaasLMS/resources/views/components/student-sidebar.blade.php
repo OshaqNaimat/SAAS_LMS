@@ -28,13 +28,27 @@
          <div
              class="user-card border border-slate-800/60 bg-slate-900/40 p-3 rounded-xl flex items-center justify-between gap-3">
              <div class="flex items-center gap-2.5 min-w-0">
+                 @php
+                     // Fetch the currently authenticated student's details
+$studentName = Auth::user()->name ?? 'Student';
+$rollNumber = Auth::user()->roll_number ?? 'N/A';
+
+// Split the name by spaces to extract initials
+$words = explode(' ', $studentName);
+
+// Grab the first letter of the first word, and the first letter of the second word
+$initials = strtoupper(
+    substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''),
+                     );
+                 @endphp
+
                  <div
                      class="user-avatar w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs shrink-0">
-                     ZM
+                     {{ $initials }}
                  </div>
                  <div class="user-info truncate">
-                     <strong class="block text-xs font-semibold text-white truncate">Zayn Malik</strong>
-                     <small class="block text-[10px] text-gray-400 truncate">Roll No: #10A-03</small>
+                     <strong class="block text-xs font-semibold text-white truncate">{{ $studentName }}</strong>
+                     <small class="block text-[10px] text-gray-400 truncate">Roll No: {{ $rollNumber }}</small>
                  </div>
              </div>
              <form action="/logout" method="POST" class="m-0 flex items-center">

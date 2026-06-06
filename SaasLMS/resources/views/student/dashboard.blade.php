@@ -8,9 +8,21 @@
         <main class="flex-1 flex flex-col min-w-0 overflow-y-auto p-6 lg:p-8">
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                @php
+                    // Fetch the currently authenticated student's details
+$studentName = Auth::user()->name ?? 'Student';
+
+// Split the name by spaces to extract initials
+$words = explode(' ', $studentName);
+$studentClass = Auth::user()->class ?? 'N/A';
+$studentSection = Auth::user()->section ?? 'N/A';
+
+                @endphp
                 <div>
-                    <h1 class="text-2xl font-bold text-white">Assalam-o-Alaikum, Zayn!</h1>
-                    <p class="text-sm text-gray-400">Class 10 - Section A • Room No. 05</p>
+                    <h1 class="text-2xl font-bold text-white">Assalam-o-Alaikum, {{ $studentName }}</h1>
+                    <p class="text-sm text-gray-400">
+                        Class {{ ucfirst($studentClass) }} - Section {{ strtoupper($studentSection) }} •
+                    </p>
                 </div>
             </div>
 
