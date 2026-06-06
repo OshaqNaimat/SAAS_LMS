@@ -327,53 +327,69 @@
 
         <!-- New Project Modal -->
         <div id="projectModal" class="modal-overlay" role="dialog" aria-modal="true">
-            <div class="modal ">
+            <div class="modal">
                 <div class="modal-header">
                     <h3><i class="bi bi-plus-lg" style="color:#3b82f6;"></i> Add New Student</h3>
-                    <button class="modal-close" onclick="closeModal('projectModal')" aria-label="Close"><i
-                            class="bi bi-x-lg"></i></button>
-                </div>
-                <div class="modal-body">
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="form-group">
-                            <label class="block font-medium mb-1">Student Name</label>
-                            <input type="text" placeholder="Enter student name" class="w-full border rounded p-2">
-                        </div>
-                        <div class="form-group">
-                            <label class="block font-medium mb-1">Father Name</label>
-                            <input type="text" placeholder="Enter father's name"
-                                class="w-full border rounded p-2">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="form-group">
-                            <label class="block font-medium mb-1">Student Roll No.</label>
-                            <input type="text" placeholder="Enter roll number" class="w-full border rounded p-2">
-                        </div>
-                        <div class="form-group">
-                            <label class="block font-medium mb-1">Class</label>
-                            <input type="text" placeholder="Enter class" class="w-full border rounded p-2">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label class="block font-medium mb-1">Section</label>
-                            <input type="text" placeholder="Enter section" class="w-full border rounded p-2">
-                        </div>
-                        <div class="form-group">
-                            <label class="block font-medium mb-1">Date</label>
-                            <input type="date" class="w-full border rounded p-2">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-cancel" onclick="closeModal('projectModal')">Cancel</button>
-                    <button class="btn-submit" onclick="closeModal('projectModal')"><i class="bi bi-check-lg"></i>
-                        Add Student
+                    <button type="button" class="modal-close" onclick="closeModal('projectModal')"
+                        aria-label="Close">
+                        <i class="bi bi-x-lg"></i>
                     </button>
                 </div>
+
+                <form action="{{ route('admin.add-student') }}" method="POST">
+                    @csrf
+
+                    <input type="hidden" name="role" value="student">
+
+                    <div class="modal-body">
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label class="block font-medium mb-1 text-sm text-gray-300">Student Name</label>
+                                <input type="text" name="name" placeholder="Enter student name" required
+                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="form-group">
+                                <label class="block font-medium mb-1 text-sm text-gray-300">Father Name</label>
+                                <input type="text" name="father_name" placeholder="Enter father's name" required
+                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="form-group">
+                                <label class="block font-medium mb-1 text-sm text-gray-300">Student Roll No.</label>
+                                <input type="text" name="roll_number" placeholder="Enter roll number" required
+                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="form-group">
+                                <label class="block font-medium mb-1 text-sm text-gray-300">Class</label>
+                                <input type="text" name="class" placeholder="Enter class" required
+                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label class="block font-medium mb-1 text-sm text-gray-300">Section</label>
+                                <input type="text" name="section" placeholder="Enter section" required
+                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="form-group">
+                                <label class="block font-medium mb-1 text-sm text-gray-300">Password</label>
+                                <input type="password" name="password" placeholder="••••••••" required
+                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel"
+                            onclick="closeModal('projectModal')">Cancel</button>
+                        <button type="submit" class="btn-submit">
+                            <i class="bi bi-check-lg"></i> Add Student
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 

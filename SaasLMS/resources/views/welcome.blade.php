@@ -18,32 +18,32 @@
                 </div>
             </div>
 
-            <div class="bg-[#111c2a] border border-slate-800 p-1.5 rounded-xl flex gap-1">
-                <button type="button" onclick="switchRole('admin')" id="tab-admin"
-                    class="role-tab flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold transition-all duration-200 bg-blue-600 text-white">
-                    <i class="bi bi-shield-lock-fill"></i> Admin
-                </button>
-                <button type="button" onclick="switchRole('teacher')" id="tab-teacher"
-                    class="role-tab flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition-all duration-200">
-                    <i class="bi bi-person-workspace"></i> Teacher
-                </button>
-                <button type="button" onclick="switchRole('student')" id="tab-student"
-                    class="role-tab flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition-all duration-200">
-                    <i class="bi bi-mortarboard-fill"></i> Student
-                </button>
-            </div>
+            {{-- <div class="bg-[#111c2a] border border-slate-800 p-1.5 rounded-xl flex gap-1">
+                    <button type="button" onclick="switchRole('admin')" id="tab-admin"
+                        class="role-tab flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold transition-all duration-200 bg-blue-600 text-white">
+                        <i class="bi bi-shield-lock-fill"></i> Admin
+                    </button>
+                    <button type="button" onclick="switchRole('teacher')" id="tab-teacher"
+                        class="role-tab flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition-all duration-200">
+                        <i class="bi bi-person-workspace"></i> Teacher
+                    </button>
+                    <button type="button" onclick="switchRole('student')" id="tab-student"
+                        class="role-tab flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-medium text-gray-400 hover:text-white transition-all duration-200">
+                        <i class="bi bi-mortarboard-fill"></i> Student
+                    </button>
+                </div> --}}
 
             <div
                 class="bg-[#111c2a] border border-slate-800 rounded-2xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
 
                 <div class="space-y-1 mb-6">
-                    <h2 id="authHeading" class="text-base font-bold text-white">Administrative Sign In</h2>
+                    <h2 id="authHeading" class="text-base font-bold text-white">Sign In</h2>
                     <p id="authSubheading" class="text-xs text-gray-400">Enter your secure organizational credentials to
                         authenticate session keys.</p>
                 </div>
-
                 <form action="/login" method="POST" class="space-y-4" onsubmit="handleAuthSubmit(event)">
                     @csrf
+
                     @if ($errors->has('login_identity'))
                         <div
                             class="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl p-3 mb-2 flex items-center gap-2 font-medium">
@@ -54,17 +54,9 @@
 
                     <input type="hidden" name="role" id="userRoleInput" value="admin">
 
-                    @if ($errors->has('login_identity'))
-                        <div
-                            class="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl p-3 mb-2 flex items-center gap-2">
-                            <i class="bi bi-exclamation-triangle-fill"></i>
-                            <span>{{ $errors->first('login_identity') }}</span>
-                        </div>
-                    @endif
-
-                    <div class="space-y-1.5 ">
+                    <div class="space-y-1.5">
                         <label id="identifierLabel" class="block text-xs font-semibold text-gray-400">
-                            Administrative Email
+                            Email
                         </label>
                         <div class="relative">
                             <span id="identifierIcon"
@@ -73,7 +65,7 @@
                             </span>
 
                             <input type="text" id="identifierInput" name="login_identity"
-                                value="{{ old('login_identity') }}" placeholder="admin@apex.edu"
+                                value="{{ old('login_identity') }}" placeholder="user@apex.edu"
                                 class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500 transition"
                                 required autofocus>
                         </div>
@@ -82,10 +74,6 @@
                     <div class="space-y-1.5">
                         <div class="flex items-center justify-between">
                             <label class="block text-xs font-semibold text-gray-400">Security Password</label>
-                            {{-- <a href="/forgot-password"
-                                class="text-[11px] font-medium text-blue-400 hover:text-blue-300 id-accent-text transition">
-                                Forgot Key?
-                            </a> --}}
                         </div>
                         <div class="relative">
                             <span
@@ -102,16 +90,6 @@
                             </button>
                         </div>
                     </div>
-
-                    {{-- <div class="flex items-center justify-between pt-1">
-                        <label class="flex items-center gap-2 cursor-pointer group">
-                            <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}
-                                class="rounded bg-[#090d16] border-slate-800 text-blue-600 focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer">
-                            <span class="text-[11px] text-gray-400 group-hover:text-gray-300 transition font-medium">
-                                Keep session keys active
-                            </span>
-                        </label>
-                    </div> --}}
 
                     <div class="pt-2">
                         <button type="submit" id="authSubmitBtn"
@@ -145,32 +123,32 @@
                 focusBorder: "focus:border-blue-500",
                 shadowGlow: "bg-blue-600/5"
             },
-            teacher: {
-                heading: "Faculty Portal Gate",
-                subheading: "Access your lecture schedules, digital logic registers, and attendance sheets.",
-                label: "Official Faculty Email",
-                placeholder: "professor.mercer@apex.edu",
-                type: "email",
-                icon: "bi-person-workspace",
-                inputIcon: "bi-envelope",
-                colorClass: "bg-emerald-600",
-                textClass: "text-emerald-400",
-                focusBorder: "focus:border-emerald-500",
-                shadowGlow: "bg-emerald-600/5"
-            },
-            student: {
-                heading: "Student Central Ledger",
-                subheading: "Sign in using your portal Roll ID to check academic status and pay bills.",
-                label: "Institutional Roll Number",
-                placeholder: "e.g. AGI-2026-XXXX",
-                type: "text",
-                icon: "bi-mortarboard-fill",
-                inputIcon: "bi-card-text",
-                colorClass: "bg-amber-600",
-                textClass: "text-amber-400",
-                focusBorder: "focus:border-amber-500",
-                shadowGlow: "bg-amber-600/5"
-            }
+            // teacher: {
+            //     heading: "Faculty Portal Gate",
+            //     subheading: "Access your lecture schedules, digital logic registers, and attendance sheets.",
+            //     label: "Official Faculty Email",
+            //     placeholder: "professor.mercer@apex.edu",
+            //     type: "email",
+            //     icon: "bi-person-workspace",
+            //     inputIcon: "bi-envelope",
+            //     colorClass: "bg-emerald-600",
+            //     textClass: "text-emerald-400",
+            //     focusBorder: "focus:border-emerald-500",
+            //     shadowGlow: "bg-emerald-600/5"
+            // },
+            // student: {
+            //     heading: "Student Central Ledger",
+            //     subheading: "Sign in using your portal Roll ID to check academic status and pay bills.",
+            //     label: "Institutional Roll Number",
+            //     placeholder: "e.g. AGI-2026-XXXX",
+            //     type: "text",
+            //     icon: "bi-mortarboard-fill",
+            //     inputIcon: "bi-card-text",
+            //     colorClass: "bg-amber-600",
+            //     textClass: "text-amber-400",
+            //     focusBorder: "focus:border-amber-500",
+            //     shadowGlow: "bg-amber-600/5"
+            // }
         };
 
         function switchRole(role) {

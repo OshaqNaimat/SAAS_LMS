@@ -12,37 +12,44 @@ class AuthController extends Controller
      */
 public function login(Request $request)
 {
-    // Validate structural form input field formats
+    // 1. Validate basic inputs
     $request->validate([
-        'login_identity' => 'required|email',
+        'login_identity' => 'required|string',
         'password'       => 'required|string',
-        'role'           => 'required|string',
     ]);
 
-    $credentials = [
-        'email'    => $request->input('login_identity'),
-        'password' => $request->input('password'),
-    ];
+    $identity = $request->input('login_identity');
+    $password = $request->input('password');
 
-    // Check credentials against database tables
-   if (Auth::attempt($credentials, $request->boolean('remember'))) {
-    $request->session()->regenerate();
-    $user = Auth::user();
-
-    // Route users to their specific authorized dashboard URLs
-    if ($user->role === 'admin') {
-        return redirect()->route('dashboard');
+    // 2. AUTOMATIC DETECTION LAYER
+    if (str_contains($identity, '@')) {
+        // It's an email -> Could be an Admin or a Teacher
+        $credentials = ['email' => $identity, 'password' => $password];
+    } else {
+        // No @ symbol -> It's a Student Roll Number
+        $credentials = ['roll_number' => $identity, 'password' => $password];
     }
 
-    if ($user->role === 'teacher') {
-        return redirect()->route('teacher.dashboard');
+    // 3. Attempt Authentication
+    if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        $request->session()->regenerate();
+        $user = Auth::user();
+
+        // 4. Smart Redirection based on the authenticated user's actual database role
+        if ($user->role === 'admin') {
+            return redirect()->route('dashboard')->with('success', 'Welcome Admin.');
+        }
+
+        if ($user->role === 'teacher') {
+            return redirect()->route('teacher.dashboard')->with('success', 'Welcome Teacher.');
+        }
+
+        if ($user->role === 'student') {
+            return redirect()->route('student.dashboard')->with('success', 'Welcome Student.');
+        }
     }
 
-    if ($user->role === 'student') {
-        return redirect()->route('student.dashboard');
-    }
-}
-    // Explicit validation matching failure states
+    // Fallback if credentials fail
     return back()->withErrors([
         'login_identity' => 'The provided security credentials do not match our logs.',
     ])->onlyInput('login_identity');

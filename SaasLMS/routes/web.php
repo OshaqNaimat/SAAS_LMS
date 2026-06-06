@@ -76,7 +76,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // TEACHER WORKSPACE ROUTES (Only Teachers Allowed)
 // ==========================================
 Route::middleware(['auth', 'role:teacher'])->group(function () {
-    Route::get('/teacher/dashboard', function () {
+    Route::get('/teacher-dashboard`', function () {
         return view('teacher.dashboard');
     })->name('teacher.dashboard');
 });
@@ -90,3 +90,4 @@ Route::middleware(['auth', 'role:student'])->group(function () {
     })->name('student.dashboard');
 });
 
+Route::post('/admin/add-student', [AdminController::class, 'storeStudent'])->name('admin.add-student');
