@@ -36,11 +36,11 @@
                             </div>
                             <h3 class="font-bold text-base text-white">Active Faculty Members</h3>
                         </div>
-                        {{-- <span
+                        <span
                             class="text-xs px-3  py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
                             {{ $teachers->count() }} Registered
-                        </span> --}}
-                        <div class="kpi-value">{{ $totalTeachers }}</div>
+                        </span>
+                        {{-- <div class="kpi-value">{{ $totalTeachers }}</div> --}}
 
                     </div>
                     <div class="overflow-x-auto">
@@ -90,11 +90,11 @@
                             </div>
                             <h3 class="font-bold text-base text-white">Enrolled Student Registry</h3>
                         </div>
-                        {{-- <span
+                        <span
                             class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
                             {{ $students->count() }} Registered
-                        </span> --}}
-                        <div class="kpi-value">{{ $totalStudents }}</div>
+                        </span>
+                        {{-- <div class="kpi-value">{{ $totalStudents }}</div> --}}
 
                     </div>
                     <div class="overflow-x-auto">
