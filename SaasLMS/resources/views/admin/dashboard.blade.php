@@ -5,6 +5,11 @@
     <div>
 
         <div class="app-container">
+            <!-- Success Toast -->
+            <div id="successToast" class="success-toast">
+                <i class="bi bi-check-circle-fill"></i>
+                <span id="successToastMsg"></span>
+            </div>
 
             <!-- Sidebar Overlay -->
             <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -450,6 +455,24 @@
                 attributes: true,
                 attributeFilter: ['class']
             });
+
+
+            function showToast(message) {
+                const toast = document.getElementById('successToast');
+                const msg = document.getElementById('successToastMsg');
+                msg.textContent = message;
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500); // disappears after 2.5s
+            }
+
+            @if (session('success'))
+                window.addEventListener('DOMContentLoaded', () => {
+                    showToast(@json(session('success')));
+                });
+            @endif
         </script>
     </div>
 

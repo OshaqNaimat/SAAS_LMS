@@ -25,7 +25,7 @@ class AdminController extends Controller
             'role'     => $request->role, // Saves explicitly as 'teacher'
         ]);
 
-        return back()->with('success', 'Teacher registered successfully!');
+        return back()->with('success', 'Teacher Registered successfully!');
     }
     public function storeStudent(Request $request)
 {
@@ -49,7 +49,7 @@ class AdminController extends Controller
         'role'        => $request->role, // Saves explicitly as 'student'
     ]);
 
-    return back()->with('success', 'Student account generated successfully!');
+    return back()->with('success', 'New Student Registered successfully!');
 }
 }
 

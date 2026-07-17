@@ -17,24 +17,24 @@ Route::get('/', function () {
 
 // admin dashbaord
 // Route::view("/admin-dashboard",'admin.dashboard');
-Route::view("/admin-faculty",'admin.faculty');
-Route::view("/admin-classes-control",'admin.classes');
-Route::view("/admin-attendence-control",'admin.attendence');
-Route::view("/admin-reports-control",'admin.reports');
-Route::view("/admin-billings-control",'admin.billings');
-Route::view("/admin-setting",'admin.setting');
+// Route::view("/admin-faculty",'admin.faculty');
+// Route::view("/admin-classes-control",'admin.classes');
+// Route::view("/admin-attendence-control",'admin.attendence');
+// Route::view("/admin-reports-control",'admin.reports');
+// Route::view("/admin-billings-control",'admin.billings');
+// Route::view("/admin-setting",'admin.setting');
 
-// teacher routes
-// Route::view("/teacher-dashboard",'teacher.dashboard');
-Route::view("/teacher-schedules",'teacher.Schedule');
-Route::view("/teacher-attendance",'teacher.attendence-registry');
-Route::view("/teacher-batches",'teacher.assigned-batches');
-Route::view("/teacher-announcements",'teacher.notice-board');
+// // teacher routes
+// // Route::view("/teacher-dashboard",'teacher.dashboard');
+// Route::view("/teacher-schedules",'teacher.Schedule');
+// Route::view("/teacher-attendance",'teacher.attendence-registry');
+// Route::view("/teacher-batches",'teacher.assigned-batches');
+// Route::view("/teacher-announcements",'teacher.notice-board');
 
-// student routes
-// Route::view("/student-dashboard",'student.dashboard');
-Route::view("/student-timetable",'student.student-timetable');
-Route::view("/student-attendance",'student.student-attendence');
+// // student routes
+// // Route::view("/student-dashboard",'student.dashboard');
+// Route::view("/student-timetable",'student.student-timetable');
+// Route::view("/student-attendance",'student.student-attendence');
 
 
 // // Form Actions Handling Authentication Tasks
