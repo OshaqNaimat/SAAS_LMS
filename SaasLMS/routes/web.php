@@ -73,6 +73,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // FIXED: Both registration forms are now safely guarded inside the admin group
     Route::post('/admin/add-teacher', [AdminController::class, 'storeTeacher'])->name('admin.add-teacher');
     Route::post('/admin/add-student', [AdminController::class, 'storeStudent'])->name('admin.add-student');
+    Route::view('/admin-faculty','admin.faculty');
 });
 
 
