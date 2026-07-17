@@ -16,7 +16,7 @@
                 <div class="flex items-center gap-3 shrink-0 sm:self-center">
                     <button onclick="toggleModal('inviteModal')"
                         class="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-sm font-semibold transition text-gray-200">
-                        Invite Member
+                        Add a Member
                     </button>
                     <button onclick="toggleModal('studentModal')"
                         class="flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition text-white shadow-md">
@@ -36,10 +36,12 @@
                             </div>
                             <h3 class="font-bold text-base text-white">Active Faculty Members</h3>
                         </div>
-                        <span
-                            class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
-                            50 Registered
-                        </span>
+                        {{-- <span
+                            class="text-xs px-3  py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
+                            {{ $teachers->count() }} Registered
+                        </span> --}}
+                        <div class="kpi-value">{{ $totalTeachers }}</div>
+
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -54,34 +56,27 @@
                                 </tr>
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4 font-semibold text-white">Dr. Sarah Jenkins</td>
-                                    <td class="p-4 text-gray-400">Computer Science</td>
-                                    <td class="p-4">s.jenkins@apex.edu</td>
-                                    <td class="p-4">
-                                        <span
-                                            class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">Active</span>
-                                    </td>
-                                    <td class="p-4 text-right">
-                                        <button class="text-gray-500 hover:text-white">
-                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4 font-semibold text-white">Prof. Marcus Vance</td>
-                                    <td class="p-4 text-gray-400">Mathematics</td>
-                                    <td class="p-4">m.vance@apex.edu</td>
-                                    <td class="p-4">
-                                        <span
-                                            class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">Active</span>
-                                    </td>
-                                    <td class="p-4 text-right">
-                                        <button class="text-gray-500 hover:text-white">
-                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                @forelse($teachers as $teacher)
+                                    <tr class="hover:bg-slate-900/40">
+                                        <td class="p-4 font-semibold text-white">{{ $teacher->name }}</td>
+                                        <td class="p-4 text-gray-400">{{ $teacher->assigned_class ?? '—' }}</td>
+                                        <td class="p-4">{{ $teacher->email }}</td>
+                                        <td class="p-4">
+                                            <span
+                                                class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">Active</span>
+                                        </td>
+                                        <td class="p-4 text-right">
+                                            <button class="text-gray-500 hover:text-white">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="p-6 text-center text-gray-500 text-sm">No teachers
+                                            added yet.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -95,10 +90,12 @@
                             </div>
                             <h3 class="font-bold text-base text-white">Enrolled Student Registry</h3>
                         </div>
-                        <span
+                        {{-- <span
                             class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
-                            500 Registered
-                        </span>
+                            {{ $students->count() }} Registered
+                        </span> --}}
+                        <div class="kpi-value">{{ $totalStudents }}</div>
+
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -114,30 +111,26 @@
                                 </tr>
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4 text-blue-400 font-mono font-medium">#AGI-2026-089</td>
-                                    <td class="p-4 font-semibold text-white">Amara Sterling</td>
-                                    <td class="p-4 text-gray-400">David Sterling</td>
-                                    <td class="p-4">Grade 11 - Alpha</td>
-                                    <td class="p-4">Aug 14, 2025</td>
-                                    <td class="p-4 text-right">
-                                        <button class="text-gray-500 hover:text-white">
-                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4 text-blue-400 font-mono font-medium">#AGI-2026-104</td>
-                                    <td class="p-4 font-semibold text-white">Ethan Brooks</td>
-                                    <td class="p-4 text-gray-400">Robert Brooks</td>
-                                    <td class="p-4">Grade 12 - Omega</td>
-                                    <td class="p-4">Sep 01, 2025</td>
-                                    <td class="p-4 text-right">
-                                        <button class="text-gray-500 hover:text-white">
-                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                @forelse($students as $student)
+                                    <tr class="hover:bg-slate-900/40">
+                                        <td class="p-4 text-blue-400 font-mono font-medium">#{{ $student->roll_number }}
+                                        </td>
+                                        <td class="p-4 font-semibold text-white">{{ $student->name }}</td>
+                                        <td class="p-4 text-gray-400">{{ $student->father_name }}</td>
+                                        <td class="p-4">{{ $student->class }} - {{ $student->section }}</td>
+                                        <td class="p-4">{{ $student->created_at->format('M d, Y') }}</td>
+                                        <td class="p-4 text-right">
+                                            <button class="text-gray-500 hover:text-white">
+                                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="p-6 text-center text-gray-500 text-sm">No students
+                                            added yet.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -147,142 +140,101 @@
         </main>
     </div>
 
-    <div id="inviteModal"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
-        role="dialog" aria-modal="true">
-        <div
-            class="w-full max-w-[500px] bg-[#111c2a] rounded-2xl shadow-2xl border border-slate-800 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
-            <div class="p-5 flex justify-between items-center border-b border-slate-800/60 bg-[#142032]">
-                <h3 class="text-base font-bold flex items-center gap-2.5 text-white">
-                    <i class="bi bi-person-plus text-blue-500 text-lg"></i> Invite Team Member
-                </h3>
-                <button onclick="toggleModal('inviteModal')" class="text-gray-400 hover:text-white transition"
-                    aria-label="Close">
-                    <i class="bi bi-x-lg text-sm"></i>
-                </button>
-            </div>
-            <form class="p-6 space-y-5" onsubmit="event.preventDefault(); toggleModal('inviteModal');">
-                <div class="space-y-1.5">
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Email
-                        Address</label>
-                    <input type="email" placeholder="colleague@example.com"
-                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition"
-                        required>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Role</label>
-                        <div class="relative">
-                            <select
-                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition appearance-none">
-                                <option disabled selected>Select Role...</option>
-                                <option>Teacher</option>
-                                <option>Admin</option>
-                            </select>
-                            <i
-                                class="bi bi-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                        </div>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label
-                            class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Project</label>
-                        <div class="relative">
-                            <select
-                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition appearance-none">
-                                <option disabled selected>Assign Class</option>
-                                <option>Class 1</option>
-                                <option>Class 2</option>
-                                <option>Class 3</option>
-                            </select>
-                            <i
-                                class="bi bi-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="space-y-1.5">
-                    <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Message
-                        (optional)</label>
-                    <input type="text" placeholder="Add a personal message..."
-                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
-                </div>
-                <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
-                    <button type="button" onclick="toggleModal('inviteModal')"
-                        class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-800 bg-[#172232] text-gray-300 hover:bg-slate-800 hover:text-white transition">Cancel</button>
-                    <button type="submit"
-                        class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-2 shadow-lg shadow-blue-600/10">
-                        <i class="bi bi-send text-xs"></i> Send Invite
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <form action="{{ route('admin.add-teacher') }}" method="POST" class="p-6 space-y-5">
+        @csrf
+        <input type="hidden" name="role" value="teacher">
 
-    <div id="studentModal"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
-        role="dialog" aria-modal="true">
-        <div
-            class="w-full max-w-2xl bg-[#111c2a] rounded-2xl shadow-2xl border border-slate-800 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
-            <div class="p-5 flex justify-between items-center border-b border-slate-800/60 bg-[#142032]">
-                <h3 class="text-base font-bold flex items-center gap-2 text-white">
-                    <i class="fa-solid fa-user-plus text-blue-400"></i> Add New Student Entry
-                </h3>
-                <button onclick="toggleModal('studentModal')" class="text-gray-400 hover:text-white transition">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <form class="p-6 space-y-5" onsubmit="event.preventDefault(); toggleModal('studentModal');">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Student Name</label>
-                        <input type="text" placeholder="Enter student name"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition"
-                            required>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Father's Name</label>
-                        <input type="text" placeholder="Enter father's name"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition"
-                            required>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Student Roll No.</label>
-                        <input type="text" placeholder="e.g. AGI-2026-110"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition"
-                            required>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Class</label>
-                        <input type="text" placeholder="e.g. Grade 12"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition"
-                            required>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Section</label>
-                        <input type="text" placeholder="e.g. Alpha"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition"
-                            required>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Admission Date</label>
-                        <input type="date"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition"
-                            required>
-                    </div>
-                </div>
-                <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
-                    <button type="button" onclick="toggleModal('studentModal')"
-                        class="px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-gray-400 hover:bg-slate-800 transition">Cancel</button>
-                    <button type="submit"
-                        class="px-5 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-500 transition">Save
-                        Entry</button>
-                </div>
-            </form>
+        <div class="space-y-1.5">
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Full Name</label>
+            <input type="text" name="name" placeholder="Prof. Mashood" required
+                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
         </div>
-    </div>
+
+        <div class="space-y-1.5">
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Email Address</label>
+            <input type="email" name="email" placeholder="teacher@apex.edu" required
+                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Password</label>
+                <input type="password" name="password" placeholder="••••••••" required
+                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+            </div>
+            <div class="space-y-1.5">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Assigned Class</label>
+                <select name="assigned_class"
+                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                    <option value="">Select Class...</option>
+                    <option value="Class 1">Class 1</option>
+                    <option value="Class 2">Class 2</option>
+                    <option value="Class 3">Class 3</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
+            <button type="button" onclick="toggleModal('inviteModal')"
+                class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-800 bg-[#172232] text-gray-300 hover:bg-slate-800 hover:text-white transition">Cancel</button>
+            <button type="submit"
+                class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-2 shadow-lg shadow-blue-600/10">
+                <i class="bi bi-send text-xs"></i> Register Teacher
+            </button>
+        </div>
+    </form>
+
+    <form action="{{ route('admin.add-student') }}" method="POST" class="p-6 space-y-5">
+        @csrf
+        <input type="hidden" name="role" value="student">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-gray-400">Student Name</label>
+                <input type="text" name="name" placeholder="Enter student name" required
+                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+            </div>
+            <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-gray-400">Father's Name</label>
+                <input type="text" name="father_name" placeholder="Enter father's name" required
+                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-gray-400">Student Roll No.</label>
+                <input type="text" name="roll_number" placeholder="e.g. AGI-2026-110" required
+                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+            </div>
+            <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-gray-400">Class</label>
+                <input type="text" name="class" placeholder="e.g. Grade 12" required
+                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-gray-400">Section</label>
+                <input type="text" name="section" placeholder="e.g. Alpha" required
+                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+            </div>
+            <div class="space-y-1.5">
+                <label class="block text-xs font-semibold text-gray-400">Password</label>
+                <input type="password" name="password" placeholder="••••••••" required
+                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+            </div>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
+            <button type="button" onclick="toggleModal('studentModal')"
+                class="px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-gray-400 hover:bg-slate-800 transition">Cancel</button>
+            <button type="submit"
+                class="px-5 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-500 transition">Save
+                Entry</button>
+        </div>
+    </form>
 
     <div id="studentModal"
         class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden"
