@@ -66,4 +66,41 @@ public function dashboard()
 
     return view('admin.dashboard', compact('totalTeachers', 'totalStudents'));
 }
+public function destroy(User $user)
+{
+    $user->delete();
+    return back()->with('success', ucfirst($user->role) . ' removed successfully!');
+}
+
+public function updateTeacher(Request $request, User $user)
+{
+    $request->validate([
+        'name'           => 'required|string|max:255',
+        'email'          => 'required|email|unique:users,email,' . $user->id,
+        'assigned_class' => 'nullable|string',
+    ]);
+
+    $user->update([
+        'name'           => $request->name,
+        'email'          => $request->email,
+        'assigned_class' => $request->assigned_class,
+    ]);
+
+    return back()->with('success', 'Teacher updated successfully!');
+}
+
+public function updateStudent(Request $request, User $user)
+{
+    $request->validate([
+        'name'        => 'required|string|max:255',
+        'father_name' => 'required|string|max:255',
+        'roll_number' => 'required|string|unique:users,roll_number,' . $user->id,
+        'class'       => 'required|string',
+        'section'     => 'required|string',
+    ]);
+
+    $user->update($request->only('name', 'father_name', 'roll_number', 'class', 'section'));
+
+    return back()->with('success', 'Student updated successfully!');
+}
 };

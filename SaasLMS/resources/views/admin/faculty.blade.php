@@ -66,9 +66,25 @@
                                                 class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">Active</span>
                                         </td>
                                         <td class="p-4 text-right">
-                                            <button class="text-gray-500 hover:text-white">
-                                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                                            </button>
+                                            <div class="flex items-center justify-end gap-3">
+                                                {{-- <button onclick="openEditTeacher({{ $teacher->id }})"
+                                                    class="text-yellow-400 hover:text-yellow-300 transition"
+                                                    title="Edit">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </button> --}}
+                                                <form action="{{ route('admin.user.destroy', $teacher->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Remove {{ $teacher->name }}? This cannot be undone.');"
+                                                    class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="text-red-400 hover:text-red-300 transition"
+                                                        title="Delete">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -113,16 +129,33 @@
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
                                 @forelse($students as $student)
                                     <tr class="hover:bg-slate-900/40">
-                                        <td class="p-4 text-blue-400 font-mono font-medium">#{{ $student->roll_number }}
+                                        <td class="p-4 text-blue-400 font-mono font-medium">
+                                            #{{ $student->roll_number }}
                                         </td>
                                         <td class="p-4 font-semibold text-white">{{ $student->name }}</td>
                                         <td class="p-4 text-gray-400">{{ $student->father_name }}</td>
                                         <td class="p-4">{{ $student->class }} - {{ $student->section }}</td>
                                         <td class="p-4">{{ $student->created_at->format('M d, Y') }}</td>
                                         <td class="p-4 text-right">
-                                            <button class="text-gray-500 hover:text-white">
-                                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                                            </button>
+                                            <div class="flex items-center justify-end gap-3">
+                                                {{-- <button onclick="openEditStudent({{ $student->id }})"
+                                                    class="text-yellow-400 hover:text-yellow-300 transition"
+                                                    title="Edit">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </button> --}}
+                                                <form action="{{ route('admin.user.destroy', $student->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Remove {{ $student->name }}? This cannot be undone.');"
+                                                    class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="text-red-400 hover:text-red-300 transition"
+                                                        title="Delete">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -163,7 +196,8 @@
                     class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
             </div>
             <div class="space-y-1.5">
-                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Assigned Class</label>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Assigned
+                    Class</label>
                 <select name="assigned_class"
                     class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
                     <option value="">Select Class...</option>
@@ -356,6 +390,19 @@
 
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
+        });
+
+        function toggleActionMenu(id) {
+            document.querySelectorAll('[id^="menu-"]').forEach(menu => {
+                if (menu.id !== 'menu-' + id) menu.classList.add('hidden');
+            });
+            document.getElementById('menu-' + id).classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('[id^="menu-"]') && !e.target.closest('button[onclick^="toggleActionMenu"]')) {
+                document.querySelectorAll('[id^="menu-"]').forEach(menu => menu.classList.add('hidden'));
+            }
         });
     </script>
 </x-layout>

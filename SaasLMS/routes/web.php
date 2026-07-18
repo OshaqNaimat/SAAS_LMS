@@ -75,6 +75,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/admin/add-student', [AdminController::class, 'storeStudent'])->name('admin.add-student');
     Route::get('/admin/faculty-roster', [AdminController::class, 'facultyRoster'])->name('admin.faculty-roster');
     Route::get('/admin-faculty', [AdminController::class, 'facultyRoster'])->name('admin.faculty');
+    Route::delete('/admin/users/{user}', [AdminController::class, 'destroy'])->name('admin.user.destroy');
+    Route::put('/admin/teachers/{user}', [AdminController::class, 'updateTeacher'])->name('admin.teacher.update');
+    Route::put('/admin/students/{user}', [AdminController::class, 'updateStudent'])->name('admin.student.update');
+
     Route::view('/admin-classes-control','admin.classes');
     Route::view('/admin-attendence-control','admin.attendence');
     Route::view('/admin-reports-control','admin.reports');
