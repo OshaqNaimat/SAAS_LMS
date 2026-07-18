@@ -79,7 +79,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/admin/teachers/{user}', [AdminController::class, 'updateTeacher'])->name('admin.teacher.update');
     Route::put('/admin/students/{user}', [AdminController::class, 'updateStudent'])->name('admin.student.update');
 
-    Route::view('/admin-classes-control','admin.classes');
+    Route::get('/admin/classes', [AdminController::class, 'classesIndex'])->name('admin.classes');
+Route::post('/admin/classes', [AdminController::class, 'storeClass'])->name('admin.classes.store');
+Route::put('/admin/classes/{classRoom}', [AdminController::class, 'updateClass'])->name('admin.classes.update');
+Route::delete('/admin/classes/{classRoom}', [AdminController::class, 'destroyClass'])->name('admin.classes.destroy');
+
     Route::view('/admin-attendence-control','admin.attendence');
     Route::view('/admin-reports-control','admin.reports');
     Route::view('/admin-billings-control','admin.billings');

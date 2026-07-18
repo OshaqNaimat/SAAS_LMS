@@ -14,7 +14,7 @@
                         active curriculums.</p>
                 </div>
                 <div class="flex items-center gap-3 shrink-0 sm:self-center">
-                    <button onclick="toggleModal('classModal')"
+                    <button onclick="openAddClass()"
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition text-white shadow-md shadow-blue-600/10">
                         <i class="bi bi-plus-lg"></i> Create New Class
                     </button>
@@ -25,9 +25,7 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Total Classes</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">24</h4>
-                        <span class="text-[11px] text-emerald-400 flex items-center gap-1"><i
-                                class="bi bi-arrow-up-short"></i> +2 this term</span>
+                        <h4 class="text-2xl font-bold text-white tracking-tight">{{ $totalClasses }}</h4>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-xl">
@@ -61,9 +59,7 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Overcrowded Classes</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">1</h4>
-                        <span class="text-[11px] text-rose-400 flex items-center gap-1"><i
-                                class="bi bi-exclamation-triangle"></i> Sec Alpha limits</span>
+                        <h4 class="text-2xl font-bold text-white tracking-tight">{{ $overcrowded }}</h4>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-xl">
@@ -148,7 +144,7 @@
                         </div>
                         <span
                             class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
-                            24
+                            {{ $classes->count() }}
                         </span>
                     </div>
                     <div class="overflow-x-auto">
@@ -164,52 +160,52 @@
                                 </tr>
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4 font-semibold text-white">
-                                        <div class="flex flex-col">
-                                            <span>Grade 11 - Alpha</span>
-                                            <span class="text-xs font-normal text-gray-400">Room 304 • Science
-                                                Stream</span>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-gray-300">Dr. Sarah Jenkins</td>
-                                    <td class="p-4 font-mono text-xs text-blue-400 font-medium">32 Students / Max 35
-                                    </td>
-                                    <td class="p-4">
-                                        <div class="w-32 bg-slate-800 h-2 rounded-full overflow-hidden">
-                                            <div class="bg-blue-500 h-full w-[85%]"></div>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-right">
-                                        <button class="text-gray-500 hover:text-white transition px-2"><i
-                                                class="bi bi-pencil-square"></i></button>
-                                        <button class="text-gray-500 hover:text-rose-400 transition px-2"><i
-                                                class="bi bi-trash3"></i></button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4 font-semibold text-white">
-                                        <div class="flex flex-col">
-                                            <span>Grade 12 - Omega</span>
-                                            <span class="text-xs font-normal text-gray-400">Room 102 • Advanced
-                                                Mathematics</span>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-gray-300">Prof. Marcus Vance</td>
-                                    <td class="p-4 font-mono text-xs text-blue-400 font-medium">28 Students / Max 30
-                                    </td>
-                                    <td class="p-4">
-                                        <div class="w-32 bg-slate-800 h-2 rounded-full overflow-hidden">
-                                            <div class="bg-blue-500 h-full w-[60%]"></div>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-right">
-                                        <button class="text-gray-500 hover:text-white transition px-2"><i
-                                                class="bi bi-pencil-square"></i></button>
-                                        <button class="text-gray-500 hover:text-rose-400 transition px-2"><i
-                                                class="bi bi-trash3"></i></button>
-                                    </td>
-                                </tr>
+                                @forelse($classes as $class)
+                                    @php $count = $class->studentCount(); @endphp
+                                    <tr class="hover:bg-slate-900/40">
+                                        <td class="p-4 font-semibold text-white">
+                                            <div class="flex flex-col">
+                                                <span>{{ $class->name }} - {{ $class->section }}</span>
+                                                <span class="text-xs font-normal text-gray-400">
+                                                    {{ $class->room ?? 'No room set' }} @if ($class->stream)
+                                                        • {{ $class->stream }}
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td class="p-4 text-gray-300">{{ $class->teacher->name ?? 'Unassigned' }}</td>
+                                        <td
+                                            class="p-4 font-mono text-xs {{ $count >= $class->max_seats ? 'text-rose-400' : 'text-blue-400' }} font-medium">
+                                            {{ $count }} Students / Max {{ $class->max_seats }}
+                                        </td>
+                                        <td class="p-4">
+                                            @php $pct = $class->max_seats > 0 ? min(100, round($count / $class->max_seats * 100)) : 0; @endphp
+                                            <div class="w-32 bg-slate-800 h-2 rounded-full overflow-hidden">
+                                                <div class="{{ $pct >= 100 ? 'bg-rose-500' : 'bg-blue-500' }} h-full"
+                                                    style="width: {{ $pct }}%"></div>
+                                            </div>
+                                        </td>
+                                        <td class="p-4 text-right">
+                                            <button
+                                                onclick="openEditClass({{ $class->id }}, '{{ $class->name }}', '{{ $class->section }}', '{{ $class->stream }}', '{{ $class->room }}', {{ $class->max_seats }}, {{ $class->teacher_id ?? 'null' }})"
+                                                class="text-yellow-400 hover:text-yellow-300 transition px-2"><i
+                                                    class="bi bi-pencil-square"></i></button>
+                                            <form action="{{ route('admin.classes.destroy', $class->id) }}"
+                                                method="POST" class="inline"
+                                                onsubmit="return confirm('Delete {{ $class->name }} - {{ $class->section }}? This cannot be undone.');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit"
+                                                    class="text-gray-500 hover:text-rose-400 transition px-2"><i
+                                                        class="bi bi-trash3"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="p-6 text-center text-gray-500 text-sm">No classes
+                                            created yet.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -221,63 +217,67 @@
     <div id="classModal"
         class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
         role="dialog" aria-modal="true">
-        <div
-            class="w-full max-w-[550px] bg-[#111c2a] rounded-2xl shadow-2xl border border-slate-800 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
+        <div class="...">
             <div class="p-5 flex justify-between items-center border-b border-slate-800/60 bg-[#142032]">
-                <h3 class="text-base font-bold flex items-center gap-2.5 text-white">
+                <h3 id="classModalTitle" class="text-base font-bold flex items-center gap-2.5 text-white">
                     <i class="bi bi-door-open text-blue-500 text-lg"></i> Create New Class Configuration
                 </h3>
-                <button onclick="toggleModal('classModal')" class="text-gray-400 hover:text-white transition"
-                    aria-label="Close">
+                <button onclick="toggleModal('classModal')" class="text-gray-400 hover:text-white transition">
                     <i class="bi bi-x-lg text-sm"></i>
                 </button>
             </div>
-            <form class="p-6 space-y-5" onsubmit="event.preventDefault(); toggleModal('classModal');">
+            <form id="classForm" action="{{ route('admin.classes.store') }}" method="POST" class="p-6 space-y-5">
+                @csrf
+                <input type="hidden" name="_method" id="classMethod" value="POST">
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-gray-400">Class Name / Grade</label>
-                        <input type="text" placeholder="e.g. Grade 11"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition"
-                            required>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Section Designation</label>
-                        <input type="text" placeholder="e.g. Alpha"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition"
-                            required>
-                    </div>
-                </div>
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-gray-400">Assigned Lead Faculty Mentor</label>
-                    <div class="relative">
-                        <select
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition appearance-none"
-                            required>
-                            <option disabled selected>Assign educator...</option>
-                            <option>Dr. Sarah Jenkins</option>
-                            <option>Prof. Marcus Vance</option>
-                        </select>
-                        <i
-                            class="bi bi-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Room Location</label>
-                        <input type="text" placeholder="e.g. Room 304"
+                        <input type="text" name="name" id="className" placeholder="e.g. Grade 11" required
                             class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
                     </div>
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Max Roster Seats</label>
-                        <input type="number" placeholder="30"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition"
-                            required>
+                        <label class="block text-xs font-semibold text-gray-400">Section Designation</label>
+                        <input type="text" name="section" id="classSection" placeholder="e.g. Alpha" required
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
                     </div>
                 </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-400">Assigned Lead Faculty Mentor</label>
+                    <select name="teacher_id" id="classTeacher"
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                        <option value="">Unassigned</option>
+                        @foreach ($teachers as $teacher)
+                            <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-gray-400">Stream (optional)</label>
+                        <input type="text" name="stream" id="classStream" placeholder="e.g. Science Stream"
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-gray-400">Room Location</label>
+                        <input type="text" name="room" id="classRoom" placeholder="e.g. Room 304"
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-400">Max Roster Seats</label>
+                    <input type="number" name="max_seats" id="classMaxSeats" placeholder="30" required
+                        min="1"
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+                </div>
+
                 <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
                     <button type="button" onclick="toggleModal('classModal')"
                         class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-800 bg-[#172232] text-gray-300 hover:bg-slate-800 hover:text-white transition">Cancel</button>
-                    <button type="submit"
+                    <button type="submit" id="classSubmitBtn"
                         class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-lg shadow-blue-600/10">
                         Create Configuration
                     </button>
@@ -331,5 +331,35 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
+
+        function resetClassForm() {
+            document.getElementById('classForm').action = "{{ route('admin.classes.store') }}";
+            document.getElementById('classMethod').value = "POST";
+            document.getElementById('classModalTitle').innerHTML =
+                '<i class="bi bi-door-open text-blue-500 text-lg"></i> Create New Class Configuration';
+            document.getElementById('classSubmitBtn').textContent = 'Create Configuration';
+            document.getElementById('classForm').reset();
+        }
+
+        function openAddClass() {
+            resetClassForm();
+            toggleModal('classModal');
+        }
+
+        function openEditClass(id, name, section, stream, room, maxSeats, teacherId) {
+            resetClassForm();
+            document.getElementById('classForm').action = `/admin/classes/${id}`;
+            document.getElementById('classMethod').value = "PUT";
+            document.getElementById('classModalTitle').innerHTML =
+                '<i class="bi bi-pencil-square text-yellow-400 text-lg"></i> Edit Class Configuration';
+            document.getElementById('classSubmitBtn').textContent = 'Update Configuration';
+            document.getElementById('className').value = name;
+            document.getElementById('classSection').value = section;
+            document.getElementById('classStream').value = stream ?? '';
+            document.getElementById('classRoom').value = room ?? '';
+            document.getElementById('classMaxSeats').value = maxSeats;
+            document.getElementById('classTeacher').value = teacherId ?? '';
+            toggleModal('classModal');
+        }
     </script>
 </x-layout>
