@@ -217,7 +217,8 @@
     <div id="classModal"
         class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
         role="dialog" aria-modal="true">
-        <div class="...">
+        <div
+            class="w-full max-w-[550px] bg-[#111c2a] rounded-2xl shadow-2xl border border-slate-800 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
             <div class="p-5 flex justify-between items-center border-b border-slate-800/60 bg-[#142032]">
                 <h3 id="classModalTitle" class="text-base font-bold flex items-center gap-2.5 text-white">
                     <i class="bi bi-door-open text-blue-500 text-lg"></i> Create New Class Configuration
