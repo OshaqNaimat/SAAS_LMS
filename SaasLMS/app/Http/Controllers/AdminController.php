@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClassRoom;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -102,5 +103,53 @@ public function updateStudent(Request $request, User $user)
     $user->update($request->only('name', 'father_name', 'roll_number', 'class', 'section'));
 
     return back()->with('success', 'Student updated successfully!');
+}
+public function classesIndex()
+{
+    $classes = ClassRoom::with('teacher')->latest()->get();
+    $teachers = User::where('role', 'teacher')->get();
+
+    $totalClasses = $classes->count();
+    $overcrowded = $classes->filter(fn ($c) => $c->studentCount() >= $c->max_seats)->count();
+
+    return view('admin.classes', compact('classes', 'teachers', 'totalClasses', 'overcrowded'));
+}
+
+public function storeClass(Request $request)
+{
+    $request->validate([
+        'name'       => 'required|string|max:255',
+        'section'    => 'required|string|max:255',
+        'stream'     => 'nullable|string|max:255',
+        'room'       => 'nullable|string|max:255',
+        'max_seats'  => 'required|integer|min:1',
+        'teacher_id' => 'nullable|exists:users,id',
+    ]);
+
+    ClassRoom::create($request->only('name', 'section', 'stream', 'room', 'max_seats', 'teacher_id'));
+
+    return back()->with('success', 'Class created successfully!');
+}
+
+public function updateClass(Request $request, ClassRoom $classRoom)
+{
+    $request->validate([
+        'name'       => 'required|string|max:255',
+        'section'    => 'required|string|max:255',
+        'stream'     => 'nullable|string|max:255',
+        'room'       => 'nullable|string|max:255',
+        'max_seats'  => 'required|integer|min:1',
+        'teacher_id' => 'nullable|exists:users,id',
+    ]);
+
+    $classRoom->update($request->only('name', 'section', 'stream', 'room', 'max_seats', 'teacher_id'));
+
+    return back()->with('success', 'Class updated successfully!');
+}
+
+public function destroyClass(ClassRoom $classRoom)
+{
+    $classRoom->delete();
+    return back()->with('success', 'Class removed successfully!');
 }
 };
