@@ -12,10 +12,10 @@
             <div class="sidebar-label">Main</div>
             <a href="/dashboard" class="nav-item"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
             <a class="nav-item" href="/admin-faculty"><i class="bi bi-people-fill"></i> Faculty
-                <span class="nav-badge">1,240</span>
+                {{-- <span class="nav-badge">1,240</span> --}}
             </a>
             <a class="nav-item" href="/admin-classes-control"><i class="bi bi-mortarboard-fill"></i> Classes
-                <span class="nav-badge">18</span>
+                {{-- <span class="nav-badge">18</span> --}}
             </a>
             <a class="nav-item" href="/admin-attendence-control"><i class="bi bi-calendar-check-fill"></i>
                 Attendance</a>
