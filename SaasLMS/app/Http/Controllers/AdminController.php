@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\ClassRoom;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -152,4 +154,104 @@ public function destroyClass(ClassRoom $classRoom)
     $classRoom->delete();
     return back()->with('success', 'Class removed successfully!');
 }
+
+
+public function attendanceIndex()
+{
+    $today = Carbon::today();
+
+    $students = User::where('role', 'student')->get();
+    $teachers = User::where('role', 'teacher')->get();
+
+    // Today's attendance keyed by user_id for quick lookup
+    $todayRecords = Attendance::where('date', $today)->get()->keyBy('user_id');
+
+    // Overall rates
+    $studentRate = $this->overallRate('student', $today);
+    $facultyRate = $this->overallRate('teacher', $today);
+
+    $studentAbsentToday = Attendance::where('date', $today)->where('status', 'absent')
+        ->whereIn('user_id', $students->pluck('id'))->count();
+
+    $facultyOnLeave = Attendance::where('date', $today)->where('status', 'approved_leave')
+        ->whereIn('user_id', $teachers->pluck('id'))->count();
+
+    // Last 5 days trend for the velocity chart
+    $trend = [];
+    for ($i = 4; $i >= 0; $i--) {
+        $day = $today->copy()->subDays($i);
+        $trend[] = [
+            'label' => $day->format('D'),
+            'student_pct' => $this->dayRate('student', $day),
+            'faculty_pct' => $this->dayRate('teacher', $day),
+        ];
+    }
+
+    // Incident breakdown today (students only)
+    $incidentTotal = Attendance::where('date', $today)
+        ->whereIn('user_id', $students->pluck('id'))
+        ->whereIn('status', ['absent', 'late', 'approved_leave'])->count();
+
+    $incidents = [
+        'leave'   => Attendance::where('date', $today)->where('status', 'approved_leave')->whereIn('user_id', $students->pluck('id'))->count(),
+        'absent'  => Attendance::where('date', $today)->where('status', 'absent')->whereIn('user_id', $students->pluck('id'))->count(),
+        'late'    => Attendance::where('date', $today)->where('status', 'late')->whereIn('user_id', $students->pluck('id'))->count(),
+    ];
+
+    return view('admin.attendance', compact(
+        'students', 'teachers', 'todayRecords', 'studentRate', 'facultyRate',
+        'studentAbsentToday', 'facultyOnLeave', 'trend', 'incidents', 'incidentTotal'
+    ));
+}
+
+private function overallRate($role, $today)
+{
+    $userIds = User::where('role', $role)->pluck('id');
+    $total = Attendance::whereIn('user_id', $userIds)->where('date', $today)->count();
+    if ($total === 0) return 0;
+    $present = Attendance::whereIn('user_id', $userIds)->where('date', $today)->where('status', 'present')->count();
+    return round(($present / $total) * 100, 1);
+}
+
+private function dayRate($role, $day)
+{
+    $userIds = User::where('role', $role)->pluck('id');
+    $total = Attendance::whereIn('user_id', $userIds)->where('date', $day)->count();
+    if ($total === 0) return 0;
+    $present = Attendance::whereIn('user_id', $userIds)->where('date', $day)->where('status', 'present')->count();
+    return round(($present / $total) * 100);
+}
+
+public function markAttendance(Request $request)
+{
+    $request->validate([
+        'user_id' => 'required|exists:users,id',
+        'status'  => 'required|in:present,absent,late,approved_leave',
+        'note'    => 'nullable|string',
+    ]);
+
+    Attendance::updateOrCreate(
+        ['user_id' => $request->user_id, 'date' => Carbon::today()],
+        ['status' => $request->status, 'note' => $request->note, 'marked_by' => auth()->id()]
+    );
+
+    return back()->with('success', 'Attendance updated!');
+}
+
+public function bulkMarkPresent(Request $request)
+{
+    $request->validate(['role' => 'required|in:student,teacher']);
+    $today = Carbon::today();
+
+    $users = User::where('role', $request->role)->get();
+    foreach ($users as $user) {
+        Attendance::updateOrCreate(
+            ['user_id' => $user->id, 'date' => $today],
+            ['status' => 'present', 'marked_by' => auth()->id()]
+        );
+    }
+
+    return back()->with('success', ucfirst($request->role) . 's marked present!');
+}
+
 };

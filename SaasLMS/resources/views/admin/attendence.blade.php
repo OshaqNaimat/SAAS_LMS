@@ -26,9 +26,7 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Student Attendance Rate</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">94.8%</h4>
-                        <span class="text-[11px] text-emerald-400 flex items-center gap-1"><i
-                                class="bi bi-arrow-up-short"></i> Optimal target met</span>
+                        <h4 class="text-2xl font-bold text-white tracking-tight">{{ $studentRate }}%</h4>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-xl">
@@ -38,9 +36,7 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Faculty Attendance Rate</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">98.2%</h4>
-                        <span class="text-[11px] text-emerald-400 flex items-center gap-1"><i
-                                class="bi bi-arrow-up-short"></i> +0.4% from last week</span>
+                        <h4 class="text-2xl font-bold text-white tracking-tight">{{ $facultyRate }}%</h4>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
@@ -50,8 +46,8 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Total Student Absentees</span>
-                        <h4 class="text-2xl font-bold text-rose-400 tracking-tight">26</h4>
-                        <span class="text-[11px] text-gray-400 flex items-center gap-1">Out of 500 Enrolled</span>
+                        <h4 class="text-2xl font-bold text-rose-400 tracking-tight">{{ $studentAbsentToday }}</h4>
+                        <span class="text-[11px] text-gray-400">Out of {{ $students->count() }} Enrolled</span>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 text-xl">
@@ -61,9 +57,7 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Faculty On Leave</span>
-                        <h4 class="text-2xl font-bold text-amber-400 tracking-tight">1</h4>
-                        <span class="text-[11px] text-amber-400 flex items-center gap-1"><i class="bi bi-clock"></i>
-                            Approved personal leave</span>
+                        <h4 class="text-2xl font-bold text-amber-400 tracking-tight">{{ $facultyOnLeave }}</h4>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
@@ -89,41 +83,20 @@
                     </div>
 
                     <div class="flex items-end justify-between h-44 pt-4 px-2 border-b border-slate-800/80 gap-4">
-                        <div class="w-1/5 flex flex-col items-center gap-2 h-full justify-end">
-                            <div class="w-full flex justify-center items-end gap-1 h-full">
-                                <div class="w-3 bg-blue-500 rounded-t-sm transition-all" style="height: 92%;"></div>
-                                <div class="w-3 bg-emerald-500 rounded-t-sm transition-all" style="height: 98%;"></div>
+                        @foreach ($trend as $i => $day)
+                            <div class="w-1/5 flex flex-col items-center gap-2 h-full justify-end">
+                                <div class="w-full flex justify-center items-end gap-1 h-full">
+                                    <div class="w-3 bg-blue-500 rounded-t-sm transition-all"
+                                        style="height: {{ $day['student_pct'] }}%"></div>
+                                    <div class="w-3 bg-emerald-500 rounded-t-sm transition-all"
+                                        style="height: {{ $day['faculty_pct'] }}%"></div>
+                                </div>
+                                <span
+                                    class="text-[10px] {{ $i === 4 ? 'text-gray-300 font-bold' : 'text-gray-400 font-medium' }}">
+                                    {{ $i === 4 ? 'Today' : $day['label'] }}
+                                </span>
                             </div>
-                            <span class="text-[10px] text-gray-400 font-medium">Mon</span>
-                        </div>
-                        <div class="w-1/5 flex flex-col items-center gap-2 h-full justify-end">
-                            <div class="w-full flex justify-center items-end gap-1 h-full">
-                                <div class="w-3 bg-blue-500 rounded-t-sm transition-all" style="height: 95%;"></div>
-                                <div class="w-3 bg-emerald-500 rounded-t-sm transition-all" style="height: 100%;"></div>
-                            </div>
-                            <span class="text-[10px] text-gray-400 font-medium">Tue</span>
-                        </div>
-                        <div class="w-1/5 flex flex-col items-center gap-2 h-full justify-end">
-                            <div class="w-full flex justify-center items-end gap-1 h-full">
-                                <div class="w-3 bg-blue-500 rounded-t-sm transition-all" style="height: 89%;"></div>
-                                <div class="w-3 bg-emerald-500 rounded-t-sm transition-all" style="height: 96%;"></div>
-                            </div>
-                            <span class="text-[10px] text-gray-400 font-medium">Wed</span>
-                        </div>
-                        <div class="w-1/5 flex flex-col items-center gap-2 h-full justify-end">
-                            <div class="w-full flex justify-center items-end gap-1 h-full">
-                                <div class="w-3 bg-blue-400 rounded-t-sm transition-all" style="height: 94%;"></div>
-                                <div class="w-3 bg-emerald-400 rounded-t-sm transition-all" style="height: 98%;"></div>
-                            </div>
-                            <span class="text-[10px] text-gray-300 font-bold">Today</span>
-                        </div>
-                        <div class="w-1/5 flex flex-col items-center gap-2 h-full justify-end opacity-40">
-                            <div class="w-full flex justify-center items-end gap-1 h-full">
-                                <div class="w-3 bg-blue-500 rounded-t-sm" style="height: 0%;"></div>
-                                <div class="w-3 bg-emerald-500 rounded-t-sm" style="height: 0%;"></div>
-                            </div>
-                            <span class="text-[10px] text-gray-400 font-medium">Fri</span>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
 
@@ -132,32 +105,37 @@
                         <h3 class="text-sm font-bold text-white mb-1">Incident Categorization</h3>
                         <p class="text-xs text-gray-400">Distribution of exceptions logged today</p>
                     </div>
+                    @php
+                        $leavePct = $incidentTotal > 0 ? round(($incidents['leave'] / $incidentTotal) * 100) : 0;
+                        $absentPct = $incidentTotal > 0 ? round(($incidents['absent'] / $incidentTotal) * 100) : 0;
+                        $latePct = $incidentTotal > 0 ? round(($incidents['late'] / $incidentTotal) * 100) : 0;
+                    @endphp
                     <div class="space-y-3 py-2">
                         <div>
                             <div class="flex justify-between text-xs mb-1">
-                                <span class="text-gray-400">Sick Leaves</span>
-                                <span class="text-white font-medium">62%</span>
+                                <span class="text-gray-400">Approved Leaves</span>
+                                <span class="text-white font-medium">{{ $leavePct }}%</span>
                             </div>
                             <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-amber-500 h-full w-[62%]"></div>
+                                <div class="bg-amber-500 h-full" style="width: {{ $leavePct }}%"></div>
                             </div>
                         </div>
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="text-gray-400">Unexcused Absences</span>
-                                <span class="text-white font-medium">23%</span>
+                                <span class="text-white font-medium">{{ $absentPct }}%</span>
                             </div>
                             <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-rose-500 h-full w-[23%]"></div>
+                                <div class="bg-rose-500 h-full" style="width: {{ $absentPct }}%"></div>
                             </div>
                         </div>
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="text-gray-400">Late Arrivals</span>
-                                <span class="text-white font-medium">15%</span>
+                                <span class="text-white font-medium">{{ $latePct }}%</span>
                             </div>
                             <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-blue-500 h-full w-[15%]"></div>
+                                <div class="bg-blue-500 h-full" style="width: {{ $latePct }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -204,52 +182,54 @@
                                 </tr>
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4">
-                                        <div class="flex flex-col">
-                                            <span class="font-semibold text-white">Amara Sterling</span>
-                                            <span class="text-xs font-mono text-blue-400">Roll No. 123</span>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-gray-400">Grade 11 - Alpha</td>
-                                    <td class="p-4 font-semibold text-emerald-400">96.4%</td>
-                                    <td class="p-4">
-                                        <span id="status-student-089"
-                                            class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                                            Present
-                                        </span>
-                                    </td>
-                                    <td class="p-4 text-right">
-                                        <button
-                                            onclick="openOverrideModal('Amara Sterling', 'Present', 'status-student-089')"
-                                            class="text-xs font-semibold bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:text-blue-400 text-gray-400 px-3 py-1.5 rounded-xl transition">
-                                            <i class="bi bi-pencil-square mr-1"></i> Edit Exception
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4">
-                                        <div class="flex flex-col">
-                                            <span class="font-semibold text-white">Ethan Brooks</span>
-                                            <span class="text-xs font-mono text-blue-400">Roll No. 104</span>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-gray-400">Grade 12 - Omega</td>
-                                    <td class="p-4 font-semibold text-rose-400">82.1%</td>
-                                    <td class="p-4">
-                                        <span id="status-student-104"
-                                            class="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 border border-rose-500/20 text-rose-400">
-                                            Absent
-                                        </span>
-                                    </td>
-                                    <td class="p-4 text-right">
-                                        <button
-                                            onclick="openOverrideModal('Ethan Brooks', 'Absent', 'status-student-104')"
-                                            class="text-xs font-semibold bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:text-blue-400 text-gray-400 px-3 py-1.5 rounded-xl transition">
-                                            <i class="bi bi-pencil-square mr-1"></i> Edit Exception
-                                        </button>
-                                    </td>
-                                </tr>
+                                @forelse($students as $student)
+                                    @php
+                                        $record = $todayRecords->get($student->id);
+                                        $status = $record->status ?? 'present';
+                                        $rate = $student->attendanceRate();
+                                    @endphp
+                                    <tr class="hover:bg-slate-900/40">
+                                        <td class="p-4">
+                                            <div class="flex flex-col">
+                                                <span class="font-semibold text-white">{{ $student->name }}</span>
+                                                <span class="text-xs font-mono text-blue-400">Roll No.
+                                                    {{ $student->roll_number }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="p-4 text-gray-400">{{ $student->class }} - {{ $student->section }}
+                                        </td>
+                                        <td
+                                            class="p-4 font-semibold {{ $rate === null ? 'text-gray-500' : ($rate >= 90 ? 'text-emerald-400' : 'text-rose-400') }}">
+                                            {{ $rate !== null ? $rate . '%' : 'No data' }}
+                                        </td>
+                                        <td class="p-4">
+                                            @php
+                                                $badgeClass = match ($status) {
+                                                    'present'
+                                                        => 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
+                                                    'absent' => 'bg-rose-500/10 border-rose-500/20 text-rose-400',
+                                                    default => 'bg-amber-500/10 border-amber-500/20 text-amber-400',
+                                                };
+                                            @endphp
+                                            <span id="status-student-{{ $student->id }}"
+                                                class="px-2.5 py-1 rounded-full text-xs font-semibold border {{ $badgeClass }}">
+                                                {{ ucfirst(str_replace('_', ' ', $status)) }}
+                                            </span>
+                                        </td>
+                                        <td class="p-4 text-right">
+                                            <button
+                                                onclick="openOverrideModal({{ $student->id }}, '{{ $student->name }}', '{{ $status }}', 'status-student-{{ $student->id }}')"
+                                                class="text-xs font-semibold bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:text-blue-400 text-gray-400 px-3 py-1.5 rounded-xl transition">
+                                                <i class="bi bi-pencil-square mr-1"></i> Edit Exception
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="p-6 text-center text-gray-500 text-sm">No students
+                                            found.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -269,27 +249,42 @@
                                 </tr>
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4">
-                                        <div class="flex flex-col">
-                                            <span class="font-semibold text-white">Dr. Sarah Jenkins</span>
-                                            <span class="text-xs text-gray-400">s.jenkins@apex.edu</span>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-gray-400">Computer Science</td>
-                                    <td class="p-4 font-semibold text-emerald-400">100.0%</td>
-                                    <td class="p-4">
-                                        <div class="flex gap-1 status-group">
-                                            <button onclick="setStatus(this, 'present')"
-                                                class="status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800 transition">Present</button>
-                                            <button onclick="setStatus(this, 'leave')"
-                                                class="status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 text-gray-500 border border-slate-800 hover:border-amber-800 hover:text-amber-400 transition">On
-                                                Leave</button>
-                                            <button onclick="setStatus(this, 'absent')"
-                                                class="status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 text-gray-500 border border-slate-800 hover:border-rose-800 hover:text-rose-400 transition">Absent</button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @forelse($teachers as $teacher)
+                                    @php
+                                        $record = $todayRecords->get($teacher->id);
+                                        $status = $record->status ?? 'present';
+                                        $rate = $teacher->attendanceRate();
+                                    @endphp
+                                    <tr class="hover:bg-slate-900/40">
+                                        <td class="p-4">
+                                            <div class="flex flex-col">
+                                                <span class="font-semibold text-white">{{ $teacher->name }}</span>
+                                                <span class="text-xs text-gray-400">{{ $teacher->email }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="p-4 text-gray-400">{{ $teacher->assigned_class ?? '—' }}</td>
+                                        <td
+                                            class="p-4 font-semibold {{ $rate === null ? 'text-gray-500' : ($rate >= 90 ? 'text-emerald-400' : 'text-rose-400') }}">
+                                            {{ $rate !== null ? $rate . '%' : 'No data' }}
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex gap-1 status-group" data-user-id="{{ $teacher->id }}">
+                                                <button onclick="setStatus(this, 'present')"
+                                                    class="status-btn px-2.5 py-1 rounded-lg text-xs font-semibold {{ $status === 'present' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-slate-900 text-gray-500 border border-slate-800' }} transition">Present</button>
+                                                <button onclick="setStatus(this, 'approved_leave')"
+                                                    class="status-btn px-2.5 py-1 rounded-lg text-xs font-semibold {{ $status === 'approved_leave' ? 'bg-amber-950 text-amber-400 border border-amber-800' : 'bg-slate-900 text-gray-500 border border-slate-800' }} transition">On
+                                                    Leave</button>
+                                                <button onclick="setStatus(this, 'absent')"
+                                                    class="status-btn px-2.5 py-1 rounded-lg text-xs font-semibold {{ $status === 'absent' ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-slate-900 text-gray-500 border border-slate-800' }} transition">Absent</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="p-6 text-center text-gray-500 text-sm">No teachers
+                                            found.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -393,96 +388,79 @@
             }
         });
 
-        function openOverrideModal(studentName, currentStatus, badgeId) {
+        function csrfToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        function openOverrideModal(userId, studentName, currentStatus, badgeId) {
             document.getElementById('modalStudentName').innerText = studentName;
             document.getElementById('modalCurrentStatus').innerText = currentStatus;
             document.getElementById('targetBadgeId').value = badgeId;
+            document.getElementById('targetUserId').value = userId;
             document.getElementById('modalNewStatusSelect').value = currentStatus;
             toggleModal('overrideModal');
         }
 
         function saveOverrideException(event) {
             event.preventDefault();
+            const userId = document.getElementById('targetUserId').value;
             const badgeId = document.getElementById('targetBadgeId').value;
             const newStatus = document.getElementById('modalNewStatusSelect').value;
-            const targetBadge = document.getElementById(badgeId);
+            const note = event.target.querySelector('textarea').value;
 
-            if (targetBadge) {
-                targetBadge.innerText = newStatus;
-
-                // Adjust colors based on selection context
-                if (newStatus === 'Present') {
-                    targetBadge.className =
-                        "px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
-                } else if (newStatus === 'Absent') {
-                    targetBadge.className =
-                        "px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 border border-rose-500/20 text-rose-400";
-                } else {
-                    targetBadge.className =
-                        "px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/20 text-amber-400";
-                }
-            }
-
-            toggleModal('overrideModal');
-        }
-
-        function switchTab(tabKey) {
-            const studentTable = document.getElementById('roster-students');
-            const facultyTable = document.getElementById('roster-faculty');
-            const studentBtn = document.getElementById('tabBtn-students');
-            const facultyBtn = document.getElementById('tabBtn-faculty');
-            const bulkFaculty = document.getElementById('bulkFacultyBtn');
-
-            if (tabKey === 'students') {
-                studentTable.classList.remove('hidden');
-                facultyTable.classList.add('hidden');
-                bulkFaculty.classList.add('hidden');
-
-                studentBtn.className =
-                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-blue-500 text-white";
-                facultyBtn.className =
-                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-transparent text-gray-400 hover:text-white";
-            } else {
-                studentTable.classList.add('hidden');
-                facultyTable.classList.remove('hidden');
-                bulkFaculty.classList.remove('hidden');
-
-                studentBtn.className =
-                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-transparent text-gray-400 hover:text-white";
-                facultyBtn.className =
-                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-blue-500 text-white";
-            }
+            fetch("{{ route('admin.attendance.mark') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken(),
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        status: newStatus.toLowerCase().replace(' ', '_'),
+                        note
+                    }),
+                })
+                .then(res => res.json())
+                .then(() => location.reload())
+                .catch(err => console.error(err));
         }
 
         function setStatus(button, type) {
             const group = button.closest('.status-group');
-            const buttons = group.querySelectorAll('.status-btn');
+            const userId = group.dataset.userId;
 
-            buttons.forEach(btn => {
-                btn.className =
-                    "status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 text-gray-500 border border-slate-800 transition";
-            });
-
-            if (type === 'present') {
-                button.className =
-                    "status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800 transition";
-            } else if (type === 'late' || type === 'leave') {
-                button.className =
-                    "status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-950 text-amber-400 border border-amber-800 transition";
-            } else if (type === 'absent') {
-                button.className =
-                    "status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-950 text-rose-400 border border-rose-800 transition";
-            }
+            fetch("{{ route('admin.attendance.mark') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken(),
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        status: type
+                    }),
+                })
+                .then(res => res.json())
+                .then(() => location.reload())
+                .catch(err => console.error(err));
         }
 
         function bulkMarkAll(tableId) {
-            const table = document.getElementById(tableId);
-            const groups = table.querySelectorAll('.status-group');
+            const role = tableId === 'roster-faculty' ? 'teacher' : 'student';
 
-            groups.forEach(group => {
-                const presentBtn = group.querySelector('button:nth-child(1)');
-                if (presentBtn) setStatus(presentBtn, 'present');
-            });
+            fetch("{{ route('admin.attendance.bulk') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken(),
+                    },
+                    body: JSON.stringify({
+                        role
+                    }),
+                })
+                .then(res => res.json())
+                .then(() => location.reload())
+                .catch(err => console.error(err));
         }
 
         function closeSidebar() {

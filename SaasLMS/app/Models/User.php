@@ -52,4 +52,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function attendanceRate($days = 30)
+{
+    $total = \App\Models\Attendance::where('user_id', $this->id)
+        ->where('date', '>=', now()->subDays($days))
+        ->count();
+
+    if ($total === 0) return null;
+
+    $present = \App\Models\Attendance::where('user_id', $this->id)
+        ->where('date', '>=', now()->subDays($days))
+        ->where('status', 'present')
+        ->count();
+
+    return round(($present / $total) * 100, 1);
+}
 }

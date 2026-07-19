@@ -84,8 +84,13 @@ Route::post('/admin-classes-control', [AdminController::class, 'storeClass'])->n
 Route::put('/admin-classes-control/{classRoom}', [AdminController::class, 'updateClass'])->name('admin.classes.update');
 Route::delete('/admin-classes-control/{classRoom}', [AdminController::class, 'destroyClass'])->name('admin.classes.destroy');
 
-    // Route::view("/admin-classes-control",'admin.classes');
-    Route::view('/admin-attendence-control','admin.attendence');
+
+    // Route::view('/admin-attendence-control','admin.attendence');
+    Route::get('/admin-attendence-control', [AdminController::class, 'attendanceIndex'])->name('admin.attendance');
+Route::post('/admin/attendance/mark', [AdminController::class, 'markAttendance'])->name('admin.attendance.mark');
+Route::post('/admin/attendance/bulk-present', [AdminController::class, 'bulkMarkPresent'])->name('admin.attendance.bulk');
+
+
     Route::view('/admin-reports-control','admin.reports');
     Route::view('/admin-billings-control','admin.billings');
     Route::view('/admin-setting','admin.setting');
