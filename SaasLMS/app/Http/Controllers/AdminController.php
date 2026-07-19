@@ -198,10 +198,10 @@ public function attendanceIndex()
         'late'    => Attendance::where('date', $today)->where('status', 'late')->whereIn('user_id', $students->pluck('id'))->count(),
     ];
 
-    return view('admin.attendance', compact(
-        'students', 'teachers', 'todayRecords', 'studentRate', 'facultyRate',
-        'studentAbsentToday', 'facultyOnLeave', 'trend', 'incidents', 'incidentTotal'
-    ));
+   return view('admin.attendence', compact(
+    'students', 'teachers', 'todayRecords', 'studentRate', 'facultyRate',
+    'studentAbsentToday', 'facultyOnLeave', 'trend', 'incidents', 'incidentTotal'
+));
 }
 
 private function overallRate($role, $today)
