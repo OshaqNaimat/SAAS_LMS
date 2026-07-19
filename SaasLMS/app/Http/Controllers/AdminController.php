@@ -7,6 +7,7 @@ use App\Models\ClassRoom;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -231,9 +232,9 @@ public function markAttendance(Request $request)
     ]);
 
     Attendance::updateOrCreate(
-        ['user_id' => $request->user_id, 'date' => Carbon::today()],
-        ['status' => $request->status, 'note' => $request->note, 'marked_by' => auth()->id()]
-    );
+    ['user_id' => $request->user_id, 'date' => Carbon::today()],
+    ['status' => $request->status, 'note' => $request->note, 'marked_by' => Auth::id()]
+);
 
     return back()->with('success', 'Attendance updated!');
 }
@@ -247,7 +248,7 @@ public function bulkMarkPresent(Request $request)
     foreach ($users as $user) {
         Attendance::updateOrCreate(
             ['user_id' => $user->id, 'date' => $today],
-            ['status' => 'present', 'marked_by' => auth()->id()]
+            ['status' => 'present', 'marked_by' => Auth::id()]
         );
     }
 
