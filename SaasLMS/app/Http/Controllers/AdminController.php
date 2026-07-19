@@ -158,10 +158,21 @@ public function destroyClass(ClassRoom $classRoom)
 
 private function buildHistory($limit = 10)
 {
-    $dates = Attendance::select('date')->distinct()->orderByDesc('date')->limit($limit)->pluck('date');
+    return [
+        'students' => $this->buildHistoryForRole('student', $limit),
+        'teachers' => $this->buildHistoryForRole('teacher', $limit),
+    ];
+}
 
-    return $dates->map(function ($date) {
-        $records = Attendance::where('date', $date)->with('user')->get();
+private function buildHistoryForRole($role, $limit = 10)
+{
+    $userIds = User::where('role', $role)->pluck('id');
+
+    $dates = Attendance::whereIn('user_id', $userIds)
+        ->select('date')->distinct()->orderByDesc('date')->limit($limit)->pluck('date');
+
+    return $dates->map(function ($date) use ($userIds) {
+        $records = Attendance::where('date', $date)->whereIn('user_id', $userIds)->with('user')->get();
         $total = $records->count();
         $present = $records->where('status', 'present')->count();
         $pct = $total > 0 ? round(($present / $total) * 100) : 0;

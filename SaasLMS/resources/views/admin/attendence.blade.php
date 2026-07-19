@@ -293,16 +293,27 @@
                             </tbody>
                         </table>
 
-                        <div class="card-bg rounded-2xl shadow-lg overflow-hidden mt-8">
+                        <div class="flex items-center gap-2 mt-8 mb-4 border-b border-slate-800 pb-2">
+                            <button onclick="switchHistoryTab('students')" id="historyTabBtn-students"
+                                class="px-4 py-2 text-sm font-semibold transition-all border-b-2 border-blue-500 text-white">
+                                Student Attendance History
+                            </button>
+                            <button onclick="switchHistoryTab('teachers')" id="historyTabBtn-teachers"
+                                class="px-4 py-2 text-sm font-semibold transition-all border-b-2 border-transparent text-gray-400 hover:text-white">
+                                Faculty Attendance History
+                            </button>
+                        </div>
+
+                        <div id="history-students" class="card-bg rounded-2xl shadow-lg overflow-hidden">
                             <div class="header-bg p-4 flex items-center gap-3">
                                 <div
                                     class="w-8 h-8 rounded-lg bg-purple-950 flex items-center justify-center text-purple-400">
                                     <i class="bi bi-clock-history"></i>
                                 </div>
-                                <h3 class="font-bold text-base text-white">Attendance History</h3>
+                                <h3 class="font-bold text-base text-white">Student Attendance History</h3>
                             </div>
                             <div class="p-5 space-y-6">
-                                @forelse($history as $day)
+                                @forelse($history['students'] as $day)
                                     <div
                                         class="flex flex-col sm:flex-row sm:items-start gap-4 pb-5 border-b border-slate-800/60 last:border-0 last:pb-0">
                                         <div class="w-32 shrink-0 font-bold text-white text-sm">{{ $day['date'] }}
@@ -326,7 +337,47 @@
                                         </div>
                                     </div>
                                 @empty
-                                    <p class="text-center text-gray-500 text-sm py-6">No attendance history yet.</p>
+                                    <p class="text-center text-gray-500 text-sm py-6">No student attendance history
+                                        yet.</p>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div id="history-teachers" class="card-bg rounded-2xl shadow-lg overflow-hidden hidden">
+                            <div class="header-bg p-4 flex items-center gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-purple-950 flex items-center justify-center text-purple-400">
+                                    <i class="bi bi-clock-history"></i>
+                                </div>
+                                <h3 class="font-bold text-base text-white">Faculty Attendance History</h3>
+                            </div>
+                            <div class="p-5 space-y-6">
+                                @forelse($history['teachers'] as $day)
+                                    <div
+                                        class="flex flex-col sm:flex-row sm:items-start gap-4 pb-5 border-b border-slate-800/60 last:border-0 last:pb-0">
+                                        <div class="w-32 shrink-0 font-bold text-white text-sm">{{ $day['date'] }}
+                                        </div>
+                                        <div class="flex-1 flex flex-wrap gap-2">
+                                            @foreach ($day['entries'] as $entry)
+                                                @if ($entry['present'])
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-emerald-950/40 text-emerald-400 border border-emerald-800/40">
+                                                        <i class="bi bi-check-lg"></i> {{ $entry['name'] }}
+                                                    </span>
+                                                @else
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-rose-950/40 text-rose-400 border border-rose-800/40">
+                                                        <i class="bi bi-x-lg"></i> {{ $entry['name'] }}
+                                                    </span>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                        <div class="shrink-0 text-xl font-black text-amber-400">{{ $day['pct'] }}%
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-center text-gray-500 text-sm py-6">No faculty attendance history
+                                        yet.</p>
                                 @endforelse
                             </div>
                         </div>
@@ -583,5 +634,28 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
+
+        function switchHistoryTab(tabKey) {
+            const studentHist = document.getElementById('history-students');
+            const facultyHist = document.getElementById('history-teachers');
+            const studentBtn = document.getElementById('historyTabBtn-students');
+            const facultyBtn = document.getElementById('historyTabBtn-teachers');
+
+            if (tabKey === 'students') {
+                studentHist.classList.remove('hidden');
+                facultyHist.classList.add('hidden');
+                studentBtn.className =
+                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-blue-500 text-white";
+                facultyBtn.className =
+                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-transparent text-gray-400 hover:text-white";
+            } else {
+                studentHist.classList.add('hidden');
+                facultyHist.classList.remove('hidden');
+                studentBtn.className =
+                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-transparent text-gray-400 hover:text-white";
+                facultyBtn.className =
+                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-blue-500 text-white";
+            }
+        }
     </script>
 </x-layout>
