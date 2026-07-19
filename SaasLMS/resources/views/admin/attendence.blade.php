@@ -17,8 +17,13 @@
                     <div
                         class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 flex items-center gap-2 text-xs font-semibold text-gray-300">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Live Session: Jun 04, 2026
+                        Live Session: {{ now()->format('M d, Y') }}
                     </div>
+                    <button id="saveChangesBtn" onclick="saveAllChanges()"
+                        class="hidden items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition text-white shadow-md shadow-blue-600/10">
+                        <i class="bi bi-save"></i> Save Changes
+                        <span id="pendingCount" class="bg-white/20 rounded-full px-2 py-0.5 text-xs">0</span>
+                    </button>
                 </div>
             </div>
 
@@ -287,6 +292,44 @@
                                 @endforelse
                             </tbody>
                         </table>
+
+                        <div class="card-bg rounded-2xl shadow-lg overflow-hidden mt-8">
+                            <div class="header-bg p-4 flex items-center gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-purple-950 flex items-center justify-center text-purple-400">
+                                    <i class="bi bi-clock-history"></i>
+                                </div>
+                                <h3 class="font-bold text-base text-white">Attendance History</h3>
+                            </div>
+                            <div class="p-5 space-y-6">
+                                @forelse($history as $day)
+                                    <div
+                                        class="flex flex-col sm:flex-row sm:items-start gap-4 pb-5 border-b border-slate-800/60 last:border-0 last:pb-0">
+                                        <div class="w-32 shrink-0 font-bold text-white text-sm">{{ $day['date'] }}
+                                        </div>
+                                        <div class="flex-1 flex flex-wrap gap-2">
+                                            @foreach ($day['entries'] as $entry)
+                                                @if ($entry['present'])
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-emerald-950/40 text-emerald-400 border border-emerald-800/40">
+                                                        <i class="bi bi-check-lg"></i> {{ $entry['name'] }}
+                                                    </span>
+                                                @else
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-rose-950/40 text-rose-400 border border-rose-800/40">
+                                                        <i class="bi bi-x-lg"></i> {{ $entry['name'] }}
+                                                    </span>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                        <div class="shrink-0 text-xl font-black text-amber-400">{{ $day['pct'] }}%
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-center text-gray-500 text-sm py-6">No attendance history yet.</p>
+                                @endforelse
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -309,6 +352,8 @@
             </div>
             <form class="p-6 space-y-5" onsubmit="saveOverrideException(event)">
                 <input type="hidden" id="targetBadgeId">
+                <input type="hidden" id="targetUserId">
+
 
                 <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-4 space-y-2">
                     <div class="flex justify-between text-xs"><span class="text-gray-400">Student:</span> <span
@@ -354,6 +399,8 @@
     </div>
 
     <script>
+        let pendingChanges = {};
+
         function toggleModal(modalId) {
             const modal = document.getElementById(modalId);
             const container = modal.querySelector('.transform');
@@ -375,21 +422,86 @@
                     container.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
                     container.classList.add('opacity-0', 'scale-95', 'translate-y-4');
                 }
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                }, 200);
+                setTimeout(() => modal.classList.add('hidden'), 200);
             }
         }
 
-        // Handle overlay outside clicking dismissals
         window.addEventListener('click', function(event) {
-            if (event.target.id === 'overrideModal') {
-                toggleModal(event.target.id);
-            }
+            if (event.target.id === 'overrideModal') toggleModal(event.target.id);
         });
+
+        function switchTab(tabKey) {
+            const studentTable = document.getElementById('roster-students');
+            const facultyTable = document.getElementById('roster-faculty');
+            const studentBtn = document.getElementById('tabBtn-students');
+            const facultyBtn = document.getElementById('tabBtn-faculty');
+            const bulkFaculty = document.getElementById('bulkFacultyBtn');
+
+            if (tabKey === 'students') {
+                studentTable.classList.remove('hidden');
+                facultyTable.classList.add('hidden');
+                bulkFaculty.classList.add('hidden');
+                studentBtn.className =
+                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-blue-500 text-white";
+                facultyBtn.className =
+                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-transparent text-gray-400 hover:text-white";
+            } else {
+                studentTable.classList.add('hidden');
+                facultyTable.classList.remove('hidden');
+                bulkFaculty.classList.remove('hidden');
+                studentBtn.className =
+                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-transparent text-gray-400 hover:text-white";
+                facultyBtn.className =
+                    "px-4 py-2 text-sm font-semibold transition-all border-b-2 border-blue-500 text-white";
+            }
+        }
 
         function csrfToken() {
             return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        function stageChange(userId, status, note = null) {
+            pendingChanges[userId] = {
+                user_id: userId,
+                status,
+                note
+            };
+            updateSaveButton();
+        }
+
+        function updateSaveButton() {
+            const btn = document.getElementById('saveChangesBtn');
+            const count = Object.keys(pendingChanges).length;
+            document.getElementById('pendingCount').textContent = count;
+            if (count > 0) {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+            } else {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+            }
+        }
+
+        function saveAllChanges() {
+            const changes = Object.values(pendingChanges);
+            if (changes.length === 0) return;
+
+            fetch("{{ route('admin.attendance.save-batch') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken(),
+                    },
+                    body: JSON.stringify({
+                        changes
+                    }),
+                })
+                .then(res => res.json())
+                .then(() => {
+                    pendingChanges = {};
+                    location.reload();
+                })
+                .catch(err => console.error(err));
         }
 
         function openOverrideModal(userId, studentName, currentStatus, badgeId) {
@@ -407,60 +519,58 @@
             const badgeId = document.getElementById('targetBadgeId').value;
             const newStatus = document.getElementById('modalNewStatusSelect').value;
             const note = event.target.querySelector('textarea').value;
+            const statusKey = newStatus.toLowerCase().replace(' ', '_');
 
-            fetch("{{ route('admin.attendance.mark') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken(),
-                    },
-                    body: JSON.stringify({
-                        user_id: userId,
-                        status: newStatus.toLowerCase().replace(' ', '_'),
-                        note
-                    }),
-                })
-                .then(res => res.json())
-                .then(() => location.reload())
-                .catch(err => console.error(err));
+            const targetBadge = document.getElementById(badgeId);
+            if (targetBadge) {
+                targetBadge.innerText = newStatus;
+                if (newStatus === 'Present') {
+                    targetBadge.className =
+                        "px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400";
+                } else if (newStatus === 'Absent') {
+                    targetBadge.className =
+                        "px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 border border-rose-500/20 text-rose-400";
+                } else {
+                    targetBadge.className =
+                        "px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/20 text-amber-400";
+                }
+            }
+
+            stageChange(userId, statusKey, note);
+            toggleModal('overrideModal');
         }
 
         function setStatus(button, type) {
             const group = button.closest('.status-group');
             const userId = group.dataset.userId;
+            const buttons = group.querySelectorAll('.status-btn');
 
-            fetch("{{ route('admin.attendance.mark') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken(),
-                    },
-                    body: JSON.stringify({
-                        user_id: userId,
-                        status: type
-                    }),
-                })
-                .then(res => res.json())
-                .then(() => location.reload())
-                .catch(err => console.error(err));
+            buttons.forEach(btn => {
+                btn.className =
+                    "status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 text-gray-500 border border-slate-800 transition";
+            });
+
+            if (type === 'present') {
+                button.className =
+                    "status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800 transition";
+            } else if (type === 'approved_leave') {
+                button.className =
+                    "status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-950 text-amber-400 border border-amber-800 transition";
+            } else if (type === 'absent') {
+                button.className =
+                    "status-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-950 text-rose-400 border border-rose-800 transition";
+            }
+
+            stageChange(userId, type);
         }
 
         function bulkMarkAll(tableId) {
-            const role = tableId === 'roster-faculty' ? 'teacher' : 'student';
-
-            fetch("{{ route('admin.attendance.bulk') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken(),
-                    },
-                    body: JSON.stringify({
-                        role
-                    }),
-                })
-                .then(res => res.json())
-                .then(() => location.reload())
-                .catch(err => console.error(err));
+            const table = document.getElementById(tableId);
+            const groups = table.querySelectorAll('.status-group');
+            groups.forEach(group => {
+                const presentBtn = group.querySelector('button:nth-child(1)');
+                if (presentBtn) setStatus(presentBtn, 'present');
+            });
         }
 
         function closeSidebar() {

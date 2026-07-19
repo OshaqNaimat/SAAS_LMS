@@ -156,6 +156,48 @@ public function destroyClass(ClassRoom $classRoom)
     return back()->with('success', 'Class removed successfully!');
 }
 
+private function buildHistory($limit = 10)
+{
+    $dates = Attendance::select('date')->distinct()->orderByDesc('date')->limit($limit)->pluck('date');
+
+    return $dates->map(function ($date) {
+        $records = Attendance::where('date', $date)->with('user')->get();
+        $total = $records->count();
+        $present = $records->where('status', 'present')->count();
+        $pct = $total > 0 ? round(($present / $total) * 100) : 0;
+
+        return [
+            'date' => Carbon::parse($date)->format('M d, Y'),
+            'pct' => $pct,
+            'entries' => $records->map(fn ($r) => [
+                'name' => $r->user->name ?? 'Unknown',
+                'present' => $r->status === 'present',
+            ])->values(),
+        ];
+    })->values();
+}
+
+public function saveBatchAttendance(Request $request)
+{
+    $request->validate([
+        'changes' => 'required|array',
+        'changes.*.user_id' => 'required|exists:users,id',
+        'changes.*.status' => 'required|in:present,absent,late,approved_leave',
+        'changes.*.note' => 'nullable|string',
+    ]);
+
+    $today = Carbon::today();
+
+    foreach ($request->changes as $change) {
+        Attendance::updateOrCreate(
+            ['user_id' => $change['user_id'], 'date' => $today],
+            ['status' => $change['status'], 'note' => $change['note'] ?? null, 'marked_by' => Auth::id()]
+        );
+    }
+
+    return response()->json(['success' => true, 'message' => 'Attendance saved successfully!']);
+}
+
 
 public function attendanceIndex()
 {
@@ -199,10 +241,12 @@ public function attendanceIndex()
         'late'    => Attendance::where('date', $today)->where('status', 'late')->whereIn('user_id', $students->pluck('id'))->count(),
     ];
 
-   return view('admin.attendence', compact(
-    'students', 'teachers', 'todayRecords', 'studentRate', 'facultyRate',
-    'studentAbsentToday', 'facultyOnLeave', 'trend', 'incidents', 'incidentTotal'
-));
+    $history = $this->buildHistory();
+
+    return view('admin.attendence', compact(
+        'students', 'teachers', 'todayRecords', 'studentRate', 'facultyRate',
+        'studentAbsentToday', 'facultyOnLeave', 'trend', 'incidents', 'incidentTotal', 'history'
+    ));
 }
 
 private function overallRate($role, $today)
@@ -232,11 +276,11 @@ public function markAttendance(Request $request)
     ]);
 
     Attendance::updateOrCreate(
-    ['user_id' => $request->user_id, 'date' => Carbon::today()],
-    ['status' => $request->status, 'note' => $request->note, 'marked_by' => Auth::id()]
-);
+        ['user_id' => $request->user_id, 'date' => Carbon::today()],
+        ['status' => $request->status, 'note' => $request->note, 'marked_by' => Auth::id()]
+    );
 
-    return back()->with('success', 'Attendance updated!');
+    return response()->json(['success' => true, 'message' => 'Attendance updated!']);
 }
 
 public function bulkMarkPresent(Request $request)
@@ -252,7 +296,6 @@ public function bulkMarkPresent(Request $request)
         );
     }
 
-    return back()->with('success', ucfirst($request->role) . 's marked present!');
+    return response()->json(['success' => true, 'message' => ucfirst($request->role) . 's marked present!']);
 }
-
 };

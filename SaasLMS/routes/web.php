@@ -89,7 +89,7 @@ Route::delete('/admin-classes-control/{classRoom}', [AdminController::class, 'de
     Route::get('/admin-attendence-control', [AdminController::class, 'attendanceIndex'])->name('admin.attendance');
 Route::post('/admin/attendance/mark', [AdminController::class, 'markAttendance'])->name('admin.attendance.mark');
 Route::post('/admin/attendance/bulk-present', [AdminController::class, 'bulkMarkPresent'])->name('admin.attendance.bulk');
-
+Route::post('/admin/attendance/save-batch', [AdminController::class, 'saveBatchAttendance'])->name('admin.attendance.save-batch');
 
     Route::view('/admin-reports-control','admin.reports');
     Route::view('/admin-billings-control','admin.billings');
