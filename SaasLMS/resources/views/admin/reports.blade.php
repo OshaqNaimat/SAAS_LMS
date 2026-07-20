@@ -1,4 +1,4 @@
-<x-layout>
+{{-- <x-layout>
     <div class="flex h-screen relative">
 
         <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -208,4 +208,4 @@
             if (window.innerWidth >= 1024) closeSidebar();
         });
     </script>
-</x-layout>
+</x-layout> --}}
