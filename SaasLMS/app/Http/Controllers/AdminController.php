@@ -503,6 +503,7 @@ public function storePayment(Request $request)
         'category'     => 'required|string',
         'channel'      => 'required|string',
         'amount'       => 'required|integer|min:1',
+        'status'       => 'required|in:cleared,pending,overdue',
     ]);
 
     $student = \App\Models\User::where('roll_number', $request->roll_number)->where('role', 'student')->first();
@@ -517,7 +518,7 @@ public function storePayment(Request $request)
         'category'     => $request->category,
         'channel'      => $request->channel,
         'amount'       => $request->amount,
-        'status'       => 'cleared',
+        'status'       => $request->status,
         'recorded_by'  => Auth::id(),
     ]);
 
