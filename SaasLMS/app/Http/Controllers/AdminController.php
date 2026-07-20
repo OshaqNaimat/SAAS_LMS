@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\GeneratedReport;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -436,7 +437,90 @@ private function arrayToCsv($rows)
     fclose($handle);
     return $csv;
 }
+public function billingIndex(Request $request)
+{
+    $query = Payment::query();
 
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('student_name', 'like', "%{$search}%")
+              ->orWhere('roll_number', 'like', "%{$search}%")
+              ->orWhere('voucher_id', 'like', "%{$search}%");
+        });
+    }
+
+    $payments = $query->latest()->get();
+
+    $totalCollected = Payment::where('status', 'cleared')->sum('amount');
+    $outstanding = Payment::where('status', 'pending')->sum('amount');
+    $pendingCount = Payment::where('status', 'pending')->count();
+    $overdueCount = Payment::where('status', 'overdue')->count();
+
+    $totalInvoiced = Payment::sum('amount');
+    $collectedPct = $totalInvoiced > 0 ? round(($totalCollected / $totalInvoiced) * 100) : 0;
+
+    $bankAmount = Payment::where('channel', 'like', '%Bank%')->orWhere('channel', 'like', '%Pay Order%')->sum('amount');
+    $cashAmount = Payment::where('channel', 'like', '%Cash%')->sum('amount');
+    $totalChannelAmount = $bankAmount + $cashAmount;
+    $bankPct = $totalChannelAmount > 0 ? round(($bankAmount / $totalChannelAmount) * 100) : 0;
+    $cashPct = 100 - $bankPct;
+
+    // Category breakdown for the bar chart
+    $categories = ['Tuition Fee', 'Exam Fee', 'Admission Fee', 'Sports / Lab'];
+    $categoryTotals = [];
+    $maxCategoryAmount = Payment::selectRaw('category, SUM(amount) as total')
+        ->groupBy('category')->pluck('total', 'category');
+    $peak = $maxCategoryAmount->max() ?: 1;
+    foreach ($categories as $cat) {
+        $amount = $maxCategoryAmount[$cat] ?? 0;
+        $categoryTotals[$cat] = round(($amount / $peak) * 100);
+    }
+
+    // Channel breakdown for the progress bars
+    $channels = ['Bank Deposit (HBL)', 'Cash Counter', 'Pay Order'];
+    $channelTotals = [];
+    $channelSums = Payment::selectRaw('channel, SUM(amount) as total')->groupBy('channel')->pluck('total', 'channel');
+    $totalAllChannels = $channelSums->sum() ?: 1;
+    foreach ($channels as $ch) {
+        $amount = $channelSums[$ch] ?? 0;
+        $channelTotals[$ch] = round(($amount / $totalAllChannels) * 100);
+    }
+
+    return view('admin.billings', compact(
+        'payments', 'totalCollected', 'outstanding', 'pendingCount', 'overdueCount',
+        'collectedPct', 'bankPct', 'cashPct', 'categoryTotals', 'channelTotals'
+    ));
+}
+
+public function storePayment(Request $request)
+{
+    $request->validate([
+        'roll_number'  => 'required|string',
+        'student_name' => 'required|string|max:255',
+        'category'     => 'required|string',
+        'channel'      => 'required|string',
+        'amount'       => 'required|integer|min:1',
+    ]);
+
+    $student = \App\Models\User::where('roll_number', $request->roll_number)->where('role', 'student')->first();
+
+    $voucherId = '#VCH-' . now()->format('Y') . '-' . str_pad(Payment::count() + 9041, 4, '0', STR_PAD_LEFT);
+
+    Payment::create([
+        'voucher_id'   => $voucherId,
+        'student_id'   => $student->id ?? null,
+        'student_name' => $request->student_name,
+        'roll_number'  => $request->roll_number,
+        'category'     => $request->category,
+        'channel'      => $request->channel,
+        'amount'       => $request->amount,
+        'status'       => 'cleared',
+        'recorded_by'  => Auth::id(),
+    ]);
+
+    return back()->with('success', 'Payment recorded successfully!');
+}
 
 
 };
