@@ -159,6 +159,7 @@
                                 <th class="p-4">Payment Method</th>
                                 <th class="p-4">Amount Paid</th>
                                 <th class="p-4">Clearing Status</th>
+                                <th class="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="billingLogTableBody" class="text-sm text-gray-300 divide-y divide-slate-800">
@@ -249,6 +250,41 @@
         </div>
     </div>
 
+    <div id="editStatusModal"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
+        role="dialog" aria-modal="true" onclick="toggleModal('editStatusModal')">
+        <div class="w-full max-w-[400px] bg-[#111c2a] rounded-2xl shadow-2xl border border-slate-800 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out"
+            onclick="event.stopPropagation()">
+            <div class="p-5 flex justify-between items-center border-b border-slate-800/60 bg-[#142032]">
+                <h3 class="text-base font-bold flex items-center gap-2.5 text-white">
+                    <i class="bi bi-pencil-square text-yellow-400 text-lg"></i> Update Clearing Status
+                </h3>
+                <button onclick="toggleModal('editStatusModal')" class="text-gray-400 hover:text-white transition">
+                    <i class="bi bi-x-lg text-sm"></i>
+                </button>
+            </div>
+            <form id="editStatusForm" class="p-6 space-y-4" onsubmit="submitStatusUpdate(event)">
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-400">New Status</label>
+                    <select id="editStatusSelect"
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                        <option value="cleared">Cleared</option>
+                        <option value="pending">Pending Review</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+                <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
+                    <button type="button" onclick="toggleModal('editStatusModal')"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-800 bg-[#172232] text-gray-300 hover:bg-slate-800 hover:text-white transition">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-lg shadow-blue-600/10">
+                        Update Status
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function toggleModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -303,5 +339,31 @@
                     .catch(err => console.error(err));
             }, 300); // waits 300ms after typing stops before searching
         });
+        let currentEditPaymentId = null;
+
+        function openEditPayment(id, currentStatus) {
+            currentEditPaymentId = id;
+            document.getElementById('editStatusSelect').value = currentStatus;
+            toggleModal('editStatusModal');
+        }
+
+        function submitStatusUpdate(event) {
+            event.preventDefault();
+            const newStatus = document.getElementById('editStatusSelect').value;
+
+            fetch(`/admin/billing/${currentEditPaymentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                    body: JSON.stringify({
+                        status: newStatus
+                    }),
+                })
+                .then(res => res.json())
+                .then(() => location.reload())
+                .catch(err => console.error(err));
+        }
     </script>
 </x-layout>

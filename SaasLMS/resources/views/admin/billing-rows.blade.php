@@ -22,13 +22,20 @@
                     'overdue' => 'bg-rose-500/10 border-rose-500/20 text-rose-400',
                 };
             @endphp
-            <span class="px-2.5 py-1 rounded-full text-xs font-semibold border {{ $statusClass }}">
+            <span id="payment-status-{{ $payment->id }}"
+                class="px-2.5 py-1 rounded-full text-xs font-semibold border {{ $statusClass }}">
                 {{ ucfirst($payment->status) }}
             </span>
+        </td>
+        <td class="p-4 text-right">
+            <button onclick="openEditPayment({{ $payment->id }}, '{{ $payment->status }}')"
+                class="text-yellow-400 hover:text-yellow-300 transition" title="Edit Status">
+                <i class="bi bi-pencil-square"></i>
+            </button>
         </td>
     </tr>
 @empty
     <tr>
-        <td colspan="6" class="p-6 text-center text-gray-500 text-sm">No payment records found.</td>
+        <td colspan="7" class="p-6 text-center text-gray-500 text-sm">No payment records found.</td>
     </tr>
 @endforelse

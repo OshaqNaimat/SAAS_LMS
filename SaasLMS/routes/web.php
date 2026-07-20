@@ -98,6 +98,7 @@ Route::get('/admin/reports/{report}/download', [AdminController::class, 'downloa
    Route::get('/admin-billings-control', [AdminController::class, 'billingIndex'])->name('admin.billing');
 Route::post('/admin/billing/store', [AdminController::class, 'storePayment'])->name('admin.billing.store');
 Route::get('/admin/billing/search', [AdminController::class, 'searchPayments'])->name('admin.billing.search');
+Route::put('/admin/billing/{payment}', [AdminController::class, 'updatePayment'])->name('admin.billing.update');
 
     Route::view('/admin-setting','admin.setting');
 });

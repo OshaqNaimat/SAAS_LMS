@@ -538,5 +538,15 @@ public function searchPayments(Request $request)
         'html' => view('admin.billing-rows', compact('payments'))->render(),
     ]);
 }
+public function updatePayment(Request $request, Payment $payment)
+{
+    $request->validate([
+        'status' => 'required|in:cleared,pending,overdue',
+    ]);
+
+    $payment->update(['status' => $request->status]);
+
+    return response()->json(['success' => true, 'message' => 'Status updated successfully!']);
+}
 
 };
