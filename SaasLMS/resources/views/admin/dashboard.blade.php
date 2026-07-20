@@ -55,14 +55,13 @@
                                 <div class="kpi-info">
                                     <h4>Total Revenue</h4>
                                     <div class="kpi-value">Rs 10,000</div>
-                                    {{-- <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 12 new</div> --}}
                                 </div>
                                 <div class="kpi-icon" style="color:#60a5fa;"><i class="bi bi-currency-dollar"></i></div>
                             </div>
                             <div class="kpi-card">
                                 <div class="kpi-info">
                                     <h4>Total Teachers</h4>
-                                    <div class="kpi-value">50</div>
+                                    <div class="kpi-value">{{ $teachers->count() }} Registered</div>
                                     {{-- <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 3 new</div> --}}
                                 </div>
                                 <div class="kpi-icon" style="color:var(--green);"><i class="bi bi-people-fill"></i>
