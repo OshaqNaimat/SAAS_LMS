@@ -25,9 +25,10 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Total Collected (Term)</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">PKR 2.45M</h4>
+                        <h4 class="text-2xl font-bold text-white tracking-tight">PKR
+                            {{ number_format($totalCollected) }}</h4>
                         <span class="text-[11px] text-emerald-400 flex items-center gap-1"><i
-                                class="bi bi-arrow-up-short"></i> 85% of total invoices</span>
+                                class="bi bi-arrow-up-short"></i> {{ $collectedPct }}% of total invoices</span>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
@@ -37,9 +38,10 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Outstanding Receivables</span>
-                        <h4 class="text-2xl font-bold text-amber-400 tracking-tight">PKR 410K</h4>
-                        <span class="text-[11px] text-amber-400 flex items-center gap-1"><i class="bi bi-clock"></i> 32
-                            Pending invoices</span>
+                        <h4 class="text-2xl font-bold text-amber-400 tracking-tight">PKR
+                            {{ number_format($outstanding) }}</h4>
+                        <span class="text-[11px] text-amber-400 flex items-center gap-1"><i class="bi bi-clock"></i>
+                            {{ $pendingCount }} Pending invoices</span>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
@@ -49,7 +51,7 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Overdue Accounts</span>
-                        <h4 class="text-2xl font-bold text-rose-400 tracking-tight">14 Cases</h4>
+                        <h4 class="text-2xl font-bold text-rose-400 tracking-tight">{{ $overdueCount }} Cases</h4>
                         <span class="text-[11px] text-rose-400 flex items-center gap-1">Grace periods expired</span>
                     </div>
                     <div
@@ -60,8 +62,8 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Bank Transfer Cleared</span>
-                        <h4 class="text-2xl font-bold text-blue-400 tracking-tight">92%</h4>
-                        <span class="text-[11px] text-gray-400">vs 8% Direct Cash</span>
+                        <h4 class="text-2xl font-bold text-blue-400 tracking-tight">{{ $bankPct }}%</h4>
+                        <span class="text-[11px] text-gray-400">vs {{ $cashPct }}% Direct Cash</span>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-xl">
@@ -84,26 +86,14 @@
                     </div>
 
                     <div class="flex items-end justify-between h-44 pt-4 px-4 border-b border-slate-800/80 gap-6">
-                        <div class="w-1/4 flex flex-col items-center gap-2 h-full justify-end group">
-                            <div class="w-full max-w-[48px] bg-blue-500 rounded-t-md transition-all"
-                                style="height: 85%;"></div>
-                            <span class="text-[11px] text-gray-400">Tuition Fee</span>
-                        </div>
-                        <div class="w-1/4 flex flex-col items-center gap-2 h-full justify-end group">
-                            <div class="w-full max-w-[48px] bg-blue-600/40 group-hover:bg-blue-600 rounded-t-md transition-all"
-                                style="height: 40%;"></div>
-                            <span class="text-[11px] text-gray-400">Exam Fee</span>
-                        </div>
-                        <div class="w-1/4 flex flex-col items-center gap-2 h-full justify-end group">
-                            <div class="w-full max-w-[48px] bg-blue-600/40 group-hover:bg-blue-600 rounded-t-md transition-all"
-                                style="height: 55%;"></div>
-                            <span class="text-[11px] text-gray-400">Admission</span>
-                        </div>
-                        <div class="w-1/4 flex flex-col items-center gap-2 h-full justify-end group">
-                            <div class="w-full max-w-[48px] bg-amber-500/40 group-hover:bg-amber-500 rounded-t-md transition-all"
-                                style="height: 18%;"></div>
-                            <span class="text-[11px] text-amber-400">Sports / Lab</span>
-                        </div>
+                        @foreach ($categoryTotals as $cat => $pct)
+                            <div class="w-1/4 flex flex-col items-center gap-2 h-full justify-end group">
+                                <div class="w-full max-w-[48px] {{ $cat === 'Sports / Lab' ? 'bg-amber-500/40 group-hover:bg-amber-500' : 'bg-blue-600/40 group-hover:bg-blue-600' }} rounded-t-md transition-all"
+                                    style="height: {{ $pct }}%"></div>
+                                <span
+                                    class="text-[11px] {{ $cat === 'Sports / Lab' ? 'text-amber-400' : 'text-gray-400' }}">{{ $cat }}</span>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
 
@@ -115,29 +105,32 @@
                     <div class="space-y-4 py-2">
                         <div>
                             <div class="flex justify-between text-xs mb-1">
-                                <span class="text-gray-400"> Bank Deposit Challan</span>
-                                <span class="text-white font-medium">68%</span>
+                                <span class="text-gray-400">Bank Deposit Challan</span>
+                                <span class="text-white font-medium">{{ $channelTotals['Bank Deposit (HBL)'] }}%</span>
                             </div>
                             <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-blue-500 h-full w-[68%]"></div>
+                                <div class="bg-blue-500 h-full"
+                                    style="width: {{ $channelTotals['Bank Deposit (HBL)'] }}%"></div>
                             </div>
                         </div>
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="text-gray-400">Direct Over-Counter Cash</span>
-                                <span class="text-white font-medium">20%</span>
+                                <span class="text-white font-medium">{{ $channelTotals['Cash Counter'] }}%</span>
                             </div>
                             <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-full w-[20%]"></div>
+                                <div class="bg-emerald-500 h-full"
+                                    style="width: {{ $channelTotals['Cash Counter'] }}%"></div>
                             </div>
                         </div>
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="text-gray-400">Pay Order / Check Drop</span>
-                                <span class="text-white font-medium">12%</span>
+                                <span class="text-white font-medium">{{ $channelTotals['Pay Order'] }}%</span>
                             </div>
                             <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-amber-500 h-full w-[12%]"></div>
+                                <div class="bg-amber-500 h-full" style="width: {{ $channelTotals['Pay Order'] }}%">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -151,7 +144,7 @@
                     class="p-4 bg-slate-900/60 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <h3 class="font-bold text-base text-white">Institutional Billing History</h3>
                     <div class="flex items-center gap-2">
-                        <input type="text" placeholder="Search Voucher / Roll No..."
+                        <input type="text" id="billingSearchInput" placeholder="Search Voucher / Roll No..."
                             class="bg-[#090d16] border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 transition w-48 placeholder-gray-600">
                     </div>
                 </div>
@@ -169,101 +162,7 @@
                             </tr>
                         </thead>
                         <tbody id="billingLogTableBody" class="text-sm text-gray-300 divide-y divide-slate-800">
-                            <tr class="hover:bg-slate-900/40">
-                                <td class="p-4 font-mono text-xs text-blue-400 font-semibold">#VCH-2026-9041</td>
-                                <td class="p-4">
-                                    <div class="flex flex-col">
-                                        <span class="font-semibold text-white">Amara Sterling</span>
-                                        <span class="text-xs font-mono text-gray-400">Roll: #AGI-2026-089</span>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-gray-400 font-medium">Q2 Enrollment + Tuition</td>
-                                <td class="p-4 text-xs"><i class="bi bi-bank mr-1.5 text-blue-400"></i> Bank Deposit
-                                    (HBL)</td>
-                                <td class="p-4 font-bold text-white">PKR 45,000</td>
-                                <td class="p-4">
-                                    <span
-                                        class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                                        Cleared
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-900/40">
-                                <td class="p-4 font-mono text-xs text-blue-400 font-semibold">#VCH-2026-9042</td>
-                                <td class="p-4">
-                                    <div class="flex flex-col">
-                                        <span class="font-semibold text-white">Ethan Brooks</span>
-                                        <span class="text-xs font-mono text-gray-400">Roll: #AGI-2026-104</span>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-gray-400 font-medium">Mid-Term Examination Fee</td>
-                                <td class="p-4 text-xs"><i class="bi bi-cash mr-1.5 text-emerald-400"></i> Cash
-                                    Counter</td>
-                                <td class="p-4 font-bold text-white">PKR 8,500</td>
-                                <td class="p-4">
-                                    <span
-                                        class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                                        Cleared
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-900/40">
-                                <td class="p-4 font-mono text-xs text-blue-400 font-semibold">#VCH-2026-9043</td>
-                                <td class="p-4">
-                                    <div class="flex flex-col">
-                                        <span class="font-semibold text-white">Zayn Malik</span>
-                                        <span class="text-xs font-mono text-gray-400">Roll: #AGI-2026-211</span>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-gray-400 font-medium">Annual Sports & Lab Charges</td>
-                                <td class="p-4 text-xs"><i class="bi bi-hourglass mr-1.5 text-amber-400"></i> Physical
-                                    Challan Box</td>
-                                <td class="p-4 font-bold text-white">PKR 12,000</td>
-                                <td class="p-4">
-                                    <span
-                                        class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/20 text-amber-400">
-                                        Pending Review
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-900/40">
-                                <td class="p-4 font-mono text-xs text-blue-400 font-semibold">#VCH-2026-9044</td>
-                                <td class="p-4">
-                                    <div class="flex flex-col">
-                                        <span class="font-semibold text-white">Sara Khalid</span>
-                                        <span class="text-xs font-mono text-gray-400">Roll: #AGI-2026-317</span>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-gray-400 font-medium">Admission Charges</td>
-                                <td class="p-4 text-xs"><i class="bi bi-bank mr-1.5 text-blue-400"></i> Bank Deposit
-                                    (HBL)</td>
-                                <td class="p-4 font-bold text-white">PKR 30,000</td>
-                                <td class="p-4">
-                                    <span
-                                        class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                                        Cleared
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-900/40">
-                                <td class="p-4 font-mono text-xs text-blue-400 font-semibold">#VCH-2026-9045</td>
-                                <td class="p-4">
-                                    <div class="flex flex-col">
-                                        <span class="font-semibold text-white">Omar Farooq</span>
-                                        <span class="text-xs font-mono text-gray-400">Roll: #AGI-2026-422</span>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-gray-400 font-medium">Q2 Tuition Fee</td>
-                                <td class="p-4 text-xs"><i class="bi bi-receipt mr-1.5 text-amber-400"></i> Pay Order
-                                </td>
-                                <td class="p-4 font-bold text-white">PKR 45,000</td>
-                                <td class="p-4">
-                                    <span
-                                        class="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 border border-rose-500/20 text-rose-400">
-                                        Overdue
-                                    </span>
-                                </td>
-                            </tr>
+                            @include('admin.billing-rows')
                         </tbody>
                     </table>
                 </div>
@@ -286,58 +185,46 @@
                     <i class="bi bi-x-lg text-sm"></i>
                 </button>
             </div>
-            <form class="p-6 space-y-4" onsubmit="saveManualPaymentLog(event)">
+            <form action="{{ route('admin.billing.store') }}" method="POST" class="p-6 space-y-4">
+                @csrf
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-gray-400">Student Roll Number</label>
-                        <input type="text" id="payRollNo" placeholder="e.g. AGI-2026-089"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500"
-                            required>
+                        <input type="text" name="roll_number" placeholder="e.g. AGI-2026-089" required
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500">
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-gray-400">Student Name</label>
-                        <input type="text" id="payStudentName" placeholder="e.g. Ali Ahmed"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500"
-                            required>
+                        <input type="text" name="student_name" placeholder="e.g. Ali Ahmed" required
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500">
                     </div>
                 </div>
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-semibold text-gray-400">Fee Category / Description</label>
-                    <div class="relative">
-                        <select id="payCategory"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition appearance-none"
-                            required>
-                            <option value="Tuition Fee">Tuition Fee</option>
-                            <option value="Exam Fee">Exam Fee</option>
-                            <option value="Admission Fee">Admission Charges</option>
-                            <option value="Sports / Lab">Lab & Sports Equipment Charges</option>
-                        </select>
-                        <i
-                            class="bi bi-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                    </div>
+                    <select name="category" required
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                        <option value="Tuition Fee">Tuition Fee</option>
+                        <option value="Exam Fee">Exam Fee</option>
+                        <option value="Admission Fee">Admission Charges</option>
+                        <option value="Sports / Lab">Lab & Sports Equipment Charges</option>
+                    </select>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-gray-400">Payment Channel</label>
-                        <div class="relative">
-                            <select id="payChannel"
-                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition appearance-none"
-                                required>
-                                <option value="Bank Deposit (HBL)">Bank Challan Deposit</option>
-                                <option value="Cash Counter">On-Counter Cash</option>
-                                <option value="Pay Order">Pay Order / Check</option>
-                            </select>
-                            <i
-                                class="bi bi-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                        </div>
+                        <select name="channel" required
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                            <option value="Bank Deposit (HBL)">Bank Challan Deposit</option>
+                            <option value="Cash Counter">On-Counter Cash</option>
+                            <option value="Pay Order">Pay Order / Check</option>
+                        </select>
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-gray-400">Amount (PKR)</label>
-                        <input type="number" id="payAmount" placeholder="e.g. 25000"
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500"
-                            required>
+                        <input type="number" name="amount" placeholder="e.g. 25000" required min="1"
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500">
                     </div>
                 </div>
 
@@ -381,44 +268,7 @@
             }
         }
 
-        function saveManualPaymentLog(event) {
-            event.preventDefault();
 
-            const rollNo = document.getElementById('payRollNo').value;
-            const studentName = document.getElementById('payStudentName').value;
-            const category = document.getElementById('payCategory').value;
-            const channel = document.getElementById('payChannel').value;
-            const amount = document.getElementById('payAmount').value;
-
-            const uniqueId = "#VCH-2026-" + Math.floor(1000 + Math.random() * 9000);
-            const iconClass = channel.includes('Cash') ? 'bi-cash text-emerald-400' : 'bi-bank text-blue-400';
-
-            const newRow = document.createElement('tr');
-            newRow.className = "hover:bg-slate-900/40 transition";
-            newRow.innerHTML = `
-                <td class="p-4 font-mono text-xs text-blue-400 font-semibold">${uniqueId}</td>
-                <td class="p-4">
-                    <div class="flex flex-col">
-                        <span class="font-semibold text-white">${studentName}</span>
-                        <span class="text-xs font-mono text-gray-400">Roll: #${rollNo}</span>
-                    </div>
-                </td>
-                <td class="p-4 text-gray-400 font-medium">${category}</td>
-                <td class="p-4 text-xs"><i class="bi ${iconClass} mr-1.5"></i> ${channel}</td>
-                <td class="p-4 font-bold text-white">PKR ${Number(amount).toLocaleString()}</td>
-                <td class="p-4">
-                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                        Cleared
-                    </span>
-                </td>
-            `;
-
-            const tableBody = document.getElementById('billingLogTableBody');
-            tableBody.insertBefore(newRow, tableBody.firstChild);
-
-            event.target.reset();
-            toggleModal('collectionModal');
-        }
 
         function closeSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -429,6 +279,20 @@
 
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
+        });
+        let searchDebounce;
+        document.getElementById('billingSearchInput').addEventListener('input', function() {
+            clearTimeout(searchDebounce);
+            const query = this.value;
+
+            searchDebounce = setTimeout(() => {
+                fetch(`{{ route('admin.billing.search') }}?search=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        document.getElementById('billingLogTableBody').innerHTML = data.html;
+                    })
+                    .catch(err => console.error(err));
+            }, 300); // waits 300ms after typing stops before searching
         });
     </script>
 </x-layout>

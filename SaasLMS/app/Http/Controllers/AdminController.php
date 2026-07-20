@@ -487,6 +487,8 @@ public function billingIndex(Request $request)
         $channelTotals[$ch] = round(($amount / $totalAllChannels) * 100);
     }
 
+    $payments = Payment::latest()->get(); // full list on initial page load
+
     return view('admin.billings', compact(
         'payments', 'totalCollected', 'outstanding', 'pendingCount', 'overdueCount',
         'collectedPct', 'bankPct', 'cashPct', 'categoryTotals', 'channelTotals'
@@ -521,6 +523,19 @@ public function storePayment(Request $request)
 
     return back()->with('success', 'Payment recorded successfully!');
 }
+public function searchPayments(Request $request)
+{
+    $search = $request->get('search', '');
 
+    $payments = Payment::when($search, function ($q) use ($search) {
+        $q->where('student_name', 'like', "%{$search}%")
+          ->orWhere('roll_number', 'like', "%{$search}%")
+          ->orWhere('voucher_id', 'like', "%{$search}%");
+    })->latest()->get();
+
+    return response()->json([
+        'html' => view('admin.billing-rows', compact('payments'))->render(),
+    ]);
+}
 
 };
