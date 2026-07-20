@@ -9,7 +9,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
+use App\Models\GeneratedReport;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -121,15 +122,20 @@ public function classesIndex()
 public function storeClass(Request $request)
 {
     $request->validate([
-        'name'       => 'required|string|max:255',
-        'section'    => 'required|string|max:255',
-        'stream'     => 'nullable|string|max:255',
-        'room'       => 'nullable|string|max:255',
-        'max_seats'  => 'required|integer|min:1',
-        'teacher_id' => 'nullable|exists:users,id',
+        'name'              => 'required|string|max:255',
+        'section'           => 'required|string|max:255',
+        'stream'            => 'nullable|string|max:255',
+        'room'              => 'nullable|string|max:255',
+        'max_seats'         => 'required|integer|min:1',
+        'teacher_id'        => 'nullable|exists:users,id',
+        'total_lessons'     => 'nullable|integer|min:0',
+        'completed_lessons' => 'nullable|integer|min:0',
     ]);
 
-    ClassRoom::create($request->only('name', 'section', 'stream', 'room', 'max_seats', 'teacher_id'));
+    ClassRoom::create($request->only(
+        'name', 'section', 'stream', 'room', 'max_seats', 'teacher_id',
+        'total_lessons', 'completed_lessons'
+    ));
 
     return back()->with('success', 'Class created successfully!');
 }
@@ -137,15 +143,20 @@ public function storeClass(Request $request)
 public function updateClass(Request $request, ClassRoom $classRoom)
 {
     $request->validate([
-        'name'       => 'required|string|max:255',
-        'section'    => 'required|string|max:255',
-        'stream'     => 'nullable|string|max:255',
-        'room'       => 'nullable|string|max:255',
-        'max_seats'  => 'required|integer|min:1',
-        'teacher_id' => 'nullable|exists:users,id',
+        'name'              => 'required|string|max:255',
+        'section'           => 'required|string|max:255',
+        'stream'            => 'nullable|string|max:255',
+        'room'              => 'nullable|string|max:255',
+        'max_seats'         => 'required|integer|min:1',
+        'teacher_id'        => 'nullable|exists:users,id',
+        'total_lessons'     => 'nullable|integer|min:0',
+        'completed_lessons' => 'nullable|integer|min:0',
     ]);
 
-    $classRoom->update($request->only('name', 'section', 'stream', 'room', 'max_seats', 'teacher_id'));
+    $classRoom->update($request->only(
+        'name', 'section', 'stream', 'room', 'max_seats', 'teacher_id',
+        'total_lessons', 'completed_lessons'
+    ));
 
     return back()->with('success', 'Class updated successfully!');
 }
@@ -309,4 +320,123 @@ public function bulkMarkPresent(Request $request)
 
     return response()->json(['success' => true, 'message' => ucfirst($request->role) . 's marked present!']);
 }
+public function reportsIndex()
+{
+    $classes = ClassRoom::all();
+
+    $totalSeats = $classes->sum('max_seats');
+    $totalEnrolled = $classes->sum(fn ($c) => $c->studentCount());
+    $rosterPct = $totalSeats > 0 ? round(($totalEnrolled / $totalSeats) * 100) : 0;
+
+    $reports = GeneratedReport::latest()->get();
+
+    return view('admin.reports', compact('classes', 'totalSeats', 'totalEnrolled', 'rosterPct', 'reports'));
+}
+
+public function generateReport(Request $request)
+{
+    $request->validate([
+        'type' => 'required|in:attendance,roster,lessons',
+        'class_id' => 'nullable|exists:class_rooms,id',
+        'window' => 'required|in:current_term,previous_month,full_year',
+    ]);
+
+    [$from, $to] = $this->resolveWindow($request->window);
+
+    $rows = match ($request->type) {
+        'attendance' => $this->buildAttendanceCsv($from, $to, $request->class_id),
+        'roster' => $this->buildRosterCsv(),
+        'lessons' => $this->buildLessonsCsv(),
+    };
+
+    $label = match ($request->type) {
+        'attendance' => 'Attendance_Compliance',
+        'roster' => 'Roster_Capacity',
+        'lessons' => 'Faculty_Lesson_Progress',
+    };
+
+    $filename = $label . '_' . now()->format('Ymd_His') . '.csv';
+    $csvContent = $this->arrayToCsv($rows);
+
+    Storage::disk('public')->put('reports/' . $filename, $csvContent);
+
+    $report = GeneratedReport::create([
+        'type' => $request->type,
+        'filename' => $filename,
+        'department' => match ($request->type) {
+            'attendance' => 'Administration Control',
+            'roster' => 'Academic Records',
+            'lessons' => 'Curriculum Office',
+        },
+        'path' => 'reports/' . $filename,
+        'size_bytes' => strlen($csvContent),
+    ]);
+
+    return back()->with('success', 'Report generated: ' . $filename);
+}
+
+public function downloadReport(GeneratedReport $report)
+{
+    return Storage::disk('public')->download($report->path, $report->filename);
+}
+
+private function resolveWindow($window)
+{
+    return match ($window) {
+        'previous_month' => [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()],
+        'full_year' => [now()->startOfYear(), now()->endOfYear()],
+        default => [now()->startOfMonth(), now()], // current_term (simplified to current month)
+    };
+}
+
+private function buildAttendanceCsv($from, $to, $classId)
+{
+    $query = Attendance::with('user')->whereBetween('date', [$from, $to]);
+    $records = $query->get();
+
+    $rows = [['Name', 'Role', 'Date', 'Status', 'Note']];
+    foreach ($records as $r) {
+        if (!$r->user) continue;
+        $rows[] = [$r->user->name, $r->user->role, $r->date, $r->status, $r->note ?? ''];
+    }
+    return $rows;
+}
+
+private function buildRosterCsv()
+{
+    $classes = ClassRoom::with('teacher')->get();
+    $rows = [['Class', 'Section', 'Teacher', 'Enrolled', 'Max Seats', 'Fill %']];
+    foreach ($classes as $c) {
+        $count = $c->studentCount();
+        $pct = $c->max_seats > 0 ? round(($count / $c->max_seats) * 100) : 0;
+        $rows[] = [$c->name, $c->section, $c->teacher->name ?? 'Unassigned', $count, $c->max_seats, $pct . '%'];
+    }
+    return $rows;
+}
+
+private function buildLessonsCsv()
+{
+    $classes = ClassRoom::with('teacher')->get();
+    $rows = [['Class', 'Section', 'Teacher', 'Completed Lessons', 'Total Lessons', 'Progress %']];
+    foreach ($classes as $c) {
+        $pct = $c->total_lessons > 0 ? round(($c->completed_lessons / $c->total_lessons) * 100) : 0;
+        $rows[] = [$c->name, $c->section, $c->teacher->name ?? 'Unassigned', $c->completed_lessons, $c->total_lessons, $pct . '%'];
+    }
+    return $rows;
+}
+
+private function arrayToCsv($rows)
+{
+    $handle = fopen('php://temp', 'r+');
+    foreach ($rows as $row) {
+        fputcsv($handle, $row);
+    }
+    rewind($handle);
+    $csv = stream_get_contents($handle);
+    fclose($handle);
+    return $csv;
+}
+
+
+
 };

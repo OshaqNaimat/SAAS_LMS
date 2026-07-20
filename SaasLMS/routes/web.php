@@ -91,7 +91,9 @@ Route::post('/admin/attendance/mark', [AdminController::class, 'markAttendance']
 Route::post('/admin/attendance/bulk-present', [AdminController::class, 'bulkMarkPresent'])->name('admin.attendance.bulk');
 Route::post('/admin/attendance/save-batch', [AdminController::class, 'saveBatchAttendance'])->name('admin.attendance.save-batch');
 
-    Route::view('/admin-reports-control','admin.reports');
+    Route::get('/admin-reports-control', [AdminController::class, 'reportsIndex'])->name('admin.reports');
+Route::post('/admin/reports/generate', [AdminController::class, 'generateReport'])->name('admin.reports.generate');
+Route::get('/admin/reports/{report}/download', [AdminController::class, 'downloadReport'])->name('admin.reports.download');
     Route::view('/admin-billings-control','admin.billings');
     Route::view('/admin-setting','admin.setting');
 });

@@ -24,49 +24,39 @@
             <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 mb-8">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-blue-400 mb-4">Report Configuration Engine
                 </h3>
-                <form class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" onsubmit="event.preventDefault();">
+                <form action="{{ route('admin.reports.generate') }}" method="POST"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    @csrf
                     <div class="space-y-1.5">
                         <label class="block text-[11px] font-semibold text-gray-400">Report Scope / Type</label>
-                        <div class="relative">
-                            <select
-                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500/80 transition appearance-none">
-                                <option>Attendance Compliance Audit</option>
-                                <option>Academic Grade Distributions</option>
-                                <option>Faculty Lesson Progress Tracking</option>
-                                <option>Roster Capacity & Enrollment</option>
-                            </select>
-                            <i
-                                class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
-                        </div>
+                        <select name="type" required
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500/80 transition">
+                            <option value="attendance">Attendance Compliance Audit</option>
+                            <option value="roster">Roster Capacity & Enrollment</option>
+                            <option value="lessons">Faculty Lesson Progress Tracking</option>
+                        </select>
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-[11px] font-semibold text-gray-400">Target Academic Cohort</label>
-                        <div class="relative">
-                            <select
-                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500/80 transition appearance-none">
-                                <option>All Batches Combined</option>
-                                <option>Grade 11 - Science</option>
-                                <option>Grade 12 - Mathematics</option>
-                            </select>
-                            <i
-                                class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
-                        </div>
+                        <select name="class_id"
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500/80 transition">
+                            <option value="">All Batches Combined</option>
+                            @foreach ($classes as $class)
+                                <option value="{{ $class->id }}">{{ $class->name }} - {{ $class->section }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-[11px] font-semibold text-gray-400">Temporal Window</label>
-                        <div class="relative">
-                            <select
-                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500/80 transition appearance-none">
-                                <option>Current Term (2026 Baseline)</option>
-                                <option>Previous Month</option>
-                                <option>Full Academic Year</option>
-                            </select>
-                            <i
-                                class="bi bi-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px] pointer-events-none"></i>
-                        </div>
+                        <select name="window" required
+                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500/80 transition">
+                            <option value="current_term">Current Term (This Month)</option>
+                            <option value="previous_month">Previous Month</option>
+                            <option value="full_year">Full Academic Year</option>
+                        </select>
                     </div>
                     <div class="flex items-end">
-                        <button type="button"
+                        <button type="submit"
                             class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs py-2 rounded-xl transition shadow-lg shadow-blue-600/10 h-[34px]">
                             Compile & Process Data
                         </button>
@@ -124,17 +114,18 @@
                     <div class="py-4 flex flex-col items-center justify-center relative">
                         <div
                             class="w-28 h-28 rounded-full border-[10px] border-slate-800 border-t-blue-500 border-r-blue-500 border-b-blue-500 flex items-center justify-center">
-                            <span class="text-xl font-black text-white">82%</span>
+                            <span class="text-xl font-black text-white">{{ $rosterPct }}%</span>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-center pt-2 border-t border-slate-800/60">
                         <div>
                             <span class="text-[10px] uppercase text-gray-400 block font-bold">Seats Occupied</span>
-                            <span class="text-sm font-semibold text-blue-400">410 Active</span>
+                            <span class="text-sm font-semibold text-blue-400">{{ $totalEnrolled }} Active</span>
                         </div>
                         <div class="border-l border-slate-800">
                             <span class="text-[10px] uppercase text-gray-400 block font-bold">Available Buffers</span>
-                            <span class="text-sm font-semibold text-gray-300">90 Vacant</span>
+                            <span class="text-sm font-semibold text-gray-300">{{ max(0, $totalSeats - $totalEnrolled) }}
+                                Vacant</span>
                         </div>
                     </div>
                 </div>
@@ -151,7 +142,7 @@
                         </div>
                         <span
                             class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
-                            Available For Export
+                            {{ $reports->count() }} Available For Export
                         </span>
                     </div>
                     <div class="overflow-x-auto">
@@ -167,48 +158,36 @@
                                 </tr>
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4 font-semibold text-white">
-                                        <div class="flex items-center gap-2.5">
-                                            <i class="bi bi-file-earmark-pdf-fill text-rose-500 text-lg"></i>
-                                            <div class="flex flex-col">
-                                                <span>Attendance_Compliance_Q2.pdf</span>
-                                                <span class="text-xs font-normal text-gray-400">System generated
-                                                    verification layout</span>
+                                @forelse($reports as $report)
+                                    <tr class="hover:bg-slate-900/40">
+                                        <td class="p-4 font-semibold text-white">
+                                            <div class="flex items-center gap-2.5">
+                                                <i
+                                                    class="bi bi-file-earmark-spreadsheet-fill text-emerald-500 text-lg"></i>
+                                                <div class="flex flex-col">
+                                                    <span>{{ $report->filename }}</span>
+                                                    <span class="text-xs font-normal text-gray-400">System generated
+                                                        CSV export</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-gray-400">Administration Control</td>
-                                    <td class="p-4 font-mono text-xs text-gray-400">Jun 04, 2026 08:35</td>
-                                    <td class="p-4 text-xs font-mono">2.4 MB</td>
-                                    <td class="p-4 text-right">
-                                        <button
-                                            class="text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-xl transition shadow-sm">
-                                            <i class="bi bi-download mr-1"></i> Download File
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4 font-semibold text-white">
-                                        <div class="flex items-center gap-2.5">
-                                            <i class="bi bi-file-earmark-excel-fill text-emerald-500 text-lg"></i>
-                                            <div class="flex flex-col">
-                                                <span>Grade_Distribution_Matrix_Final.xlsx</span>
-                                                <span class="text-xs font-normal text-gray-400">Full grade schema
-                                                    spreadsheet dump</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-gray-400">Examination Cell</td>
-                                    <td class="p-4 font-mono text-xs text-gray-400">Jun 02, 2026 14:10</td>
-                                    <td class="p-4 text-xs font-mono">842 KB</td>
-                                    <td class="p-4 text-right">
-                                        <button
-                                            class="text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-xl transition shadow-sm">
-                                            <i class="bi bi-download mr-1"></i> Download File
-                                        </button>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td class="p-4 text-gray-400">{{ $report->department }}</td>
+                                        <td class="p-4 font-mono text-xs text-gray-400">
+                                            {{ $report->created_at->format('M d, Y H:i') }}</td>
+                                        <td class="p-4 text-xs font-mono">{{ $report->humanSize() }}</td>
+                                        <td class="p-4 text-right">
+                                            <a href="{{ route('admin.reports.download', $report->id) }}"
+                                                class="text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-xl transition shadow-sm inline-block">
+                                                <i class="bi bi-download mr-1"></i> Download File
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="p-6 text-center text-gray-500 text-sm">No reports
+                                            generated yet.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
