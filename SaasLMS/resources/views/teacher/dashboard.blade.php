@@ -21,13 +21,11 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
-                        <span class="text-xs text-gray-400 font-medium">Assigned Courses</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">4 Batches</h4>
-                        <span class="text-[11px] text-emerald-400 flex items-center gap-1"><i class="bi bi-book"></i>
-                            MERN + Digital Logic</span>
+                        <span class="text-xs text-gray-400 font-medium">Assigned Classes</span>
+                        <h4 class="text-2xl font-bold text-white tracking-tight">{{ $classes->count() }}</h4>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
@@ -36,42 +34,17 @@
                 </div>
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
-                        <span class="text-xs text-gray-400 font-medium">Today's Lectures</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">2 Sessions</h4>
-                        <span class="text-[11px] text-amber-400 flex items-center gap-1"><i class="bi bi-clock"></i>
-                            Next at 11:30 AM</span>
-                    </div>
-                    <div
-                        class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
-                        <i class="bi bi-calendar2-week"></i>
-                    </div>
-                </div>
-                <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
-                    <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Avg Class Attendance</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">91.4%</h4>
-                        <span class="text-[11px] text-emerald-400 flex items-center gap-1"><i
-                                class="bi bi-graph-up"></i> +2.3% this month</span>
+                        <h4 class="text-2xl font-bold text-white tracking-tight">{{ $avgAttendance }}%</h4>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-xl">
                         <i class="bi bi-person-check"></i>
                     </div>
                 </div>
-                <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
-                    <div class="space-y-1">
-                        <span class="text-xs text-gray-400 font-medium">Pending Appraisals</span>
-                        <h4 class="text-2xl font-bold text-amber-400 tracking-tight">18 Labs</h4>
-                        <span class="text-[11px] text-gray-400">Mid-term submissions</span>
-                    </div>
-                    <div
-                        class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
-                        <i class="bi bi-file-earmark-ruled"></i>
-                    </div>
-                </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {{-- <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
                 <div class="lg:col-span-2 bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
@@ -165,6 +138,21 @@
                     </button>
                 </div>
             </div>
+             --}}
+            <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 mb-8">
+                <h3 class="text-sm font-bold text-white mb-4">Your Classes</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    @forelse($classes as $class)
+                        <div class="p-3.5 bg-[#090d16] border border-slate-800 rounded-xl">
+                            <h4 class="text-xs font-bold text-white">{{ $class->name }} - {{ $class->section }}</h4>
+                            <p class="text-[11px] text-gray-400 mt-0.5">{{ $class->pivot->subject ?? 'General' }} •
+                                {{ $class->room ?? 'No room set' }}</p>
+                        </div>
+                    @empty
+                        <p class="text-xs text-gray-500 col-span-3">No classes assigned yet. Contact admin.</p>
+                    @endforelse
+                </div>
+            </div>
 
             <div class="bg-[#111c2a] border border-slate-800 rounded-2xl shadow-lg overflow-hidden w-full mb-8">
                 <div
@@ -180,117 +168,68 @@
                 </div>
 
                 <div class="w-full overflow-x-auto block">
-                    <table class="w-full text-left border-collapse whitespace-nowrap min-w-[850px]">
+                    <table class="w-full text-left border-collapse whitespace-nowrap min-w-[650px]">
                         <thead>
                             <tr
                                 class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/40 border-b border-slate-800">
-                                <th class="p-4">Student Context Identity</th>
-                                <th class="p-4">Assigned Active Course</th>
-                                <th class="p-4">Attendance Log</th>
-                                <th class="p-4">Lab Appraisals Progress</th>
-                                <th class="p-4">Current Grade Estimate</th>
-                                <th class="p-4 text-right">Actions</th>
+                                <th class="p-4">Student</th>
+                                <th class="p-4">Class</th>
+                                <th class="p-4">Attendance Rate</th>
+                                <th class="p-4">Today's Status</th>
                             </tr>
                         </thead>
                         <tbody class="text-sm text-gray-300 divide-y divide-slate-800/60">
-                            <tr class="hover:bg-slate-900/40 transition">
-                                <td class="p-4">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-xs">
-                                            AS</div>
-                                        <div class="flex flex-col">
-                                            <span class="font-semibold text-white">Amara Sterling</span>
-                                            <span class="text-xs font-mono text-gray-400">ID: #AGI-2026-089</span>
+                            @forelse($students as $student)
+                                @php
+                                    $rate = $student->attendanceRate();
+                                    $status = $todayRecords->get($student->id)->status ?? 'present';
+                                    $initials = collect(explode(' ', $student->name))
+                                        ->map(fn($w) => strtoupper($w[0]))
+                                        ->take(2)
+                                        ->implode('');
+                                @endphp
+                                <tr class="hover:bg-slate-900/40 transition">
+                                    <td class="p-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-xs">
+                                                {{ $initials }}</div>
+                                            <div class="flex flex-col">
+                                                <span class="font-semibold text-white">{{ $student->name }}</span>
+                                                <span class="text-xs font-mono text-gray-400">Roll:
+                                                    {{ $student->roll_number }}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-xs font-medium text-gray-400">Advanced Web Architecture</td>
-                                <td class="p-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-16 bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                            <div class="bg-emerald-500 h-full w-[96%]"></div>
-                                        </div>
-                                        <span class="text-xs font-bold text-emerald-400">96%</span>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-xs font-semibold text-white">5 / 5 Uploaded</td>
-                                <td class="p-4">
-                                    <span
-                                        class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">A+
-                                        Stable</span>
-                                </td>
-                                <td class="p-4 text-right">
-                                    <button
-                                        class="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg hover:border-emerald-500/40 text-xs text-gray-400 hover:text-white transition">Manage</button>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-slate-900/40 transition">
-                                <td class="p-4">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-xs">
-                                            EB</div>
-                                        <div class="flex flex-col">
-                                            <span class="font-semibold text-white">Ethan Brooks</span>
-                                            <span class="text-xs font-mono text-gray-400">ID: #AGI-2026-104</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-xs font-medium text-gray-400">Digital Logic Circuits</td>
-                                <td class="p-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-16 bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                            <div class="bg-amber-500 h-full w-[82%]"></div>
-                                        </div>
-                                        <span class="text-xs font-bold text-amber-400">82%</span>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-xs font-semibold text-white">4 / 5 Uploaded</td>
-                                <td class="p-4">
-                                    <span
-                                        class="px-2 py-0.5 rounded text-xs font-bold bg-blue-500/10 border border-blue-500/20 text-blue-400">B
-                                        Grade</span>
-                                </td>
-                                <td class="p-4 text-right">
-                                    <button
-                                        class="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg hover:border-emerald-500/40 text-xs text-gray-400 hover:text-white transition">Manage</button>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-slate-900/40 transition">
-                                <td class="p-4">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-xs">
-                                            ZM</div>
-                                        <div class="flex flex-col">
-                                            <span class="font-semibold text-white">Zayn Malik</span>
-                                            <span class="text-xs font-mono text-gray-400">ID: #AGI-2026-211</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-xs font-medium text-gray-400">Advanced Web Architecture</td>
-                                <td class="p-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-16 bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                            <div class="bg-rose-500 h-full w-[64%]"></div>
-                                        </div>
-                                        <span class="text-xs font-bold text-rose-400">64%</span>
-                                    </div>
-                                </td>
-                                <td class="p-4 text-xs font-semibold text-white">2 / 5 Uploaded</td>
-                                <td class="p-4">
-                                    <span
-                                        class="px-2 py-0.5 rounded text-xs font-bold bg-rose-500/10 border border-rose-500/20 text-rose-400">Critical
-                                        Alert</span>
-                                </td>
-                                <td class="p-4 text-right">
-                                    <button
-                                        class="px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg hover:border-emerald-500/40 text-xs text-gray-400 hover:text-white transition">Manage</button>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td class="p-4 text-xs font-medium text-gray-400">{{ $student->class }} -
+                                        {{ $student->section }}</td>
+                                    <td class="p-4">
+                                        @if ($rate !== null)
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-16 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                                    <div class="{{ $rate >= 90 ? 'bg-emerald-500' : ($rate >= 75 ? 'bg-amber-500' : 'bg-rose-500') }} h-full"
+                                                        style="width: {{ $rate }}%"></div>
+                                                </div>
+                                                <span
+                                                    class="text-xs font-bold {{ $rate >= 90 ? 'text-emerald-400' : ($rate >= 75 ? 'text-amber-400' : 'text-rose-400') }}">{{ $rate }}%</span>
+                                            </div>
+                                        @else
+                                            <span class="text-xs text-gray-500">No data</span>
+                                        @endif
+                                    </td>
+                                    <td class="p-4">
+                                        <span
+                                            class="px-2 py-0.5 rounded text-xs font-bold {{ $status === 'present' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border border-rose-500/20 text-rose-400' }}">
+                                            {{ ucfirst(str_replace('_', ' ', $status)) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="p-6 text-center text-gray-500 text-sm">No students found
+                                        in your classes.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
