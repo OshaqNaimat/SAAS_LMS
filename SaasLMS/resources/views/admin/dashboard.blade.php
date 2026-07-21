@@ -89,6 +89,16 @@
                                     </select>
                                 </div>
                                 <div class="chart-canvas tall w-full">
+                                    @php
+                                        $points = collect($teacherTrend)
+                                            ->map(function ($pct, $i) {
+                                                $x = 30 + $i * 51; // spread across ~360px width, 7 points
+                                                $y = 160 - ($pct / 100) * 130; // scale 0-100% to 160-30 y range
+                                                return "$x,$y";
+                                            })
+                                            ->implode(' ');
+                                        $lastPoint = explode(',', collect(explode(' ', $points))->last());
+                                    @endphp
                                     <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet"
                                         class="w-full h-auto">
                                         <defs>
@@ -100,15 +110,11 @@
                                         </defs>
                                         <line x1="30" y1="160" x2="390" y2="160"
                                             stroke="rgba(148,163,184,0.15)" stroke-width="1" />
-                                        <polygon
-                                            points="30,130 70,115 110,120 150,95 190,100 230,75 270,85 310,60 350,70 390,50 390,160 30,160"
-                                            fill="url(#projGrad1)" />
-                                        <polyline
-                                            points="30,130 70,115 110,120 150,95 190,100 230,75 270,85 310,60 350,70 390,50"
-                                            fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                        <circle cx="310" cy="60" r="4" fill="#3b82f6" />
-                                        <circle cx="390" cy="50" r="4" fill="#3b82f6" />
+                                        <polygon points="{{ $points }} 390,160 30,160" fill="url(#projGrad1)" />
+                                        <polyline points="{{ $points }}" fill="none" stroke="#3b82f6"
+                                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        <circle cx="{{ $lastPoint[0] }}" cy="{{ $lastPoint[1] }}" r="4"
+                                            fill="#3b82f6" />
                                     </svg>
                                 </div>
                             </div>
@@ -123,6 +129,16 @@
                                     </select>
                                 </div>
                                 <div class="chart-canvas tall w-full">
+                                    @php
+                                        $points2 = collect($studentTrend)
+                                            ->map(function ($pct, $i) {
+                                                $x = 30 + $i * 51;
+                                                $y = 160 - ($pct / 100) * 130;
+                                                return "$x,$y";
+                                            })
+                                            ->implode(' ');
+                                        $lastPoint2 = explode(',', collect(explode(' ', $points2))->last());
+                                    @endphp
                                     <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet"
                                         class="w-full h-auto">
                                         <defs>
@@ -134,15 +150,11 @@
                                         </defs>
                                         <line x1="30" y1="160" x2="390" y2="160"
                                             stroke="rgba(148,163,184,0.15)" stroke-width="1" />
-                                        <polygon
-                                            points="30,130 70,115 110,120 150,95 190,100 230,75 270,85 310,60 350,70 390,50 390,160 30,160"
-                                            fill="url(#projGrad2)" />
-                                        <polyline
-                                            points="30,130 70,115 110,120 150,95 190,100 230,75 270,85 310,60 350,70 390,50"
-                                            fill="none" stroke="#3b82f6" stroke-width="2.5"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                        <circle cx="310" cy="60" r="4" fill="#3b82f6" />
-                                        <circle cx="390" cy="50" r="4" fill="#3b82f6" />
+                                        <polygon points="{{ $points2 }} 390,160 30,160" fill="url(#projGrad2)" />
+                                        <polyline points="{{ $points2 }}" fill="none" stroke="#3b82f6"
+                                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        <circle cx="{{ $lastPoint2[0] }}" cy="{{ $lastPoint2[1] }}" r="4"
+                                            fill="#3b82f6" />
                                     </svg>
                                 </div>
                             </div>
@@ -198,7 +210,7 @@
                         <div class="chart-card">
                             <div class="chart-card-header">
                                 <h3>Recent Team Members</h3>
-                                <a href="#"
+                                <a href="{{ route('admin.faculty') }}"
                                     style="font-size:0.72rem; color:#60a5fa; text-decoration:none; font-weight:600;">View
                                     All →</a>
                             </div>
@@ -207,48 +219,33 @@
                                     <tr>
                                         <th>Member</th>
                                         <th>Role</th>
-                                        <th>Project</th>
+                                        <th>Class / Section</th>
                                         <th>Status</th>
                                         <th>Joined</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td><strong style="color:white;">Emma Brooks</strong></td>
-                                        <td>Manager</td>
-                                        <td>Q4 Initiative</td>
-                                        <td><span class="status-dot-sm" style="background:var(--green);"></span>
-                                            Active
-                                        </td>
-                                        <td style="font-size:0.7rem;">Dec 2025</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong style="color:white;">James Wilson</strong></td>
-                                        <td>Developer</td>
-                                        <td>Marketing Site</td>
-                                        <td><span class="status-dot-sm" style="background:var(--green);"></span>
-                                            Active
-                                        </td>
-                                        <td style="font-size:0.7rem;">Jan 2026</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong style="color:white;">Lisa Chen</strong></td>
-                                        <td>Designer</td>
-                                        <td>Brand Refresh</td>
-                                        <td><span class="status-dot-sm" style="background:var(--yellow);"></span> On
-                                            Leave
-                                        </td>
-                                        <td style="font-size:0.7rem;">Mar 2026</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong style="color:white;">Mark Davis</strong></td>
-                                        <td>Analyst</td>
-                                        <td>Data Migration</td>
-                                        <td><span class="status-dot-sm" style="background:var(--green);"></span>
-                                            Active
-                                        </td>
-                                        <td style="font-size:0.7rem;">Apr 2026</td>
-                                    </tr>
+                                    @forelse($recentMembers as $member)
+                                        <tr>
+                                            <td><strong style="color:white;">{{ $member->name }}</strong></td>
+                                            <td>{{ ucfirst($member->role) }}</td>
+                                            <td>
+                                                {{ $member->role === 'teacher' ? $member->assigned_class ?? '—' : ($member->class ? $member->class . ' - ' . $member->section : '—') }}
+                                            </td>
+                                            <td>
+                                                <span class="status-dot-sm" style="background:var(--green);"></span>
+                                                Active
+                                            </td>
+                                            <td style="font-size:0.7rem;">{{ $member->created_at->format('M Y') }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5"
+                                                style="text-align:center; color:#94a3b8; font-size:0.8rem;">No members
+                                                yet.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
