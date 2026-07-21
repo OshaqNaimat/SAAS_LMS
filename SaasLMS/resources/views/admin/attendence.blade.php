@@ -262,7 +262,7 @@
                                         @endif
                                     @endforeach
                                 </div>
-                                <div class="shrink-0 text-xl font-black text-amber-400">{{ $day['pct'] }}%</div>
+                                <div class="shrink-0 text-xl font-black text-[#6479ef]">{{ $day['pct'] }}%</div>
                             </div>
                         @empty
                             <p class="text-center text-gray-500 text-sm py-6">No student attendance history yet.</p>
@@ -347,7 +347,7 @@
                                         @endif
                                     @endforeach
                                 </div>
-                                <div class="shrink-0 text-xl font-black text-amber-400">{{ $day['pct'] }}%</div>
+                                <div class="shrink-0 text-xl font-black text-[#576FF3]">{{ $day['pct'] }}%</div>
                             </div>
                         @empty
                             <p class="text-center text-gray-500 text-sm py-6">No faculty attendance history yet.</p>
