@@ -81,25 +81,21 @@
                             <!-- Project Progress Chart -->
                             <div class="chart-card w-full border rounded-xl p-4 bg-white shadow-sm">
                                 <div class="chart-card-header flex justify-between items-center mb-4">
-                                    <h3 class="font-semibold text-lg">Teacher Attendence</h3>
-                                    <select class="border rounded p-1 text-sm bg-gray-50">
-                                        <option>This Month</option>
-                                        <option>Last Month</option>
-                                        <option>Last Quarter</option>
-                                    </select>
+                                    <h3 class="font-semibold text-lg">Teacher Attendance</h3>
+                                    <span
+                                        class="text-xs font-semibold text-blue-500 bg-blue-50 px-2.5 py-1 rounded-md">Last
+                                        7 Days</span>
                                 </div>
                                 <div class="chart-canvas tall w-full">
                                     @php
-                                        $points = collect($teacherTrend)
-                                            ->map(function ($pct, $i) {
-                                                $x = 30 + $i * 51; // spread across ~360px width, 7 points
-                                                $y = 160 - ($pct / 100) * 130; // scale 0-100% to 160-30 y range
-                                                return "$x,$y";
-                                            })
-                                            ->implode(' ');
-                                        $lastPoint = explode(',', collect(explode(' ', $points))->last());
+                                        $points = collect($teacherTrend)->map(function ($pct, $i) {
+                                            $x = 30 + $i * 51;
+                                            $y = 160 - ($pct / 100) * 130;
+                                            return ['x' => $x, 'y' => $y, 'pct' => $pct, 'label' => $trendLabels[$i]];
+                                        });
+                                        $polyPoints = $points->map(fn($p) => "{$p['x']},{$p['y']}")->implode(' ');
                                     @endphp
-                                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet"
+                                    <svg viewBox="0 0 400 210" preserveAspectRatio="xMidYMid meet"
                                         class="w-full h-auto">
                                         <defs>
                                             <linearGradient id="projGrad1" x1="0%" y1="0%" x2="0%"
@@ -108,13 +104,32 @@
                                                 <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0" />
                                             </linearGradient>
                                         </defs>
-                                        <line x1="30" y1="160" x2="390" y2="160"
-                                            stroke="rgba(148,163,184,0.15)" stroke-width="1" />
-                                        <polygon points="{{ $points }} 390,160 30,160" fill="url(#projGrad1)" />
-                                        <polyline points="{{ $points }}" fill="none" stroke="#3b82f6"
+
+                                        <!-- Horizontal gridlines at 0/25/50/75/100% -->
+                                        @foreach ([0, 25, 50, 75, 100] as $mark)
+                                            @php $gy = 160 - ($mark / 100 * 130); @endphp
+                                            <line x1="30" y1="{{ $gy }}" x2="390"
+                                                y2="{{ $gy }}" stroke="rgba(148,163,184,0.12)"
+                                                stroke-width="1" />
+                                            <text x="4" y="{{ $gy + 4 }}" font-size="9"
+                                                fill="#94a3b8">{{ $mark }}</text>
+                                        @endforeach
+
+                                        <polygon points="{{ $polyPoints }} 390,160 30,160" fill="url(#projGrad1)" />
+                                        <polyline points="{{ $polyPoints }}" fill="none" stroke="#3b82f6"
                                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                                        <circle cx="{{ $lastPoint[0] }}" cy="{{ $lastPoint[1] }}" r="4"
-                                            fill="#3b82f6" />
+
+                                        @foreach ($points as $i => $p)
+                                            <circle cx="{{ $p['x'] }}" cy="{{ $p['y'] }}"
+                                                r="{{ $i === 6 ? 5 : 3.5 }}"
+                                                fill="{{ $i === 6 ? '#3b82f6' : '#fff' }}" stroke="#3b82f6"
+                                                stroke-width="2" />
+                                            <text x="{{ $p['x'] }}" y="{{ $p['y'] - 10 }}" font-size="10"
+                                                font-weight="600" text-anchor="middle"
+                                                fill="#1e40af">{{ $p['pct'] }}%</text>
+                                            <text x="{{ $p['x'] }}" y="185" font-size="10" text-anchor="middle"
+                                                fill="#64748b">{{ $p['label'] }}</text>
+                                        @endforeach
                                     </svg>
                                 </div>
                             </div>
@@ -142,15 +157,16 @@
                                     <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet"
                                         class="w-full h-auto">
                                         <defs>
-                                            <linearGradient id="projGrad2" x1="0%" y1="0%" x2="0%"
-                                                y2="100%">
+                                            <linearGradient id="projGrad2" x1="0%" y1="0%"
+                                                x2="0%" y2="100%">
                                                 <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.3" />
                                                 <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0" />
                                             </linearGradient>
                                         </defs>
                                         <line x1="30" y1="160" x2="390" y2="160"
                                             stroke="rgba(148,163,184,0.15)" stroke-width="1" />
-                                        <polygon points="{{ $points2 }} 390,160 30,160" fill="url(#projGrad2)" />
+                                        <polygon points="{{ $points2 }} 390,160 30,160"
+                                            fill="url(#projGrad2)" />
                                         <polyline points="{{ $points2 }}" fill="none" stroke="#3b82f6"
                                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
                                         <circle cx="{{ $lastPoint2[0] }}" cy="{{ $lastPoint2[1] }}" r="4"

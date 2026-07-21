@@ -66,9 +66,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // --------------------------------------------------------
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // FIXED: Both registration forms are now safely guarded inside the admin group
     Route::post('/admin/add-teacher', [AdminController::class, 'storeTeacher'])->name('admin.add-teacher');

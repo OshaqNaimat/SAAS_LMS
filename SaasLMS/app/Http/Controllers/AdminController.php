@@ -69,8 +69,25 @@ public function dashboard()
 {
     $totalTeachers = User::where('role', 'teacher')->count();
     $totalStudents = User::where('role', 'student')->count();
+    $totalRevenue = Payment::where('status', 'cleared')->sum('amount');
 
-    return view('admin.dashboard', compact('totalTeachers', 'totalStudents'));
+    $teacherTrend = [];
+    $studentTrend = [];
+    $trendLabels = [];
+
+    for ($i = 6; $i >= 0; $i--) {
+        $day = Carbon::today()->subDays($i);
+        $trendLabels[] = $i === 0 ? 'Today' : $day->format('D');
+        $teacherTrend[] = $this->dayAttendancePct('teacher', $day);
+        $studentTrend[] = $this->dayAttendancePct('student', $day);
+    }
+
+    $recentMembers = User::latest()->take(4)->get();
+
+    return view('admin.dashboard', compact(
+        'totalTeachers', 'totalStudents', 'totalRevenue',
+        'teacherTrend', 'studentTrend', 'trendLabels', 'recentMembers'
+    ));
 }
 public function destroy(User $user)
 {
@@ -549,29 +566,7 @@ public function updatePayment(Request $request, Payment $payment)
     return response()->json(['success' => true, 'message' => 'Status updated successfully!']);
 }
 
-public function dashboard()
-{
-    $totalTeachers = User::where('role', 'teacher')->count();
-    $totalStudents = User::where('role', 'student')->count();
-    $totalRevenue = Payment::where('status', 'cleared')->sum('amount');
 
-    // Last 7 days attendance trend for both roles
-    $teacherTrend = [];
-    $studentTrend = [];
-    for ($i = 6; $i >= 0; $i--) {
-        $day = Carbon::today()->subDays($i);
-        $teacherTrend[] = $this->dayAttendancePct('teacher', $day);
-        $studentTrend[] = $this->dayAttendancePct('student', $day);
-    }
-
-    // Recent members: latest 4 users of any role, newest first
-    $recentMembers = User::latest()->take(4)->get();
-
-    return view('admin.dashboard', compact(
-        'totalTeachers', 'totalStudents', 'totalRevenue',
-        'teacherTrend', 'studentTrend', 'recentMembers'
-    ));
-}
 
 private function dayAttendancePct($role, $day)
 {
