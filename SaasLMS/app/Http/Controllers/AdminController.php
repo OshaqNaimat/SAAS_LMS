@@ -395,7 +395,10 @@ public function generateReport(Request $request)
 
 public function downloadReport(GeneratedReport $report)
 {
-    return Storage::disk('public')->download($report->path, $report->filename);
+    /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+    $disk = Storage::disk('public');
+
+    return $disk->download($report->path, $report->filename);
 }
 
 private function resolveWindow($window)

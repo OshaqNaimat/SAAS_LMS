@@ -67,4 +67,8 @@ class User extends Authenticatable
 
     return round(($present / $total) * 100, 1);
 }
+public function classes()
+{
+    return $this->belongsToMany(ClassRoom::class, 'class_teacher', 'teacher_id', 'class_room_id')->withPivot('subject');
+}
 }
