@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -106,13 +107,8 @@ Route::put('/admin/billing/{payment}', [AdminController::class, 'updatePayment']
 // SECURE TEACHER WORKSPACE (Only Teachers Allowed)
 // --------------------------------------------------------
 Route::middleware(['auth', 'role:teacher'])->group(function () {
-
-    // FIXED: Removed the stray backtick character from the path string
-    Route::get('/teacher-dashboard', function () {
-        return view('teacher.dashboard');
-    })->name('teacher.dashboard');
+    Route::get('/teacher-dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
 });
-
 
 // --------------------------------------------------------
 // SECURE STUDENT WORKSPACE (Only Students Allowed)

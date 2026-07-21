@@ -9,24 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
+  public function up(): void
 {
     Schema::create('class_teacher', function (Blueprint $table) {
         $table->id();
         $table->foreignId('class_room_id')->constrained()->cascadeOnDelete();
         $table->foreignId('teacher_id')->constrained('users')->cascadeOnDelete();
-        $table->string('subject')->nullable(); // e.g. "Mathematics" - a teacher might teach a different subject per class
+        $table->string('subject')->nullable();
         $table->timestamps();
-
         $table->unique(['class_room_id', 'teacher_id', 'subject']);
     });
 }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('class_teacher');
-    }
+public function down(): void
+{
+    Schema::dropIfExists('class_teacher');
+}
 };

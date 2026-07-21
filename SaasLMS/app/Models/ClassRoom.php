@@ -21,4 +21,8 @@ class ClassRoom extends Model
             ->where('section', $this->section)
             ->count();
     }
+    public function subjectTeachers()
+{
+    return $this->belongsToMany(User::class, 'class_teacher', 'class_room_id', 'teacher_id')->withPivot('subject');
+}
 }
