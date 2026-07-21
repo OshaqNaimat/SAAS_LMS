@@ -54,36 +54,24 @@
                             <div class="kpi-card">
                                 <div class="kpi-info">
                                     <h4>Total Revenue</h4>
-                                    <div class="kpi-value">Rs 10,000</div>
+                                    <div class="kpi-value">Rs {{ number_format($totalRevenue) }}</div>
                                 </div>
                                 <div class="kpi-icon" style="color:#60a5fa;"><i class="bi bi-currency-dollar"></i></div>
                             </div>
                             <div class="kpi-card">
                                 <div class="kpi-info">
                                     <h4>Total Teachers</h4>
-                                    <div class="kpi-value">{{ $teachers->count() }} Registered</div>
-                                    {{-- <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 3 new</div> --}}
+                                    <div class="kpi-value">{{ $totalTeachers }}</div>
                                 </div>
                                 <div class="kpi-icon" style="color:var(--green);"><i class="bi bi-people-fill"></i>
                                 </div>
                             </div>
-                            {{-- <div class="kpi-card">
-                                <div class="kpi-info">
-                                    <h4>Teacher Attendence Rate</h4>
-                                    <div class="kpi-value">90%</div> --}}
-                            {{-- <div class="kpi-change up"><i class="bi bi-arrow-up-short"></i> 85% completion</div> --}}
-                            {{-- </div>
-                                <div class="kpi-icon" style="color:var(--yellow);"><i class="bi bi-check2-circle"></i>
-                                </div>
-                            </div> --}}
                             <div class="kpi-card">
                                 <div class="kpi-info">
                                     <h4>Total Students</h4>
-                                    <div class="kpi-value">500</div>
-                                    {{-- <div class="kpi-change down"><i class="bi bi-arrow-down-short"></i> 62%
-                                    </div> --}}
+                                    <div class="kpi-value">{{ $totalStudents }}</div>
                                 </div>
-                                <div class="kpi-icon" style="color:var(--pink);"><i class="bi bi-cloud-fill"></i>
+                                <div class="kpi-icon" style="color:var(--pink);"><i class="bi bi-mortarboard-fill"></i>
                                 </div>
                             </div>
                         </div>

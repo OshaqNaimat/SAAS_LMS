@@ -549,4 +549,36 @@ public function updatePayment(Request $request, Payment $payment)
     return response()->json(['success' => true, 'message' => 'Status updated successfully!']);
 }
 
+public function dashboard()
+{
+    $totalTeachers = User::where('role', 'teacher')->count();
+    $totalStudents = User::where('role', 'student')->count();
+    $totalRevenue = Payment::where('status', 'cleared')->sum('amount');
+
+    // Last 7 days attendance trend for both roles
+    $teacherTrend = [];
+    $studentTrend = [];
+    for ($i = 6; $i >= 0; $i--) {
+        $day = Carbon::today()->subDays($i);
+        $teacherTrend[] = $this->dayAttendancePct('teacher', $day);
+        $studentTrend[] = $this->dayAttendancePct('student', $day);
+    }
+
+    // Recent members: latest 4 users of any role, newest first
+    $recentMembers = User::latest()->take(4)->get();
+
+    return view('admin.dashboard', compact(
+        'totalTeachers', 'totalStudents', 'totalRevenue',
+        'teacherTrend', 'studentTrend', 'recentMembers'
+    ));
+}
+
+private function dayAttendancePct($role, $day)
+{
+    $userIds = User::where('role', $role)->pluck('id');
+    $total = Attendance::whereIn('user_id', $userIds)->where('date', $day)->count();
+    if ($total === 0) return 0;
+    $present = Attendance::whereIn('user_id', $userIds)->where('date', $day)->where('status', 'present')->count();
+    return round(($present / $total) * 100);
+}
 };
