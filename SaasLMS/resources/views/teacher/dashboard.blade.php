@@ -154,7 +154,7 @@
                 </div>
             </div>
 
-            <div class="bg-[#111c2a] border border-slate-800 rounded-2xl shadow-lg overflow-hidden w-full mb-8">
+            <div class="bg-[#111c2b] border border-slate-800 rounded-2xl shadow-lg overflow-hidden w-full mb-8">
                 <div
                     class="p-4 bg-slate-900/60 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
