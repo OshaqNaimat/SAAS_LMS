@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\GeneratedReport;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Schedule;
+
 
 class AdminController extends Controller
 {
@@ -578,5 +580,55 @@ private function dayAttendancePct($role, $day)
     if ($total === 0) return 0;
     $present = Attendance::whereIn('user_id', $userIds)->where('date', $day)->where('status', 'present')->count();
     return round(($present / $total) * 100);
+}
+public function scheduleIndex()
+{
+    $schedules = Schedule::with(['teacher', 'classRoom'])->orderBy('day_of_week')->orderBy('period_number')->get();
+    $teachers = User::where('role', 'teacher')->get();
+    $classes = ClassRoom::all();
+
+    return view('admin.schedule', compact('schedules', 'teachers', 'classes'));
+}
+
+public function storeSchedule(Request $request)
+{
+    $request->validate([
+        'teacher_id' => 'required|exists:users,id',
+        'class_room_id' => 'required|exists:class_rooms,id',
+        'subject' => 'required|string|max:255',
+        'day_of_week' => 'required|integer|min:1|max:5',
+        'period_number' => 'required|integer|min:1',
+        'start_time' => 'required',
+        'end_time' => 'required|after:start_time',
+        'room' => 'nullable|string|max:255',
+    ]);
+
+    Schedule::create($request->all());
+
+    return back()->with('success', 'Period assigned successfully!');
+}
+
+public function updateSchedule(Request $request, Schedule $schedule)
+{
+    $request->validate([
+        'teacher_id' => 'required|exists:users,id',
+        'class_room_id' => 'required|exists:class_rooms,id',
+        'subject' => 'required|string|max:255',
+        'day_of_week' => 'required|integer|min:1|max:5',
+        'period_number' => 'required|integer|min:1',
+        'start_time' => 'required',
+        'end_time' => 'required|after:start_time',
+        'room' => 'nullable|string|max:255',
+    ]);
+
+    $schedule->update($request->all());
+
+    return back()->with('success', 'Period updated successfully!');
+}
+
+public function destroySchedule(Schedule $schedule)
+{
+    $schedule->delete();
+    return back()->with('success', 'Period removed successfully!');
 }
 };
