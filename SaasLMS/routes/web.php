@@ -108,6 +108,7 @@ Route::put('/admin/billing/{payment}', [AdminController::class, 'updatePayment']
 // --------------------------------------------------------
 Route::middleware(['auth', 'role:teacher'])->group(function () {
     Route::get('/teacher-dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
+    Route::view('/teacher-schedules','teacher.Schedule');
 });
 
 // --------------------------------------------------------
