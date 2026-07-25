@@ -4,31 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Attendance;
+use App\Models\ClassRoom;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class TeacherController extends Controller
 {
-    public function dashboard()
-    {
-        $teacher = Auth::user();
-        $classes = $teacher->classes; // all ClassRoom models this teacher is linked to
+   public function dashboard()
+{
+    $teacher = Auth::user();
 
-        // Students across all of the teacher's classes
-        $students = User::where('role', 'student')
-            ->whereIn('class', $classes->pluck('name'))
-            ->whereIn('section', $classes->pluck('section'))
-            ->get();
+    // Use teacher_id (lead mentor) instead of the pivot table, since that's what admin actually assigns
+    $classes = ClassRoom::where('teacher_id', $teacher->id)->get();
 
-        $today = Carbon::today();
-        $todayRecords = Attendance::where('date', $today)
-            ->whereIn('user_id', $students->pluck('id'))
-            ->get()->keyBy('user_id');
+    $students = User::where('role', 'student')
+        ->whereIn('class', $classes->pluck('name'))
+        ->whereIn('section', $classes->pluck('section'))
+        ->get();
 
-        $avgAttendance = $students->count() > 0
-            ? round($students->map(fn ($s) => $s->attendanceRate() ?? 0)->avg(), 1)
-            : 0;
+    $today = Carbon::today();
+    $todayRecords = Attendance::where('date', $today)
+        ->whereIn('user_id', $students->pluck('id'))
+        ->get()->keyBy('user_id');
 
-        return view('teacher.dashboard', compact('classes', 'students', 'todayRecords', 'avgAttendance'));
-    }
+    $avgAttendance = $students->count() > 0
+        ? round($students->map(fn ($s) => $s->attendanceRate() ?? 0)->avg(), 1)
+        : 0;
+
+    return view('teacher.dashboard', compact('classes', 'students', 'todayRecords', 'avgAttendance'));
+}
 }

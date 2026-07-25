@@ -145,8 +145,7 @@
                     @forelse($classes as $class)
                         <div class="p-3.5 bg-[#090d16] border border-slate-800 rounded-xl">
                             <h4 class="text-xs font-bold text-white">{{ $class->name }} - {{ $class->section }}</h4>
-                            <p class="text-[11px] text-gray-400 mt-0.5">{{ $class->pivot->subject ?? 'General' }} •
-                                {{ $class->room ?? 'No room set' }}</p>
+                            <p class="text-[11px] text-gray-400 mt-0.5">{{ $class->room ?? 'No room set' }}</p>
                         </div>
                     @empty
                         <p class="text-xs text-gray-500 col-span-3">No classes assigned yet. Contact admin.</p>
