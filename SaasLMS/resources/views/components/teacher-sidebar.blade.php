@@ -16,7 +16,7 @@
             <i class="bi bi-house-door-fill"></i> Faculty Console
         </a>
 
-        <a href="/teacher-schedules" class="nav-item {{ request()->is('teacher-schedules') ? 'active' : '' }}">
+        <a href="/teacher-timetable" class="nav-item {{ request()->is('teacher-schedules') ? 'active' : '' }}">
             <i class="bi bi-calendar2-week-fill"></i> My Schedules
             <span class="nav-badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">2 Today</span>
         </a>
