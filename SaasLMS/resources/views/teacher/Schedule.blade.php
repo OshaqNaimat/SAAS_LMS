@@ -10,16 +10,18 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                 <div>
                     <h1 class="text-2xl font-bold text-white">Daily Timetable</h1>
-                    <p class="text-sm text-gray-400">Tuesday, 04 June 2026</p>
+                    <p class="text-sm text-gray-400">
+                        {{ ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][$selectedDay] }},
+                        {{ now()->format('d F Y') }}</p>
                 </div>
                 <div class="flex gap-2">
                     <div class="bg-[#111c2a] border border-slate-800 rounded-xl px-4 py-2">
                         <span class="text-[10px] text-gray-500 uppercase block font-bold">Total Lectures</span>
-                        <span class="text-sm font-bold text-white">05 Today</span>
+                        <span class="text-sm font-bold text-white">{{ $totalToday }} Today</span>
                     </div>
                     <div class="bg-[#111c2a] border border-slate-800 rounded-xl px-4 py-2">
                         <span class="text-[10px] text-gray-500 uppercase block font-bold">Work Load</span>
-                        <span class="text-sm font-bold text-emerald-400">04 Hours</span>
+                        <span class="text-sm font-bold text-emerald-400">{{ $workloadHours }} Hours</span>
                     </div>
                 </div>
             </div>
