@@ -31,97 +31,65 @@
                 <div class="lg:col-span-2 space-y-4">
 
                     <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-                        <button
-                            class="px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 text-white shrink-0">Mon</button>
-                        <button
-                            class="px-4 py-2 text-xs font-semibold rounded-xl bg-blue-600 text-white shrink-0 border border-blue-500/50 shadow-lg shadow-blue-600/20">Tue</button>
-                        <button
-                            class="px-4 py-2 text-xs font-semibold rounded-xl bg-[#111c2a] text-gray-400 border border-slate-800 shrink-0">Wed</button>
-                        <button
-                            class="px-4 py-2 text-xs font-semibold rounded-xl bg-[#111c2a] text-gray-400 border border-slate-800 shrink-0">Thu</button>
-                        <button
-                            class="px-4 py-2 text-xs font-semibold rounded-xl bg-[#111c2a] text-gray-400 border border-slate-800 shrink-0">Fri</button>
+                        @foreach (['Mon' => 1, 'Tue' => 2, 'Wed' => 3, 'Thu' => 4, 'Fri' => 5] as $label => $dayNum)
+                            <a href="{{ route('teacher.Schedule', ['day' => $dayNum]) }}"
+                                class="px-4 py-2 text-xs font-semibold rounded-xl shrink-0 {{ $selectedDay == $dayNum ? 'bg-blue-600 text-white border border-blue-500/50 shadow-lg shadow-blue-600/20' : 'bg-[#111c2a] text-gray-400 border border-slate-800' }}">
+                                {{ $label }}
+                            </a>
+                        @endforeach
                     </div>
-
                     <div class="space-y-3">
-                        <div
-                            class="bg-[#111c2a] border border-slate-800 rounded-2xl p-4 flex items-center justify-between group hover:border-slate-700 transition">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center">
-                                    <span class="text-[10px] text-gray-500 font-bold">1st</span>
-                                    <span class="text-xs text-white font-bold">08:30</span>
+                        @forelse($periods as $period)
+                            @php
+                                $statusStyles = [
+                                    'done' => ['border-slate-800', 'bg-slate-900', 'text-gray-500', 'Done'],
+                                    'ongoing' => [
+                                        'border-emerald-500/40 bg-emerald-500/[0.02] shadow-xl',
+                                        'bg-emerald-500/10 border-emerald-500/20',
+                                        'text-emerald-400',
+                                        'On-going',
+                                    ],
+                                    'upcoming' => ['border-slate-800', 'bg-slate-900', 'text-blue-400', 'Up Next'],
+                                    'scheduled' => [
+                                        'border-slate-800 opacity-70',
+                                        'bg-slate-900',
+                                        'text-gray-500',
+                                        'Later',
+                                    ],
+                                ];
+                                [$cardClass, $iconBg, $textColor, $label] = $statusStyles[$period->computedStatus];
+                            @endphp
+                            <div
+                                class="bg-[#111c2a] border {{ $cardClass }} rounded-2xl p-4 flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 rounded-xl {{ $iconBg }} border flex flex-col items-center justify-center">
+                                        <span
+                                            class="text-[10px] {{ $textColor }} font-bold">{{ $period->period_number }}{{ $period->period_number == 1 ? 'st' : ($period->period_number == 2 ? 'nd' : ($period->period_number == 3 ? 'rd' : 'th')) }}</span>
+                                        <span
+                                            class="text-xs {{ $textColor === 'text-gray-500' ? 'text-white' : $textColor }} font-bold">{{ \Carbon\Carbon::parse($period->start_time)->format('H:i') }}</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-white">{{ $period->subject }}</h3>
+                                        <p class="text-xs text-gray-500">
+                                            {{ $period->classRoom->name }}-{{ $period->classRoom->section }} •
+                                            {{ $period->room ?? 'No room set' }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 class="text-sm font-bold text-white">Mathematics</h3>
-                                    <p class="text-xs text-gray-500">Class 9-B • Room 12</p>
-                                </div>
+                                <span
+                                    class="text-[10px] font-bold {{ $textColor }} {{ $iconBg }} px-3 py-1 rounded-full border {{ $period->computedStatus === 'ongoing' ? 'animate-pulse' : '' }}">
+                                    {{ $label }}
+                                </span>
                             </div>
-                            <span
-                                class="text-[10px] font-bold text-gray-500 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">Done</span>
-                        </div>
-
-                        <div
-                            class="bg-[#111c2a] border border-emerald-500/40 bg-emerald-500/[0.02] rounded-2xl p-4 flex items-center justify-between shadow-xl">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col items-center justify-center">
-                                    <span class="text-[10px] text-emerald-400 font-bold uppercase">2nd</span>
-                                    <span class="text-xs text-emerald-400 font-bold">09:15</span>
-                                </div>
-                                <div>
-                                    <h3 class="text-sm font-bold text-white">Computer Science</h3>
-                                    <p class="text-xs text-emerald-400/70">Class 10-A • Computer Lab</p>
-                                </div>
-                            </div>
-                            <span
-                                class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 animate-pulse">On-going</span>
-                        </div>
-
-                        <div class="p-3 bg-slate-900/30 border border-dashed border-slate-800 rounded-2xl text-center">
-                            <span class="text-xs text-gray-500 font-medium">☕ 20 Min Recess / Break</span>
-                        </div>
-
-                        <div
-                            class="bg-[#111c2a] border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center">
-                                    <span class="text-[10px] text-gray-500 font-bold">3rd</span>
-                                    <span class="text-xs text-white font-bold">10:20</span>
-                                </div>
-                                <div>
-                                    <h3 class="text-sm font-bold text-white">Physics</h3>
-                                    <p class="text-xs text-gray-500">Class 12-Eng • Room 04</p>
-                                </div>
-                            </div>
-                            <span
-                                class="text-[10px] font-bold text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">Up
-                                Next</span>
-                        </div>
-
-                        <div
-                            class="bg-[#111c2a] border border-slate-800 rounded-2xl p-4 flex items-center justify-between opacity-70">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center">
-                                    <span class="text-[10px] text-gray-500 font-bold">4th</span>
-                                    <span class="text-xs text-white font-bold">11:05</span>
-                                </div>
-                                <div>
-                                    <h3 class="text-sm font-bold text-white">Chemistry</h3>
-                                    <p class="text-xs text-gray-500">Class 11-C • Room 09</p>
-                                </div>
-                            </div>
-                            <span
-                                class="text-[10px] font-bold text-gray-500 bg-slate-900 px-3 py-1 rounded-full">Later</span>
-                        </div>
+                        @empty
+                            <p class="text-center text-gray-500 text-sm py-8">No periods scheduled for this day.</p>
+                        @endforelse
                     </div>
                 </div>
 
                 <div class="space-y-6">
 
-                    <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5">
+                    {{-- <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-sm font-bold text-white">Daily Tasks</h3>
                             <button class="text-[10px] text-blue-400 font-bold hover:underline">Add New</button>
@@ -148,9 +116,9 @@
                                     Homework</span>
                             </label>
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5">
+                    {{-- <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5">
                         <h3 class="text-sm font-bold text-white mb-4">Upcoming Events</h3>
                         <div class="space-y-4">
                             <div class="flex items-start gap-3">
@@ -176,7 +144,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     {{-- <div
                         class="bg-gradient-to-br from-blue-600/20 to-emerald-600/20 border border-blue-500/20 rounded-2xl p-5">

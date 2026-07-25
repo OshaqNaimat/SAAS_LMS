@@ -19,6 +19,8 @@
             </a>
             <a class="nav-item" href="/admin-attendence-control"><i class="bi bi-calendar-check-fill"></i>
                 Attendance</a>
+            <a class="nav-item" href="{{ route('admin.schedule') }}"><i class="bi bi-calendar2-week-fill"></i>
+                Schedule</a>
         </div>
 
         <div class="sidebar-section">

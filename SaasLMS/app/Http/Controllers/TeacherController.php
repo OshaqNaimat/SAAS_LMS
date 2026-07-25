@@ -71,6 +71,6 @@ public function timetable(Request $request)
         }
     }
 
-    return view('teacher.timetable', compact('periods', 'selectedDay', 'totalToday', 'workloadHours'));
+    return view('teacher.Schedule', compact('periods', 'selectedDay', 'totalToday', 'workloadHours'));
 }
 }

@@ -99,6 +99,11 @@ Route::post('/admin/billing/store', [AdminController::class, 'storePayment'])->n
 Route::get('/admin/billing/search', [AdminController::class, 'searchPayments'])->name('admin.billing.search');
 Route::put('/admin/billing/{payment}', [AdminController::class, 'updatePayment'])->name('admin.billing.update');
 
+Route::get('/admin-schedule-control', [AdminController::class, 'scheduleIndex'])->name('admin.schedule');
+Route::post('/admin/schedule', [AdminController::class, 'storeSchedule'])->name('admin.schedule.store');
+Route::put('/admin/schedule/{schedule}', [AdminController::class, 'updateSchedule'])->name('admin.schedule.update');
+Route::delete('/admin/schedule/{schedule}', [AdminController::class, 'destroySchedule'])->name('admin.schedule.destroy');
+
     Route::view('/admin-setting','admin.setting');
 });
 
@@ -108,7 +113,7 @@ Route::put('/admin/billing/{payment}', [AdminController::class, 'updatePayment']
 // --------------------------------------------------------
 Route::middleware(['auth', 'role:teacher'])->group(function () {
     Route::get('/teacher-dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
-    Route::get('/teacher-timetable', [TeacherController::class, 'timetable'])->name('teacher.timetable');
+    Route::get('/teacher-timetable', [TeacherController::class, 'timetable'])->name('teacher.Schedule');
 });
 
 // --------------------------------------------------------
