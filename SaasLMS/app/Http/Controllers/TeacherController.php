@@ -100,7 +100,7 @@ public function attendanceIndex(Request $request)
     $absentCount = $todayRecords->where('status', 'absent')->count();
     $leaveCount = $todayRecords->where('status', 'approved_leave')->count();
 
-    return view('teacher.attendance', compact(
+    return view('teacher.attendence-registry', compact(
         'classes', 'selectedClass', 'selectedClassId', 'students', 'todayRecords',
         'presentCount', 'absentCount', 'leaveCount'
     ));
