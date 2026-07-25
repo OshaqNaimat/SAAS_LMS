@@ -114,6 +114,9 @@ Route::delete('/admin/schedule/{schedule}', [AdminController::class, 'destroySch
 Route::middleware(['auth', 'role:teacher'])->group(function () {
     Route::get('/teacher-dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
     Route::get('/teacher-timetable', [TeacherController::class, 'timetable'])->name('teacher.Schedule');
+     Route::get('/teacher-attendance', [TeacherController::class, 'attendanceIndex'])->name('teacher.attendance');
+    Route::post('/save-attendance', [TeacherController::class, 'saveAttendance'])->name('teacher.attendance.save');
+
 });
 
 // --------------------------------------------------------

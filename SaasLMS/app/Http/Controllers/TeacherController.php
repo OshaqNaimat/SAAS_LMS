@@ -73,4 +73,56 @@ public function timetable(Request $request)
 
     return view('teacher.Schedule', compact('periods', 'selectedDay', 'totalToday', 'workloadHours'));
 }
+public function attendanceIndex(Request $request)
+{
+    $teacher = Auth::user();
+    $classes = ClassRoom::where('teacher_id', $teacher->id)->get();
+
+    $selectedClassId = $request->get('class_id', $classes->first()->id ?? null);
+    $selectedClass = $classes->firstWhere('id', $selectedClassId);
+
+    $students = collect();
+    $todayRecords = collect();
+
+    if ($selectedClass) {
+        $students = User::where('role', 'student')
+            ->where('class', $selectedClass->name)
+            ->where('section', $selectedClass->section)
+            ->orderBy('roll_number')
+            ->get();
+
+        $todayRecords = Attendance::where('date', Carbon::today())
+            ->whereIn('user_id', $students->pluck('id'))
+            ->get()->keyBy('user_id');
+    }
+
+    $presentCount = $todayRecords->where('status', 'present')->count();
+    $absentCount = $todayRecords->where('status', 'absent')->count();
+    $leaveCount = $todayRecords->where('status', 'approved_leave')->count();
+
+    return view('teacher.attendance', compact(
+        'classes', 'selectedClass', 'selectedClassId', 'students', 'todayRecords',
+        'presentCount', 'absentCount', 'leaveCount'
+    ));
+}
+
+public function saveAttendance(Request $request)
+{
+    $request->validate([
+        'class_id' => 'required|exists:class_rooms,id',
+        'attendance' => 'required|array',
+        'attendance.*' => 'required|in:present,absent,approved_leave',
+    ]);
+
+    $today = Carbon::today();
+
+    foreach ($request->attendance as $studentId => $status) {
+        Attendance::updateOrCreate(
+            ['user_id' => $studentId, 'date' => $today],
+            ['status' => $status, 'marked_by' => Auth::id()]
+        );
+    }
+
+    return back()->with('success', 'Attendance saved successfully!')->with('class_id', $request->class_id);
+}
 }
