@@ -85,11 +85,10 @@ public function attendanceIndex(Request $request)
     $todayRecords = collect();
 
     if ($selectedClass) {
-        $students = User::where('role', 'student')
-            ->where('class', $selectedClass->name)
-            ->where('section', $selectedClass->section)
-            ->orderBy('roll_number')
-            ->get();
+       $students = User::where('role', 'student')
+    ->where('class_room_id', $selectedClass->id)
+    ->orderBy('roll_number')
+    ->get();
 
         $todayRecords = Attendance::where('date', Carbon::today())
             ->whereIn('user_id', $students->pluck('id'))

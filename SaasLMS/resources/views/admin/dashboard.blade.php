@@ -380,19 +380,25 @@
                                 <input type="text" name="roll_number" placeholder="Enter roll number" required
                                     class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
                             </div>
-                            <div class="form-group">
-                                <label class="block font-medium mb-1 text-sm text-gray-300">Class</label>
-                                <input type="text" name="class" placeholder="Enter class" required
-                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-semibold text-gray-400">Class</label>
+                                <select name="class_room_id" required
+                                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
+                                    <option value="">Select Class...</option>
+                                    @foreach (\App\Models\ClassRoom::all() as $class)
+                                        <option value="{{ $class->id }}">{{ $class->name }} -
+                                            {{ $class->section }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label class="block font-medium mb-1 text-sm text-gray-300">Section</label>
                                 <input type="text" name="section" placeholder="Enter section" required
                                     class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
-                            </div>
+                            </div> --}}
                             <div class="form-group">
                                 <label class="block font-medium mb-1 text-sm text-gray-300">Password</label>
                                 <input type="password" name="password" placeholder="••••••••" required
