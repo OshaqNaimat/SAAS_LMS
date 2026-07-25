@@ -71,4 +71,9 @@ public function classes()
 {
     return $this->belongsToMany(ClassRoom::class, 'class_teacher', 'teacher_id', 'class_room_id')->withPivot('subject');
 }
+// In User model, add:
+public function classRoom()
+{
+    return $this->belongsTo(ClassRoom::class);
+}
 }

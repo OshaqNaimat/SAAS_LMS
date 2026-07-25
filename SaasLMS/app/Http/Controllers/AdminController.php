@@ -40,22 +40,20 @@ class AdminController extends Controller
 public function storeStudent(Request $request)
 {
     $request->validate([
-        'name'        => 'required|string|max:255',
-        'father_name' => 'required|string|max:255',
-        'roll_number' => 'required|string|unique:users,roll_number',
-        'class'       => 'required|string',
-        'section'     => 'required|string',
-        'password'    => 'required|string|min:4',
+        'name'          => 'required|string|max:255',
+        'father_name'   => 'required|string|max:255',
+        'roll_number'   => 'required|string|unique:users,roll_number',
+        'class_room_id' => 'required|exists:class_rooms,id',
+        'password'      => 'required|string|min:4',
     ]);
 
     User::create([
-        'name'        => $request->name,
-        'father_name' => $request->father_name,
-        'roll_number' => $request->roll_number,
-        'class'       => $request->class,
-        'section'     => $request->section,
-        'password'    => Hash::make($request->password),
-        'role'        => 'student', // hardcode server-side
+        'name'          => $request->name,
+        'father_name'   => $request->father_name,
+        'roll_number'   => $request->roll_number,
+        'class_room_id' => $request->class_room_id,
+        'password'      => Hash::make($request->password),
+        'role'          => 'student',
     ]);
 
     return back()->with('success', 'New Student Registered successfully!');
