@@ -8,20 +8,14 @@
         <main class="flex-1 flex flex-col min-w-0 overflow-y-auto p-6 lg:p-8">
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-                @php
-                    // Fetch the currently authenticated student's details
-$studentName = Auth::user()->name ?? 'Student';
-
-// Split the name by spaces to extract initials
-$words = explode(' ', $studentName);
-$studentClass = Auth::user()->class ?? 'N/A';
-$studentSection = Auth::user()->section ?? 'N/A';
-
-                @endphp
                 <div>
-                    <h1 class="text-2xl font-bold text-white">Assalam-o-Alaikum, {{ $studentName }}</h1>
+                    <h1 class="text-2xl font-bold text-white">Assalam-o-Alaikum, {{ $student->name }}</h1>
                     <p class="text-sm text-gray-400">
-                        Class {{ ucfirst($studentClass) }} - Section {{ strtoupper($studentSection) }} •
+                        @if ($student->classRoom)
+                            Class {{ $student->classRoom->name }} - Section {{ $student->classRoom->section }}
+                        @else
+                            No class assigned
+                        @endif
                     </p>
                 </div>
             </div>
@@ -35,60 +29,73 @@ $studentSection = Auth::user()->section ?? 'N/A';
                                 <span
                                     class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Attendance
                                     Rate</span>
-                                <h2 class="text-3xl font-extrabold text-white mt-1">92.4%</h2>
+                                <h2 class="text-3xl font-extrabold text-white mt-1">{{ $attendanceRate }}%</h2>
                             </div>
                             <span
-                                class="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-lg">Good
-                                Standing</span>
+                                class="text-xs font-bold {{ $attendanceRate >= 90 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : ($attendanceRate >= 75 ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-rose-400 bg-rose-500/10 border-rose-500/20') }} border px-2 py-1 rounded-lg">
+                                {{ $attendanceRate >= 90 ? 'Good Standing' : ($attendanceRate >= 75 ? 'Needs Improvement' : 'At Risk') }}
+                            </span>
                         </div>
-
                         <div class="mt-8">
                             <div class="w-full bg-slate-900 rounded-full h-3 overflow-hidden border border-slate-800">
-                                <div class="bg-emerald-500 h-3 rounded-full" style="width: 92.4%"></div>
+                                <div class="bg-emerald-500 h-3 rounded-full" style="width: {{ $attendanceRate }}%">
+                                </div>
                             </div>
                         </div>
                     </div>
-
                     <div
                         class="pt-4 border-t border-slate-800/60 flex items-center justify-between text-xs text-gray-400">
                         <span class="flex items-center gap-1.5"><span
-                                class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> 38 Present</span>
+                                class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> {{ $presentCount }}
+                            Present</span>
                         <span class="flex items-center gap-1.5"><span
-                                class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> 2 Absent</span>
+                                class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> {{ $absentCount }} Absent</span>
                         <span class="flex items-center gap-1.5"><span
-                                class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> 1 Leave</span>
+                                class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {{ $leaveCount }} Leave</span>
                     </div>
                 </div>
 
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-6 flex flex-col justify-between h-56">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Monthly
-                                Test Performance</span>
-                            <h2 class="text-3xl font-extrabold text-white mt-1">Grade A</h2>
+                    <div>
+                        <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Fees
+                            Overview</span>
+                        <div class="flex items-end gap-4 mt-1">
+                            <div>
+                                <h2 class="text-2xl font-extrabold text-emerald-400">PKR
+                                    {{ number_format($totalPaid) }}</h2>
+                                <span class="text-[10px] text-gray-500">Paid</span>
+                            </div>
+                            <div>
+                                <h2
+                                    class="text-2xl font-extrabold {{ $totalDue > 0 ? 'text-rose-400' : 'text-gray-500' }}">
+                                    PKR {{ number_format($totalDue) }}</h2>
+                                <span class="text-[10px] text-gray-500">Outstanding</span>
+                            </div>
                         </div>
 
-                        <div
-                            class="flex items-end justify-between gap-2.5 h-24 w-32 shrink-0 px-2 bg-slate-900/40 border border-slate-800/50 rounded-xl p-2">
-                            <div class="w-4 bg-slate-900 rounded-t h-full flex items-end" title="Maths: 85%">
-                                <div class="bg-blue-500 w-full rounded-t" style="height: 85%"></div>
+                        @if ($feeHistory->count() > 0)
+                            <div class="flex items-end justify-between gap-1.5 h-16 mt-4 px-1">
+                                @php $maxAmount = $feeHistory->max('amount') ?: 1; @endphp
+                                @foreach ($feeHistory->take(6) as $fee)
+                                    <div class="flex-1 bg-slate-900 rounded-t h-full flex items-end"
+                                        title="{{ $fee['label'] }}: PKR {{ number_format($fee['amount']) }}">
+                                        <div class="{{ $fee['status'] === 'cleared' ? 'bg-emerald-500' : ($fee['status'] === 'overdue' ? 'bg-rose-500' : 'bg-amber-500') }} w-full rounded-t"
+                                            style="height: {{ round(($fee['amount'] / $maxAmount) * 100) }}%"></div>
+                                    </div>
+                                @endforeach
                             </div>
-                            <div class="w-4 bg-slate-900 rounded-t h-full flex items-end" title="Comp Sci: 95%">
-                                <div class="bg-blue-500 w-full rounded-t" style="height: 95%"></div>
-                            </div>
-                            <div class="w-4 bg-slate-900 rounded-t h-full flex items-end" title="Physics: 75%">
-                                <div class="bg-blue-500 w-full rounded-t" style="height: 75%"></div>
-                            </div>
-                            <div class="w-4 bg-slate-900 rounded-t h-full flex items-end" title="Chemistry: 88%">
-                                <div class="bg-blue-500 w-full rounded-t" style="height: 88%"></div>
-                            </div>
-                        </div>
+                        @else
+                            <p class="text-xs text-gray-500 mt-4">No fee records found yet.</p>
+                        @endif
                     </div>
-
                     <div
                         class="pt-4 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-gray-400">
-                        <span>Subject benchmarks verified</span>
-                        <span class="text-blue-400 font-bold">86.5% Avg</span>
+                        <span>{{ $feeHistory->count() }} transaction(s) on record</span>
+                        @if ($totalDue > 0)
+                            <span class="text-rose-400 font-bold">Payment Due</span>
+                        @else
+                            <span class="text-emerald-400 font-bold">All Cleared</span>
+                        @endif
                     </div>
                 </div>
 
@@ -101,39 +108,45 @@ $studentSection = Auth::user()->section ?? 'N/A';
                     <div class="space-y-3">
                         <h3 class="text-xs font-bold text-gray-400 tracking-wide uppercase">Today's Periods</h3>
 
-                        <div
-                            class="bg-[#111c2a] border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center">
-                                    <span class="text-[10px] text-gray-500 font-bold">1st</span>
-                                    <span class="text-xs text-white font-bold">08:30</span>
+                        @forelse($periods as $period)
+                            @php
+                                $styles = [
+                                    'ended' => ['border-slate-800', '', 'text-gray-500', 'bg-slate-900', 'Ended'],
+                                    'ongoing' => [
+                                        'border-emerald-500/40 bg-emerald-500/[0.02] shadow-xl',
+                                        '',
+                                        'text-emerald-400',
+                                        'bg-emerald-500/10 border-emerald-500/20',
+                                        'On-going',
+                                    ],
+                                    'upcoming' => ['border-slate-800', '', 'text-blue-400', 'bg-slate-900', 'Up Next'],
+                                ];
+                                [$cardClass, , $textColor, $badgeBg, $label] = $styles[$period->computedStatus];
+                            @endphp
+                            <div
+                                class="bg-[#111c2a] border {{ $cardClass }} rounded-2xl p-4 flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 rounded-xl {{ $period->computedStatus === 'ongoing' ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-slate-900 border-slate-800' }} border flex flex-col items-center justify-center">
+                                        <span
+                                            class="text-[10px] {{ $textColor }} font-bold">{{ $period->period_number }}{{ $period->period_number == 1 ? 'st' : ($period->period_number == 2 ? 'nd' : ($period->period_number == 3 ? 'rd' : 'th')) }}</span>
+                                        <span
+                                            class="text-xs {{ $period->computedStatus === 'ongoing' ? 'text-emerald-400' : 'text-white' }} font-bold">{{ \Carbon\Carbon::parse($period->start_time)->format('H:i') }}</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-white">{{ $period->subject }}</h3>
+                                        <p
+                                            class="text-xs {{ $period->computedStatus === 'ongoing' ? 'text-emerald-400/70' : 'text-gray-500' }}">
+                                            {{ $period->teacher->name ?? 'TBA' }} •
+                                            {{ $period->room ?? 'No room set' }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 class="text-sm font-bold text-white">Mathematics</h3>
-                                    <p class="text-xs text-gray-500">Prof. Mashood • Room 12</p>
-                                </div>
+                                <span
+                                    class="text-[10px] font-bold {{ $textColor }} {{ $badgeBg }} px-3 py-1 rounded-full border {{ $period->computedStatus === 'ongoing' ? 'animate-pulse' : '' }}">{{ $label }}</span>
                             </div>
-                            <span
-                                class="text-[10px] font-bold text-gray-500 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">Ended</span>
-                        </div>
-
-                        <div
-                            class="bg-[#111c2a] border border-emerald-500/40 bg-emerald-500/[0.02] rounded-2xl p-4 flex items-center justify-between shadow-xl">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col items-center justify-center">
-                                    <span class="text-[10px] text-emerald-400 font-bold uppercase">2nd</span>
-                                    <span class="text-xs text-emerald-400 font-bold">09:15</span>
-                                </div>
-                                <div>
-                                    <h3 class="text-sm font-bold text-white">Computer Science</h3>
-                                    <p class="text-xs text-emerald-400/70">Prof. Mashood • Computer Lab</p>
-                                </div>
-                            </div>
-                            <span
-                                class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 animate-pulse">On-going</span>
-                        </div>
+                        @empty
+                            <p class="text-center text-gray-500 text-sm py-6">No periods scheduled for today.</p>
+                        @endforelse
                     </div>
 
                     {{-- <div class="space-y-3 pt-2">
