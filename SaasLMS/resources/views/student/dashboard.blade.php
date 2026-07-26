@@ -101,149 +101,76 @@
 
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="space-y-6">
 
-                <div class="lg:col-span-2 space-y-6">
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold text-gray-400 tracking-wide uppercase">Weekly Timetable</h3>
 
-                    <div class="space-y-3">
-                        <h3 class="text-xs font-bold text-gray-400 tracking-wide uppercase">Weekly Timetable</h3>
-
-                        <div class="bg-[#111c2a] border border-slate-800 rounded-2xl overflow-hidden">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse whitespace-nowrap">
-                                    <thead>
-                                        <tr
-                                            class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/60 border-b border-slate-800">
-                                            <th class="p-4 w-32">Day</th>
-                                            <th class="p-4">Lectures</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                                        @php
-                                            $dayNames = [
-                                                '',
-                                                'Monday',
-                                                'Tuesday',
-                                                'Wednesday',
-                                                'Thursday',
-                                                'Friday',
-                                                'Saturday',
-                                            ];
-                                        @endphp
-                                        @forelse(range(1, 5) as $dayNum)
-                                            @php $dayPeriods = $periods->get($dayNum, collect()); @endphp
-                                            <tr class="hover:bg-slate-900/40 align-top">
-                                                <td class="p-4 font-semibold text-white">{{ $dayNames[$dayNum] }}</td>
-                                                <td class="p-4">
-                                                    @if ($dayPeriods->isEmpty())
-                                                        <span class="text-xs text-gray-500">No lectures scheduled</span>
-                                                    @else
-                                                        <div class="flex flex-wrap gap-2">
-                                                            @foreach ($dayPeriods as $period)
+                    <div class="bg-[#111c2a] border border-slate-800 rounded-2xl overflow-hidden w-full">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse whitespace-nowrap">
+                                <thead>
+                                    <tr
+                                        class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/60 border-b border-slate-800">
+                                        <th class="p-4 w-32">Day</th>
+                                        <th class="p-4">Lectures</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
+                                    @php
+                                        $dayNames = [
+                                            '',
+                                            'Monday',
+                                            'Tuesday',
+                                            'Wednesday',
+                                            'Thursday',
+                                            'Friday',
+                                            'Saturday',
+                                        ];
+                                    @endphp
+                                    @forelse(range(1, 6) as $dayNum)
+                                        @php $dayPeriods = $periods->get($dayNum, collect()); @endphp
+                                        <tr class="hover:bg-slate-900/40 align-top">
+                                            <td class="p-4 font-semibold text-white">{{ $dayNames[$dayNum] }}</td>
+                                            <td class="p-4">
+                                                @if ($dayPeriods->isEmpty())
+                                                    <span class="text-xs text-gray-500">
+                                                        {{ $dayNum === 6 ? 'No classes on Saturday' : 'No lectures scheduled' }}
+                                                    </span>
+                                                @else
+                                                    <div class="flex flex-wrap gap-2">
+                                                        @foreach ($dayPeriods as $period)
+                                                            <div
+                                                                class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 min-w-[140px]">
                                                                 <div
-                                                                    class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 min-w-[140px]">
-                                                                    <div
-                                                                        class="flex items-center justify-between gap-2 mb-1">
-                                                                        <span
-                                                                            class="text-xs font-bold text-white">{{ $period->subject }}</span>
-                                                                        <span
-                                                                            class="text-[10px] text-blue-400 font-mono">P{{ $period->period_number }}</span>
-                                                                    </div>
-                                                                    <p class="text-[10px] text-gray-500">
-                                                                        {{ \Carbon\Carbon::parse($period->start_time)->format('H:i') }}
-                                                                        -
-                                                                        {{ \Carbon\Carbon::parse($period->end_time)->format('H:i') }}
-                                                                    </p>
-                                                                    <p class="text-[10px] text-gray-500">
-                                                                        {{ $period->teacher->name ?? 'TBA' }} •
-                                                                        {{ $period->room ?? 'No room' }}</p>
+                                                                    class="flex items-center justify-between gap-2 mb-1">
+                                                                    <span
+                                                                        class="text-xs font-bold text-white">{{ $period->subject }}</span>
+                                                                    <span
+                                                                        class="text-[10px] text-blue-400 font-mono">P{{ $period->period_number }}</span>
                                                                 </div>
-                                                            @endforeach
-                                                        </div>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @empty
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
+                                                                <p class="text-[10px] text-gray-500">
+                                                                    {{ \Carbon\Carbon::parse($period->start_time)->format('H:i') }}
+                                                                    -
+                                                                    {{ \Carbon\Carbon::parse($period->end_time)->format('H:i') }}
+                                                                </p>
+                                                                <p class="text-[10px] text-gray-500">
+                                                                    {{ $period->teacher->name ?? 'TBA' }} •
+                                                                    {{ $period->room ?? 'No room' }}</p>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-
-                    {{-- <div class="space-y-3 pt-2">
-                        <h3 class="text-xs font-bold text-gray-400 tracking-wide uppercase">Class Announcements</h3>
-
-                        <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span
-                                    class="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Homework
-                                    Diary</span>
-                                <span class="text-xs text-gray-500">Today, 02:15 PM</span>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-white">HTML Layout Structure Lab Practical</h4>
-                                <p class="text-xs text-gray-400 mt-1 leading-relaxed">
-                                    Complete your responsive layout grids using CSS variables. All students must bring
-                                    their practical logs completed for code checking tomorrow morning.
-                                </p>
-                            </div>
-                            <div class="text-[11px] text-gray-500 pt-1">
-                                <span>Teacher: Prof. Mashood</span>
-                            </div>
-                        </div>
-                    </div> --}}
-
                 </div>
 
-                {{-- <div class="space-y-6">
-
-                    <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5">
-                        <h3 class="text-sm font-bold text-white mb-4">My Homework Tasks</h3>
-
-                        <div class="space-y-3">
-                            <label
-                                class="flex items-start gap-3 p-3 bg-slate-900/50 rounded-xl border border-slate-800 cursor-pointer group">
-                                <input type="checkbox"
-                                    class="mt-0.5 rounded border-slate-700 bg-slate-800 text-blue-600 focus:ring-0">
-                                <div>
-                                    <span
-                                        class="text-xs font-semibold text-gray-300 block group-hover:text-white transition">Complete
-                                        Computer Lab Grid Assignment</span>
-                                    <span class="text-[10px] text-gray-500">Due: Tomorrow</span>
-                                </div>
-                            </label>
-
-                            <label
-                                class="flex items-start gap-3 p-3 bg-slate-900/50 rounded-xl border border-slate-800 cursor-pointer group">
-                                <input type="checkbox"
-                                    class="mt-0.5 rounded border-slate-700 bg-slate-800 text-blue-600 focus:ring-0">
-                                <div>
-                                    <span
-                                        class="text-xs font-semibold text-gray-300 block group-hover:text-white transition">Maths
-                                        Exercise 3.2 (Questions 1-5)</span>
-                                    <span class="text-[10px] text-gray-500">Due: Monday</span>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5">
-                        <h3 class="text-sm font-bold text-white mb-4">School Calendar</h3>
-                        <div class="space-y-3">
-                            <div
-                                class="flex items-center gap-3 p-2 bg-slate-900/30 rounded-xl border border-slate-800/40">
-                                <div
-                                    class="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex flex-col items-center justify-center shrink-0">
-                                    <span class="text-[8px] font-bold text-blue-400 uppercase">Jun</span>
-                                    <span class="text-xs font-bold text-white">10</span>
-                                </div>
-                                <span class="text-xs font-medium text-gray-300">Upcoming Parent-Teacher Meeting</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div> --}}
             </div>
         </main>
     </div>
