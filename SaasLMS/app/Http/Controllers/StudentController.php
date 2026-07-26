@@ -26,16 +26,15 @@ class StudentController extends Controller
         $leaveCount = $last30->where('status', 'approved_leave')->count();
 
         // Full weekly timetable, from the real Schedule table, matched to student's class
-        $periods = collect();
+     $periods = collect();
 
-        if ($student->class_room_id) {
-            $periods = Schedule::with('teacher')
-                ->where('class_room_id', $student->class_room_id)
-                ->orderBy('day_of_week')
-                ->orderBy('period_number')
-                ->get();
-        }
-
+if ($student->class_room_id) {
+    $periods = Schedule::with('teacher')
+        ->where('class_room_id', $student->class_room_id)
+        ->orderBy('period_number')
+        ->get()
+        ->groupBy('day_of_week');
+}
         // Fees — match payments by roll_number
         $payments = Payment::where('roll_number', $student->roll_number)->orderBy('created_at')->get();
         $totalPaid = $payments->where('status', 'cleared')->sum('amount');

@@ -31,7 +31,7 @@
                 <div class="lg:col-span-2 space-y-4">
 
                     <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-                        @foreach (['Mon' => 1, 'Tue' => 2, 'Wed' => 3, 'Thu' => 4, 'Fri' => 5] as $label => $dayNum)
+                        @foreach (['Mon' => 1, 'Tue' => 2, 'Wed' => 3, 'Thu' => 4, 'Fri' => 5, 'Sat' => 6] as $label => $dayNum)
                             <a href="{{ route('teacher.Schedule', ['day' => $dayNum]) }}"
                                 class="px-4 py-2 text-xs font-semibold rounded-xl shrink-0 {{ $selectedDay == $dayNum ? 'bg-blue-600 text-white border border-blue-500/50 shadow-lg shadow-blue-600/20' : 'bg-[#111c2a] text-gray-400 border border-slate-800' }}">
                                 {{ $label }}

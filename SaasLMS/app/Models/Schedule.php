@@ -22,7 +22,7 @@ class Schedule extends Model
     }
 
     public function dayName()
-    {
-        return ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][$this->day_of_week] ?? '';
-    }
+{
+    return ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][$this->day_of_week] ?? '';
+}
 }

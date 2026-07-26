@@ -114,33 +114,56 @@
                                     <thead>
                                         <tr
                                             class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/60 border-b border-slate-800">
-                                            <th class="p-4">Day</th>
-                                            <th class="p-4">Period</th>
-                                            <th class="p-4">Time</th>
-                                            <th class="p-4">Subject</th>
-                                            <th class="p-4">Teacher</th>
-                                            <th class="p-4">Room</th>
+                                            <th class="p-4 w-32">Day</th>
+                                            <th class="p-4">Lectures</th>
                                         </tr>
                                     </thead>
                                     <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                                        @forelse($periods as $period)
-                                            <tr class="hover:bg-slate-900/40">
-                                                <td class="p-4 font-semibold text-white">{{ $period->dayName() }}</td>
-                                                <td class="p-4 text-gray-400">{{ $period->period_number }}</td>
-                                                <td class="p-4 text-xs font-mono text-blue-400">
-                                                    {{ \Carbon\Carbon::parse($period->start_time)->format('H:i') }} -
-                                                    {{ \Carbon\Carbon::parse($period->end_time)->format('H:i') }}
+                                        @php
+                                            $dayNames = [
+                                                '',
+                                                'Monday',
+                                                'Tuesday',
+                                                'Wednesday',
+                                                'Thursday',
+                                                'Friday',
+                                                'Saturday',
+                                            ];
+                                        @endphp
+                                        @forelse(range(1, 5) as $dayNum)
+                                            @php $dayPeriods = $periods->get($dayNum, collect()); @endphp
+                                            <tr class="hover:bg-slate-900/40 align-top">
+                                                <td class="p-4 font-semibold text-white">{{ $dayNames[$dayNum] }}</td>
+                                                <td class="p-4">
+                                                    @if ($dayPeriods->isEmpty())
+                                                        <span class="text-xs text-gray-500">No lectures scheduled</span>
+                                                    @else
+                                                        <div class="flex flex-wrap gap-2">
+                                                            @foreach ($dayPeriods as $period)
+                                                                <div
+                                                                    class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 min-w-[140px]">
+                                                                    <div
+                                                                        class="flex items-center justify-between gap-2 mb-1">
+                                                                        <span
+                                                                            class="text-xs font-bold text-white">{{ $period->subject }}</span>
+                                                                        <span
+                                                                            class="text-[10px] text-blue-400 font-mono">P{{ $period->period_number }}</span>
+                                                                    </div>
+                                                                    <p class="text-[10px] text-gray-500">
+                                                                        {{ \Carbon\Carbon::parse($period->start_time)->format('H:i') }}
+                                                                        -
+                                                                        {{ \Carbon\Carbon::parse($period->end_time)->format('H:i') }}
+                                                                    </p>
+                                                                    <p class="text-[10px] text-gray-500">
+                                                                        {{ $period->teacher->name ?? 'TBA' }} •
+                                                                        {{ $period->room ?? 'No room' }}</p>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
                                                 </td>
-                                                <td class="p-4 font-semibold text-white">{{ $period->subject }}</td>
-                                                <td class="p-4 text-gray-400">{{ $period->teacher->name ?? 'TBA' }}
-                                                </td>
-                                                <td class="p-4 text-gray-400">{{ $period->room ?? 'No room set' }}</td>
                                             </tr>
                                         @empty
-                                            <tr>
-                                                <td colspan="6" class="p-6 text-center text-gray-500 text-sm">No
-                                                    periods scheduled yet.</td>
-                                            </tr>
                                         @endforelse
                                     </tbody>
                                 </table>

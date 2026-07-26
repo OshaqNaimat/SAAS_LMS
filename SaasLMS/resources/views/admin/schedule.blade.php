@@ -197,6 +197,7 @@
                             <option value="3">Wednesday</option>
                             <option value="4">Thursday</option>
                             <option value="5">Friday</option>
+                            <option value="6">Saturday</option>
                         </select>
                     </div>
                     <div class="space-y-1.5">

@@ -40,7 +40,7 @@ public function timetable(Request $request)
 {
     $teacher = Auth::user();
     $selectedDay = (int) $request->get('day', now()->dayOfWeekIso); // defaults to today (1-5, weekends clamp oddly but fine for a school app)
-    if ($selectedDay < 1 || $selectedDay > 5) $selectedDay = 1;
+    if ($selectedDay < 1 || $selectedDay > 6) $selectedDay = 1;
 
     $periods = Schedule::with('classRoom')
         ->where('teacher_id', $teacher->id)

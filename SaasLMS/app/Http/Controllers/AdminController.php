@@ -622,7 +622,7 @@ public function updateSchedule(Request $request, Schedule $schedule)
         'teacher_id' => 'required|exists:users,id',
         'class_room_id' => 'required|exists:class_rooms,id',
         'subject' => 'required|string|max:255',
-        'day_of_week' => 'required|integer|min:1|max:5',
+'day_of_week' => 'required|integer|min:1|max:6', // was max:5
         'period_number' => 'required|integer|min:1|max:12', // ← added max:12
         'start_time' => 'required',
         'end_time' => 'required|after:start_time',
