@@ -106,47 +106,46 @@
                 <div class="lg:col-span-2 space-y-6">
 
                     <div class="space-y-3">
-                        <h3 class="text-xs font-bold text-gray-400 tracking-wide uppercase">Today's Periods</h3>
+                        <h3 class="text-xs font-bold text-gray-400 tracking-wide uppercase">Weekly Timetable</h3>
 
-                        @forelse($periods as $period)
-                            @php
-                                $styles = [
-                                    'ended' => ['border-slate-800', '', 'text-gray-500', 'bg-slate-900', 'Ended'],
-                                    'ongoing' => [
-                                        'border-emerald-500/40 bg-emerald-500/[0.02] shadow-xl',
-                                        '',
-                                        'text-emerald-400',
-                                        'bg-emerald-500/10 border-emerald-500/20',
-                                        'On-going',
-                                    ],
-                                    'upcoming' => ['border-slate-800', '', 'text-blue-400', 'bg-slate-900', 'Up Next'],
-                                ];
-                                [$cardClass, , $textColor, $badgeBg, $label] = $styles[$period->computedStatus];
-                            @endphp
-                            <div
-                                class="bg-[#111c2a] border {{ $cardClass }} rounded-2xl p-4 flex items-center justify-between">
-                                <div class="flex items-center gap-4">
-                                    <div
-                                        class="w-12 h-12 rounded-xl {{ $period->computedStatus === 'ongoing' ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-slate-900 border-slate-800' }} border flex flex-col items-center justify-center">
-                                        <span
-                                            class="text-[10px] {{ $textColor }} font-bold">{{ $period->period_number }}{{ $period->period_number == 1 ? 'st' : ($period->period_number == 2 ? 'nd' : ($period->period_number == 3 ? 'rd' : 'th')) }}</span>
-                                        <span
-                                            class="text-xs {{ $period->computedStatus === 'ongoing' ? 'text-emerald-400' : 'text-white' }} font-bold">{{ \Carbon\Carbon::parse($period->start_time)->format('H:i') }}</span>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-sm font-bold text-white">{{ $period->subject }}</h3>
-                                        <p
-                                            class="text-xs {{ $period->computedStatus === 'ongoing' ? 'text-emerald-400/70' : 'text-gray-500' }}">
-                                            {{ $period->teacher->name ?? 'TBA' }} •
-                                            {{ $period->room ?? 'No room set' }}</p>
-                                    </div>
-                                </div>
-                                <span
-                                    class="text-[10px] font-bold {{ $textColor }} {{ $badgeBg }} px-3 py-1 rounded-full border {{ $period->computedStatus === 'ongoing' ? 'animate-pulse' : '' }}">{{ $label }}</span>
+                        <div class="bg-[#111c2a] border border-slate-800 rounded-2xl overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse whitespace-nowrap">
+                                    <thead>
+                                        <tr
+                                            class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/60 border-b border-slate-800">
+                                            <th class="p-4">Day</th>
+                                            <th class="p-4">Period</th>
+                                            <th class="p-4">Time</th>
+                                            <th class="p-4">Subject</th>
+                                            <th class="p-4">Teacher</th>
+                                            <th class="p-4">Room</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
+                                        @forelse($periods as $period)
+                                            <tr class="hover:bg-slate-900/40">
+                                                <td class="p-4 font-semibold text-white">{{ $period->dayName() }}</td>
+                                                <td class="p-4 text-gray-400">{{ $period->period_number }}</td>
+                                                <td class="p-4 text-xs font-mono text-blue-400">
+                                                    {{ \Carbon\Carbon::parse($period->start_time)->format('H:i') }} -
+                                                    {{ \Carbon\Carbon::parse($period->end_time)->format('H:i') }}
+                                                </td>
+                                                <td class="p-4 font-semibold text-white">{{ $period->subject }}</td>
+                                                <td class="p-4 text-gray-400">{{ $period->teacher->name ?? 'TBA' }}
+                                                </td>
+                                                <td class="p-4 text-gray-400">{{ $period->room ?? 'No room set' }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="p-6 text-center text-gray-500 text-sm">No
+                                                    periods scheduled yet.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
-                        @empty
-                            <p class="text-center text-gray-500 text-sm py-6">No periods scheduled for today.</p>
-                        @endforelse
+                        </div>
                     </div>
 
                     {{-- <div class="space-y-3 pt-2">

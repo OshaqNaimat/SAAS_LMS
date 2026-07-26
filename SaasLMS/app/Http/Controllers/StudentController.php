@@ -25,28 +25,15 @@ class StudentController extends Controller
         $absentCount = $last30->where('status', 'absent')->count();
         $leaveCount = $last30->where('status', 'approved_leave')->count();
 
-        // Today's periods, from the real Schedule table, matched to student's class
-        $today = now()->dayOfWeekIso;
+        // Full weekly timetable, from the real Schedule table, matched to student's class
         $periods = collect();
-        if ($student->class_room_id && $today >= 1 && $today <= 5) {
+
+        if ($student->class_room_id) {
             $periods = Schedule::with('teacher')
                 ->where('class_room_id', $student->class_room_id)
-                ->where('day_of_week', $today)
+                ->orderBy('day_of_week')
                 ->orderBy('period_number')
                 ->get();
-
-            $nowTime = Carbon::createFromTimeString(now()->format('H:i:s'));
-            foreach ($periods as $p) {
-                $start = Carbon::parse($p->start_time);
-                $end = Carbon::parse($p->end_time);
-                if ($nowTime->between($start, $end)) {
-                    $p->computedStatus = 'ongoing';
-                } elseif ($nowTime->lt($start)) {
-                    $p->computedStatus = 'upcoming';
-                } else {
-                    $p->computedStatus = 'ended';
-                }
-            }
         }
 
         // Fees — match payments by roll_number
@@ -59,10 +46,10 @@ class StudentController extends Controller
             'status' => $p->status,
         ]);
 
-        return view('student.dashboard', compact(
-            'student', 'attendanceRate', 'presentCount', 'absentCount', 'leaveCount',
-            'periods', 'totalPaid', 'totalDue', 'feeHistory'
-        ));
+       return view('student.dashboard', compact(
+    'student', 'attendanceRate', 'presentCount', 'absentCount', 'leaveCount',
+    'periods', 'scheduleNote', 'totalPaid', 'totalDue', 'feeHistory'
+));
     }
     public function attendanceAnalytics()
 {

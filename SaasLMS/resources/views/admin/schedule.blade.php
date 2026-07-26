@@ -80,6 +80,61 @@
                     </table>
                 </div>
             </div>
+
+            <div class="mt-8 space-y-6">
+                <h3 class="text-xs font-bold text-gray-400 tracking-wide uppercase">Class Timetables (Student View)</h3>
+
+                @forelse($classes as $class)
+                    @php $classSchedules = $schedulesByClass->get($class->id, collect()); @endphp
+                    <div class="card-bg rounded-2xl shadow-lg overflow-hidden">
+                        <div class="header-bg p-4 flex justify-between items-center">
+                            <h3 class="font-bold text-base text-white">{{ $class->name }} - {{ $class->section }}
+                            </h3>
+                            <span
+                                class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
+                                {{ $classSchedules->count() }} Periods
+                            </span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse whitespace-nowrap">
+                                <thead>
+                                    <tr
+                                        class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/60 border-b border-slate-800">
+                                        <th class="p-4">Day</th>
+                                        <th class="p-4">Period</th>
+                                        <th class="p-4">Time</th>
+                                        <th class="p-4">Subject</th>
+                                        <th class="p-4">Teacher</th>
+                                        <th class="p-4">Room</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
+                                    @forelse($classSchedules as $s)
+                                        <tr class="hover:bg-slate-900/40">
+                                            <td class="p-4 font-semibold text-white">{{ $s->dayName() }}</td>
+                                            <td class="p-4 text-gray-400">{{ $s->period_number }}</td>
+                                            <td class="p-4 text-xs font-mono text-blue-400">
+                                                {{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }} -
+                                                {{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}
+                                            </td>
+                                            <td class="p-4">{{ $s->subject }}</td>
+                                            <td class="p-4 text-gray-400">{{ $s->teacher->name ?? 'Unknown' }}</td>
+                                            <td class="p-4 text-gray-400">{{ $s->room ?? '—' }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="p-6 text-center text-gray-500 text-sm">No periods
+                                                scheduled for this class yet.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-center text-gray-500 text-sm py-6">No classes exist yet.</p>
+                @endforelse
+            </div>
         </main>
     </div>
 
@@ -127,7 +182,8 @@
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-semibold text-gray-400">Subject</label>
-                    <input type="text" name="subject" id="scheduleSubject" placeholder="e.g. Mathematics" required
+                    <input type="text" name="subject" id="scheduleSubject" placeholder="e.g. Mathematics"
+                        required
                         class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
                 </div>
 

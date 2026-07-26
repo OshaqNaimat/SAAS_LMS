@@ -589,7 +589,13 @@ public function scheduleIndex()
     $teachers = User::where('role', 'teacher')->get();
     $classes = ClassRoom::all();
 
-    return view('admin.schedule', compact('schedules', 'teachers', 'classes'));
+    // Group schedules by class for the student-view table
+    $schedulesByClass = Schedule::with(['teacher', 'classRoom'])
+        ->orderBy('day_of_week')->orderBy('period_number')
+        ->get()
+        ->groupBy('class_room_id');
+
+    return view('admin.schedule', compact('schedules', 'teachers', 'classes', 'schedulesByClass'));
 }
 
 public function storeSchedule(Request $request)
@@ -599,7 +605,7 @@ public function storeSchedule(Request $request)
         'class_room_id' => 'required|exists:class_rooms,id',
         'subject' => 'required|string|max:255',
         'day_of_week' => 'required|integer|min:1|max:5',
-        'period_number' => 'required|integer|min:1',
+        'period_number' => 'required|integer|min:1|max:12', // ← added max:12
         'start_time' => 'required',
         'end_time' => 'required|after:start_time',
         'room' => 'nullable|string|max:255',
@@ -617,7 +623,7 @@ public function updateSchedule(Request $request, Schedule $schedule)
         'class_room_id' => 'required|exists:class_rooms,id',
         'subject' => 'required|string|max:255',
         'day_of_week' => 'required|integer|min:1|max:5',
-        'period_number' => 'required|integer|min:1',
+        'period_number' => 'required|integer|min:1|max:12', // ← added max:12
         'start_time' => 'required',
         'end_time' => 'required|after:start_time',
         'room' => 'nullable|string|max:255',
