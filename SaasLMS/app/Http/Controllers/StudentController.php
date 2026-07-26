@@ -46,10 +46,10 @@ class StudentController extends Controller
             'status' => $p->status,
         ]);
 
-       return view('student.dashboard', compact(
-    'student', 'attendanceRate', 'presentCount', 'absentCount', 'leaveCount',
-    'periods', 'scheduleNote', 'totalPaid', 'totalDue', 'feeHistory'
-));
+    return view('student.dashboard', compact(
+            'student', 'attendanceRate', 'presentCount', 'absentCount', 'leaveCount',
+            'periods', 'totalPaid', 'totalDue', 'feeHistory'
+        ));
     }
     public function attendanceAnalytics()
 {
