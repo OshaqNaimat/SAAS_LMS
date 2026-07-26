@@ -11,15 +11,15 @@
 
      <div class="sidebar-section">
          <div class="sidebar-label">Navigation</div>
-         <a href="/student-dashboard" class="nav-item active">
+         <a href="/student-dashboard" class="nav-item {{ request()->is('student-dashboard') ? 'active' : '' }}">
              <i class="bi bi-grid-1x2-fill"></i> My Dashboard
          </a>
-         <a href="/student-timetable" class="nav-item">
-             <i class="bi bi-calendar3"></i> Class Timetable
+         <a href="/student-attendance" class="nav-item {{ request()->is('student-attendance') ? 'active' : '' }}">
+             <i class="bi bi-calendar3"></i> Timetable & Attendance
          </a>
-         <a href="/student-attendance" class="nav-item">
+         {{-- <a href="/student-attendance" class="nav-item">
              <i class="bi bi-person-check-fill"></i> My Attendance
-         </a>
+         </a> --}}
      </div>
 
      <div class="sidebar-spacer"></div>

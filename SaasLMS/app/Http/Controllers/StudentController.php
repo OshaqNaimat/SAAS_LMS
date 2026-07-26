@@ -64,4 +64,38 @@ class StudentController extends Controller
             'periods', 'totalPaid', 'totalDue', 'feeHistory'
         ));
     }
+    public function attendanceAnalytics()
+{
+    $student = Auth::user();
+
+    // Real subjects/instructors, from the same Schedule table admin uses to assign teachers
+    $subjects = collect();
+    if ($student->class_room_id) {
+        $subjects = Schedule::with('teacher')
+            ->where('class_room_id', $student->class_room_id)
+            ->get()
+            ->unique('subject')
+            ->values();
+    }
+
+    // Real overall attendance stats (last 30 days, matching your existing pattern)
+    $records = Attendance::where('user_id', $student->id)
+        ->where('date', '>=', now()->subDays(30))
+        ->get();
+
+    $totalDelivered = $records->count();
+    $totalPresent = $records->where('status', 'present')->count();
+    $totalAbsent = $records->where('status', 'absent')->count();
+    $avgAttendance = $totalDelivered > 0 ? round(($totalPresent / $totalDelivered) * 100, 1) : 0;
+
+    // Recent log entries (last 4 real attendance records)
+    $recentLogs = Attendance::where('user_id', $student->id)
+        ->orderByDesc('date')
+        ->take(4)
+        ->get();
+
+    return view('student.student-attendence', compact(
+        'subjects', 'totalDelivered', 'totalPresent', 'totalAbsent', 'avgAttendance', 'recentLogs'
+    ));
+}
 }

@@ -53,7 +53,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function attendanceRate($days = 30)
+   public function attendanceRate($days = 30)
 {
     $total = \App\Models\Attendance::where('user_id', $this->id)
         ->where('date', '>=', now()->subDays($days))
