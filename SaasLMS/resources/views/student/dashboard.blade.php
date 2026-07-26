@@ -136,7 +136,7 @@ $studentSection = Auth::user()->section ?? 'N/A';
                         </div>
                     </div>
 
-                    <div class="space-y-3 pt-2">
+                    {{-- <div class="space-y-3 pt-2">
                         <h3 class="text-xs font-bold text-gray-400 tracking-wide uppercase">Class Announcements</h3>
 
                         <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 space-y-3">
@@ -157,11 +157,11 @@ $studentSection = Auth::user()->section ?? 'N/A';
                                 <span>Teacher: Prof. Mashood</span>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                 </div>
 
-                <div class="space-y-6">
+                {{-- <div class="space-y-6">
 
                     <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5">
                         <h3 class="text-sm font-bold text-white mb-4">My Homework Tasks</h3>
@@ -208,7 +208,7 @@ $studentSection = Auth::user()->section ?? 'N/A';
                         </div>
                     </div>
 
-                </div>
+                </div> --}}
             </div>
         </main>
     </div>
