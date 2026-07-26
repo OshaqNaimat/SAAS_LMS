@@ -604,12 +604,32 @@ public function storeSchedule(Request $request)
         'teacher_id' => 'required|exists:users,id',
         'class_room_id' => 'required|exists:class_rooms,id',
         'subject' => 'required|string|max:255',
-        'day_of_week' => 'required|integer|min:1|max:6', // ← fixed: was max:5
+        'day_of_week' => 'required|integer|min:1|max:6',
         'period_number' => 'required|integer|min:1|max:12',
         'start_time' => 'required',
         'end_time' => 'required|after:start_time',
         'room' => 'nullable|string|max:255',
     ]);
+
+    // Conflict 1: this class already has a lecture at this day/period
+    $classConflict = Schedule::where('class_room_id', $request->class_room_id)
+        ->where('day_of_week', $request->day_of_week)
+        ->where('period_number', $request->period_number)
+        ->exists();
+
+    if ($classConflict) {
+        return back()->withInput()->with('error', 'This class already has a lecture assigned for that day and period.');
+    }
+
+    // Conflict 2: this teacher is already teaching another class at this day/period
+    $teacherConflict = Schedule::where('teacher_id', $request->teacher_id)
+        ->where('day_of_week', $request->day_of_week)
+        ->where('period_number', $request->period_number)
+        ->exists();
+
+    if ($teacherConflict) {
+        return back()->withInput()->with('error', 'This teacher is already assigned to another class at that day and period.');
+    }
 
     Schedule::create($request->all());
 
@@ -622,12 +642,32 @@ public function updateSchedule(Request $request, Schedule $schedule)
         'teacher_id' => 'required|exists:users,id',
         'class_room_id' => 'required|exists:class_rooms,id',
         'subject' => 'required|string|max:255',
-'day_of_week' => 'required|integer|min:1|max:6', // was max:5
-        'period_number' => 'required|integer|min:1|max:12', // ← added max:12
+        'day_of_week' => 'required|integer|min:1|max:6',
+        'period_number' => 'required|integer|min:1|max:12',
         'start_time' => 'required',
         'end_time' => 'required|after:start_time',
         'room' => 'nullable|string|max:255',
     ]);
+
+    $classConflict = Schedule::where('class_room_id', $request->class_room_id)
+        ->where('day_of_week', $request->day_of_week)
+        ->where('period_number', $request->period_number)
+        ->where('id', '!=', $schedule->id) // exclude itself when editing
+        ->exists();
+
+    if ($classConflict) {
+        return back()->withInput()->with('error', 'This class already has a lecture assigned for that day and period.');
+    }
+
+    $teacherConflict = Schedule::where('teacher_id', $request->teacher_id)
+        ->where('day_of_week', $request->day_of_week)
+        ->where('period_number', $request->period_number)
+        ->where('id', '!=', $schedule->id)
+        ->exists();
+
+    if ($teacherConflict) {
+        return back()->withInput()->with('error', 'This teacher is already assigned to another class at that day and period.');
+    }
 
     $schedule->update($request->all());
 

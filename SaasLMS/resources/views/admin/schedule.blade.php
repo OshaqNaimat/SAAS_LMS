@@ -155,6 +155,10 @@
             <form id="scheduleForm" action="{{ route('admin.schedule.store') }}" method="POST" class="p-6 space-y-4">
                 @csrf
                 <input type="hidden" name="_method" id="scheduleMethod" value="POST">
+                <div id="errorToast" class="error-toast">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span id="errorToastMsg"></span>
+                </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
@@ -305,5 +309,19 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
+
+        function showErrorToast(message) {
+            const toast = document.getElementById('errorToast');
+            const msg = document.getElementById('errorToastMsg');
+            msg.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        @if (session('error'))
+            window.addEventListener('DOMContentLoaded', () => {
+                showErrorToast(@json(session('error')));
+            });
+        @endif
     </script>
 </x-layout>
