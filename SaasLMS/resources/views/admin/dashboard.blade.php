@@ -260,7 +260,7 @@
                                             <td><strong style="color:white;">{{ $member->name }}</strong></td>
                                             <td>{{ ucfirst($member->role) }}</td>
                                             <td>
-                                                {{ $member->role === 'teacher' ? $member->assigned_class ?? '—' : ($member->class ? $member->class . ' - ' . $member->section : '—') }}
+                                                {{ $member->role === 'teacher' ? $member->assigned_class ?? '—' : ($member->classRoom ? $member->classRoom->name . ' - ' . $member->classRoom->section : '—') }}
                                             </td>
                                             <td>
                                                 <span class="status-dot-sm" style="background:var(--green);"></span>
