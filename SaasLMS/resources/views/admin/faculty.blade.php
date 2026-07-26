@@ -134,7 +134,8 @@
                                         </td>
                                         <td class="p-4 font-semibold text-white">{{ $student->name }}</td>
                                         <td class="p-4 text-gray-400">{{ $student->father_name }}</td>
-                                        <td class="p-4">{{ $student->class }} - {{ $student->section }}</td>
+                                        <td class="p-4">{{ $student->classRoom->name ?? '—' }} -
+                                            {{ $student->classRoom->section ?? '' }}</td>
                                         <td class="p-4">{{ $student->created_at->format('M d, Y') }}</td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-3">

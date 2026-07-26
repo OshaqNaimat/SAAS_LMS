@@ -111,18 +111,22 @@ public function updateTeacher(Request $request, User $user)
 
     return back()->with('success', 'Teacher updated successfully!');
 }
-
 public function updateStudent(Request $request, User $user)
 {
     $request->validate([
-        'name'        => 'required|string|max:255',
-        'father_name' => 'required|string|max:255',
-        'roll_number' => 'required|string|unique:users,roll_number,' . $user->id,
-        'class'       => 'required|string',
-        'section'     => 'required|string',
+        'name'          => 'required|string|max:255',
+        'father_name'   => 'required|string|max:255',
+        'roll_number'   => 'required|string|unique:users,roll_number,' . $user->id,
+        'class_room_id' => 'required|exists:class_rooms,id',
+        'password'      => 'nullable|string|min:4',
     ]);
 
-    $user->update($request->only('name', 'father_name', 'roll_number', 'class', 'section'));
+    $data = $request->only('name', 'father_name', 'roll_number', 'class_room_id');
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
+    }
+
+    $user->update($data);
 
     return back()->with('success', 'Student updated successfully!');
 }
