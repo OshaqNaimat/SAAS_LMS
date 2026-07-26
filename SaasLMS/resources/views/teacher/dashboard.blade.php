@@ -14,10 +14,10 @@
                         process class registries.</p>
                 </div>
                 <div class="flex items-center gap-3 shrink-0">
-                    <button
+                    <a href="{{ route('teacher.attendance') }}"
                         class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold transition text-white shadow-lg shadow-emerald-600/10">
                         <i class="bi bi-calendar-plus"></i> Mark Attendance
-                    </button>
+                    </a>
                 </div>
             </div>
 
