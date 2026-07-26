@@ -124,4 +124,13 @@ public function saveAttendance(Request $request)
 
     return back()->with('success', 'Attendance saved successfully!')->with('class_id', $request->class_id);
 }
+public function classesIndex()
+{
+    $teacher = Auth::user();
+    $classes = ClassRoom::where('teacher_id', $teacher->id)->get();
+
+    $totalEnrolled = $classes->sum(fn ($c) => $c->studentCount());
+
+    return view('teacher.assigned-batches', compact('classes', 'totalEnrolled'));
+}
 }

@@ -24,10 +24,9 @@ class ClassRoom extends Model
     }
 
     public function studentCount()
-    {
-        return User::where('role', 'student')
-            ->where('class', $this->name)
-            ->where('section', $this->section)
-            ->count();
-    }
+{
+    return User::where('role', 'student')
+        ->where('class_room_id', $this->id)
+        ->count();
+}
 }

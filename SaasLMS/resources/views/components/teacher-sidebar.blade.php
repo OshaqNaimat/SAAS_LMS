@@ -28,7 +28,7 @@
     <div class="sidebar-section">
         <div class="sidebar-label">Classrooms</div>
 
-        <a href="/teacher-batches" class="nav-item {{ request()->is('teacher-batches') ? 'active' : '' }}">
+        <a href="/teacher-classes" class="nav-item {{ request()->is('teacher-batches') ? 'active' : '' }}">
             <i class="bi bi-mortarboard-fill"></i> Assigned Batches
             <span class="nav-badge">4</span>
         </a>

@@ -117,6 +117,7 @@ Route::middleware(['auth', 'role:teacher'])->group(function () {
      Route::get('/teacher-attendance', [TeacherController::class, 'attendanceIndex'])->name('teacher.attendance');
     Route::post('/save-attendance', [TeacherController::class, 'saveAttendance'])->name('teacher.attendance.save');
 
+    Route::get('/teacher-classes', [TeacherController::class, 'classesIndex'])->name('teacher.classes');
 });
 
 // --------------------------------------------------------
