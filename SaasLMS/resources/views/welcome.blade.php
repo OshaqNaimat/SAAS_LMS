@@ -66,7 +66,7 @@
 
                             <input type="text" id="identifierInput" name="login_identity"
                                 value="{{ old('login_identity') }}" placeholder="Student Roll Number / Faculty Email "
-                                class="w-full bg-[#090d17] border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500 transition"
+                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500 transition"
                                 required autofocus>
                         </div>
                     </div>
