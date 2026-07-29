@@ -323,5 +323,10 @@
                 showErrorToast(@json(session('error')));
             });
         @endif
+        @if (session('error'))
+            document.addEventListener('DOMContentLoaded', () => {
+                toggleModal('scheduleModal');
+            });
+        @endif
     </script>
 </x-layout>
