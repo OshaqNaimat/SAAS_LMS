@@ -323,9 +323,10 @@
                                 <select name="assigned_class"
                                     class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-gray-400 focus:outline-none focus:border-blue-500 transition">
                                     <option value="">Select Class...</option>
-                                    <option value="Class 1">Class 1</option>
-                                    <option value="Class 2">Class 2</option>
-                                    <option value="Class 3">Class 3</option>
+                                    @foreach (\App\Models\ClassRoom::all() as $class)
+                                        <option value="{{ $class->name }} - {{ $class->section }}">
+                                            {{ $class->name }} - {{ $class->section }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>

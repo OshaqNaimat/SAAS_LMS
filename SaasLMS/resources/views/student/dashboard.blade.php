@@ -12,7 +12,7 @@
                     <h1 class="text-2xl font-bold text-white">Assalam-o-Alaikum, {{ $student->name }}</h1>
                     <p class="text-sm text-gray-400">
                         @if ($student->classRoom)
-                            Class {{ $student->classRoom->name }} - Section {{ $student->classRoom->section }}
+                            {{ $student->classRoom->name }} - Section {{ $student->classRoom->section }}
                         @else
                             No class assigned
                         @endif

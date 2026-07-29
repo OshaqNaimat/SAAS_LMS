@@ -35,8 +35,8 @@
             <div class="user-card">
                 <div class="user-avatar">AM</div>
                 <div class="user-info">
-                    <strong>Alex Mercer</strong>
-                    <small>Org Admin</small>
+                    <strong>{{ Auth::user()->name }}</strong>
+                    <small>{{ ucfirst(Auth::user()->role) }}</small>
                 </div>
                 <div class="logout-wrapper">
                     <button type="button" class="logout-btn" title="Sign Out"

@@ -589,13 +589,16 @@ public function scheduleIndex()
     $teachers = User::where('role', 'teacher')->get();
     $classes = ClassRoom::all();
 
-    // Group schedules by class for the student-view table
-    $schedulesByClass = Schedule::with(['teacher', 'classRoom'])
-        ->orderBy('day_of_week')->orderBy('period_number')
-        ->get()
-        ->groupBy('class_room_id');
+    // Grid lookup: [day][period] => Schedule (for the flat "All Periods" grid view)
+    $scheduleGrid = $schedules->groupBy('day_of_week')->map(function ($daySchedules) {
+        return $daySchedules->keyBy('period_number');
+    });
 
-    return view('admin.schedule', compact('schedules', 'teachers', 'classes', 'schedulesByClass'));
+    $maxPeriod = $schedules->max('period_number') ?? 8;
+
+    $schedulesByClass = $schedules->groupBy('class_room_id');
+
+    return view('admin.schedule', compact('schedules', 'teachers', 'classes', 'schedulesByClass', 'scheduleGrid', 'maxPeriod'));
 }
 
 public function storeSchedule(Request $request)
@@ -678,5 +681,48 @@ public function destroySchedule(Schedule $schedule)
 {
     $schedule->delete();
     return back()->with('success', 'Period removed successfully!');
+}
+public function globalSearch(Request $request)
+{
+    $query = $request->get('q', '');
+
+    if (strlen($query) < 2) {
+        return response()->json(['results' => []]);
+    }
+
+    $teachers = User::where('role', 'teacher')
+        ->where(function ($q) use ($query) {
+            $q->where('name', 'like', "%{$query}%")->orWhere('email', 'like', "%{$query}%");
+        })
+        ->limit(5)->get()->map(fn ($t) => [
+            'type' => 'Teacher',
+            'label' => $t->name,
+            'sub' => $t->email,
+            'url' => route('admin.faculty') . '#teacher-' . $t->id,
+        ]);
+
+    $students = User::where('role', 'student')
+        ->where(function ($q) use ($query) {
+            $q->where('name', 'like', "%{$query}%")->orWhere('roll_number', 'like', "%{$query}%");
+        })
+        ->limit(5)->get()->map(fn ($s) => [
+            'type' => 'Student',
+            'label' => $s->name,
+            'sub' => 'Roll No. ' . $s->roll_number,
+            'url' => route('admin.faculty') . '#student-' . $s->id,
+        ]);
+
+    $classes = ClassRoom::where('name', 'like', "%{$query}%")
+        ->orWhere('section', 'like', "%{$query}%")
+        ->limit(5)->get()->map(fn ($c) => [
+            'type' => 'Class',
+            'label' => $c->name . ' - ' . $c->section,
+            'sub' => $c->room ? 'Room ' . $c->room : '',
+            'url' => route('admin.classes') . '#class-' . $c->id,
+        ]);
+
+    $results = $teachers->concat($students)->concat($classes)->values();
+
+    return response()->json(['results' => $results]);
 }
 };

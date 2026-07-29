@@ -19,10 +19,10 @@
 
             <div class="card-bg rounded-2xl shadow-lg overflow-hidden">
                 <div class="header-bg p-4 flex justify-between items-center">
-                    <h3 class="font-bold text-base text-white">All Assigned Periods</h3>
+                    <h3 class="font-bold text-base text-white">Master Timetable Grid</h3>
                     <span
                         class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
-                        {{ $schedules->count() }}
+                        {{ $schedules->count() }} Periods
                     </span>
                 </div>
                 <div class="overflow-x-auto">
@@ -30,52 +30,52 @@
                         <thead>
                             <tr
                                 class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/60 border-b border-slate-800">
-                                <th class="p-4">Day</th>
-                                <th class="p-4">Period</th>
-                                <th class="p-4">Time</th>
-                                <th class="p-4">Teacher</th>
-                                <th class="p-4">Class</th>
-                                <th class="p-4">Subject</th>
-                                <th class="p-4">Room</th>
-                                <th class="p-4 text-right">Actions</th>
+                                <th class="p-3 sticky left-0 bg-slate-900/60">Period</th>
+                                @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $i => $dayLabel)
+                                    <th class="p-3 text-center min-w-[160px]">{{ $dayLabel }}</th>
+                                @endforeach
                             </tr>
                         </thead>
                         <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                            @forelse($schedules as $s)
+                            @for ($p = 1; $p <= $maxPeriod; $p++)
                                 <tr class="hover:bg-slate-900/40">
-                                    <td class="p-4 font-semibold text-white">{{ $s->dayName() }}</td>
-                                    <td class="p-4 text-gray-400">{{ $s->period_number }}</td>
-                                    <td class="p-4 text-xs font-mono text-blue-400">
-                                        {{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }} -
-                                        {{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}
+                                    <td class="p-3 font-bold text-white sticky left-0 bg-[#111c2a]">P{{ $p }}
                                     </td>
-                                    <td class="p-4">{{ $s->teacher->name ?? 'Unknown' }}</td>
-                                    <td class="p-4">{{ $s->classRoom->name ?? '' }} -
-                                        {{ $s->classRoom->section ?? '' }}</td>
-                                    <td class="p-4 text-gray-400">{{ $s->subject }}</td>
-                                    <td class="p-4 text-gray-400">{{ $s->room ?? '—' }}</td>
-                                    <td class="p-4 text-right">
-                                        <button
-                                            onclick="openEditSchedule({{ $s->id }}, {{ $s->teacher_id }}, {{ $s->class_room_id }}, '{{ $s->subject }}', {{ $s->day_of_week }}, {{ $s->period_number }}, '{{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }}', '{{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}', '{{ $s->room }}')"
-                                            class="text-yellow-400 hover:text-yellow-300 transition px-2">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                        <form action="{{ route('admin.schedule.destroy', $s->id) }}" method="POST"
-                                            class="inline" onsubmit="return confirm('Remove this period?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit"
-                                                class="text-gray-500 hover:text-rose-400 transition px-2">
-                                                <i class="bi bi-trash3"></i>
-                                            </button>
-                                        </form>
-                                    </td>
+                                    @for ($d = 1; $d <= 6; $d++)
+                                        @php $cell = $scheduleGrid->get($d, collect())->get($p); @endphp
+                                        <td class="p-2 align-top">
+                                            @if ($cell)
+                                                <div
+                                                    class="bg-slate-900 border border-slate-800 rounded-lg p-2 group relative">
+                                                    <p class="text-xs font-bold text-white truncate">
+                                                        {{ $cell->subject }}</p>
+                                                    <p class="text-[10px] text-gray-500 truncate">
+                                                        {{ $cell->classRoom->name ?? '' }}-{{ $cell->classRoom->section ?? '' }}
+                                                    </p>
+                                                    <p class="text-[10px] text-gray-500 truncate">
+                                                        {{ $cell->teacher->name ?? '—' }}</p>
+                                                    <div class="hidden group-hover:flex absolute top-1 right-1 gap-1">
+                                                        <button
+                                                            onclick="openEditSchedule({{ $cell->id }}, {{ $cell->teacher_id }}, {{ $cell->class_room_id }}, '{{ $cell->subject }}', {{ $cell->day_of_week }}, {{ $cell->period_number }}, '{{ \Carbon\Carbon::parse($cell->start_time)->format('H:i') }}', '{{ \Carbon\Carbon::parse($cell->end_time)->format('H:i') }}', '{{ $cell->room }}')"
+                                                            class="text-yellow-400 hover:text-yellow-300 text-xs"><i
+                                                                class="bi bi-pencil-square"></i></button>
+                                                        <form action="{{ route('admin.schedule.destroy', $cell->id) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Remove this period?');">
+                                                            @csrf @method('DELETE')
+                                                            <button type="submit"
+                                                                class="text-gray-500 hover:text-rose-400 text-xs"><i
+                                                                    class="bi bi-trash3"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <span class="text-[10px] text-gray-700 block text-center py-2">—</span>
+                                            @endif
+                                        </td>
+                                    @endfor
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="p-6 text-center text-gray-500 text-sm">No periods assigned
-                                        yet.</td>
-                                </tr>
-                            @endforelse
+                            @endfor
                         </tbody>
                     </table>
                 </div>
