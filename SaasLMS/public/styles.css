@@ -1102,3 +1102,14 @@ body {
         transform: translateY(-50%) translateX(4px);
     }
 }
+@keyframes highlightFade {
+    0% {
+        background-color: rgba(59, 130, 246, 0.25);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+.row-highlight {
+    animation: highlightFade 2.5s ease-out;
+}

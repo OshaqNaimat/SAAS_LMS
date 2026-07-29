@@ -162,7 +162,7 @@
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
                                 @forelse($classes as $class)
                                     @php $count = $class->studentCount(); @endphp
-                                    <tr class="hover:bg-slate-900/40">
+                                    <tr id="class-{{ $class->id }}" class="hover:bg-slate-900/40">
                                         <td class="p-4 font-semibold text-white">
                                             <div class="flex flex-col">
                                                 <span>{{ $class->name }} - {{ $class->section }}</span>
@@ -375,5 +375,18 @@
             document.getElementById('classTeacher').value = teacherId ?? '';
             toggleModal('classModal');
         }
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    target.classList.add('row-highlight');
+                    setTimeout(() => target.classList.remove('row-highlight'), 2500);
+                }
+            }
+        });
     </script>
 </x-layout>

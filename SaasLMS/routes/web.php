@@ -104,6 +104,7 @@ Route::get('/admin-schedule-control', [AdminController::class, 'scheduleIndex'])
 Route::post('/admin/schedule', [AdminController::class, 'storeSchedule'])->name('admin.schedule.store');
 Route::put('/admin/schedule/{schedule}', [AdminController::class, 'updateSchedule'])->name('admin.schedule.update');
 Route::delete('/admin/schedule/{schedule}', [AdminController::class, 'destroySchedule'])->name('admin.schedule.destroy');
+       Route::get('/admin/search', [AdminController::class, 'globalSearch'])->name('admin.search');
 
     Route::view('/admin-setting','admin.setting');
 });
@@ -128,7 +129,6 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 
        Route::get('/student-dashboard', [StudentController::class, 'dashboard'])->name('student.dashboard');
         Route::get('/student-attendance', [StudentController::class, 'attendanceAnalytics'])->name('student.attendance');
-
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

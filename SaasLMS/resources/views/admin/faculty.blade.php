@@ -51,27 +51,18 @@
                                     <th class="p-4">Name</th>
                                     <th class="p-4">Assigned Class</th>
                                     <th class="p-4">Email Address</th>
-                                    <th class="p-4">Status</th>
+                                    {{-- <th class="p-4">Status</th> --}}
                                     <th class="p-4 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
                                 @forelse($teachers as $teacher)
-                                    <tr class="hover:bg-slate-900/40">
+                                    <tr id="teacher-{{ $teacher->id }}" class="hover:bg-slate-900/40">
                                         <td class="p-4 font-semibold text-white">{{ $teacher->name }}</td>
                                         <td class="p-4 text-gray-400">{{ $teacher->assigned_class ?? '—' }}</td>
                                         <td class="p-4">{{ $teacher->email }}</td>
-                                        <td class="p-4">
-                                            <span
-                                                class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">Active</span>
-                                        </td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-3">
-                                                {{-- <button onclick="openEditTeacher({{ $teacher->id }})"
-                                                    class="text-yellow-400 hover:text-yellow-300 transition"
-                                                    title="Edit">
-                                                    <i class="fa-solid fa-pen"></i>
-                                                </button> --}}
                                                 <form action="{{ route('admin.user.destroy', $teacher->id) }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Remove {{ $teacher->name }}? This cannot be undone.');"
@@ -89,7 +80,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="p-6 text-center text-gray-500 text-sm">No teachers
+                                        <td colspan="4" class="p-6 text-center text-gray-500 text-sm">No teachers
                                             added yet.</td>
                                     </tr>
                                 @endforelse
@@ -128,7 +119,7 @@
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
                                 @forelse($students as $student)
-                                    <tr class="hover:bg-slate-900/40">
+                                    <tr id="student-{{ $student->id }}" class="hover:bg-slate-900/40">
                                         <td class="p-4 text-blue-400 font-mono font-medium">
                                             #{{ $student->roll_number }}
                                         </td>
@@ -403,6 +394,19 @@
         window.addEventListener('click', function(e) {
             if (!e.target.closest('[id^="menu-"]') && !e.target.closest('button[onclick^="toggleActionMenu"]')) {
                 document.querySelectorAll('[id^="menu-"]').forEach(menu => menu.classList.add('hidden'));
+            }
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    target.classList.add('row-highlight');
+                    setTimeout(() => target.classList.remove('row-highlight'), 2500);
+                }
             }
         });
     </script>

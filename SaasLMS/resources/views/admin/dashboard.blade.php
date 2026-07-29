@@ -36,16 +36,28 @@
                         <!-- Page Header -->
                         <div class="page-header">
                             <div class="welcome-text">
-                                <h1>Welcome back, Admin 👋</h1>
+                                <h1>Welcome back, {{ Auth::user()->name }} 👋</h1>
                                 <p>Here's what's happening with your organization today.</p>
                             </div>
+
+                            <div class="relative w-full max-w-xs mx-4">
+                                <div class="relative">
+                                    <i
+                                        class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                                    <input type="text" id="globalSearchInput"
+                                        placeholder="Search students, teachers, classes..." autocomplete="off"
+                                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition">
+                                </div>
+                                <div id="globalSearchResults"
+                                    class="hidden absolute top-full mt-2 w-full bg-[#111c2a] border border-slate-800 rounded-xl shadow-2xl overflow-hidden z-50 max-h-80 overflow-y-auto">
+                                </div>
+                            </div>
+
                             <div class="header-actions">
                                 <button class="btn-secondary" onclick="openModal('inviteModal')"><i
-                                        class="bi bi-person-plus"></i>
-                                    Add Memeber</button>
+                                        class="bi bi-person-plus"></i> Add Member</button>
                                 <button class="btn-primary" onclick="openModal('projectModal')"><i
-                                        class="bi bi-plus-lg"></i>
-                                    Add New Student</button>
+                                        class="bi bi-plus-lg"></i> Add New Student</button>
                             </div>
                         </div>
 
@@ -494,6 +506,49 @@
                     showToast(@json(session('success')));
                 });
             @endif
+            let searchDebounce;
+            const searchInput = document.getElementById('globalSearchInput');
+            const searchResults = document.getElementById('globalSearchResults');
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchDebounce);
+                const query = this.value.trim();
+
+                if (query.length < 2) {
+                    searchResults.classList.add('hidden');
+                    return;
+                }
+
+                searchDebounce = setTimeout(() => {
+                    fetch(`/admin/search?q=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.results.length === 0) {
+                                searchResults.innerHTML =
+                                    `<div class="p-4 text-xs text-gray-500 text-center">No results found</div>`;
+                            } else {
+                                searchResults.innerHTML = data.results.map(r => `
+                        <a href="${r.url}" class="flex items-center justify-between px-4 py-2.5 hover:bg-slate-900/60 transition border-b border-slate-800/60 last:border-0">
+                            <div>
+                                <p class="text-xs font-semibold text-white">${r.label}</p>
+                                <p class="text-[10px] text-gray-500">${r.sub}</p>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-gray-400">${r.type}</span>
+                        </a>
+                    `).join('');
+                            }
+                            searchResults.classList.remove('hidden');
+                        })
+                        .catch(err => console.error(err));
+                }, 300);
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.add('hidden');
+                }
+            });
         </script>
     </div>
 
