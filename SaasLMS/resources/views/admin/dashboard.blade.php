@@ -41,9 +41,8 @@
                             </div>
 
                             <div class="relative w-full max-w-xs mx-4">
-                                <div class="relative">
-                                    <i
-                                        class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
+                                <div class="relative flex items-center">
+                                    <i class="bi bi-search absolute left-3 text-gray-500 text-xs leading-none"></i>
                                     <input type="text" id="globalSearchInput"
                                         placeholder="Search students, teachers, classes..." autocomplete="off"
                                         class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition">
