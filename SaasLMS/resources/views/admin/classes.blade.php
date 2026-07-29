@@ -68,7 +68,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {{-- <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <div
                     class="lg:col-span-2 bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
                     <div class="flex justify-between items-center mb-6">
@@ -131,7 +131,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="space-y-8">
                 <div class="card-bg rounded-2xl shadow-lg overflow-hidden">
@@ -275,8 +275,8 @@
                         class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
+                {{-- <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"> --}}
+                {{-- <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-gray-400">Total Lessons Planned</label>
                         <input type="number" name="total_lessons" id="classTotalLessons" min="0"
                             class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
@@ -285,8 +285,8 @@
                         <label class="block text-xs font-semibold text-gray-400">Lessons Completed</label>
                         <input type="number" name="completed_lessons" id="classCompletedLessons" min="0"
                             class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
-                    </div>
-                </div>
+                    </div> --}}
+                {{-- </div> --}}
 
                 <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
                     <button type="button" onclick="toggleModal('classModal')"
@@ -362,7 +362,7 @@
 
         function openEditClass(id, name, section, stream, room, maxSeats, teacherId) {
             resetClassForm();
-            document.getElementById('classForm').action = `/admin/classes/${id}`;
+            document.getElementById('classForm').action = `/admin-classes-control/${id}`;
             document.getElementById('classMethod').value = "PUT";
             document.getElementById('classModalTitle').innerHTML =
                 '<i class="bi bi-pencil-square text-yellow-400 text-lg"></i> Edit Class Configuration';
