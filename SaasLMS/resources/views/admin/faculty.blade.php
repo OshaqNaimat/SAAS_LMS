@@ -28,20 +28,27 @@
             <div class="space-y-8">
 
                 <div class="card-bg rounded-2xl shadow-lg overflow-hidden">
-                    <div class="header-bg p-4 flex justify-between items-center">
-                        <div class="flex items-center gap-3">
+                    <div class="header-bg p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                        <div class="flex items-center gap-3 shrink-0">
                             <div
                                 class="w-8 h-8 rounded-lg bg-emerald-950 flex items-center justify-center text-emerald-400">
                                 <i class="fa-solid fa-graduation-cap"></i>
                             </div>
                             <h3 class="font-bold text-base text-white">Active Faculty Members</h3>
                         </div>
+
+                        <div class="relative flex items-center w-full sm:w-64">
+                            <i class="bi bi-search absolute left-3 text-gray-500 text-xs leading-none"></i>
+                            <input type="text" id="teacherSearchInput" placeholder="Search teachers..."
+                                autocomplete="off"
+                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition">
+                        </div>
+
                         <span
-                            class="text-xs px-3  py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
+                            class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400 shrink-0"
+                            id="teacherCountBadge">
                             {{ $teachers->count() }} Registered
                         </span>
-                        {{-- <div class="kpi-value">{{ $totalTeachers }}</div> --}}
-
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -57,7 +64,7 @@
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
                                 @forelse($teachers as $teacher)
-                                    <tr id="teacher-{{ $teacher->id }}" class="hover:bg-slate-900/40">
+                                    <tr id="teacher-{{ $teacher->id }}" class="teacher-row hover:bg-slate-900/40">
                                         <td class="p-4 font-semibold text-white">{{ $teacher->name }}</td>
                                         <td class="p-4 text-gray-400">{{ $teacher->assigned_class ?? '—' }}</td>
                                         <td class="p-4">{{ $teacher->email }}</td>
@@ -90,19 +97,26 @@
                 </div>
 
                 <div class="card-bg rounded-2xl shadow-lg overflow-hidden">
-                    <div class="header-bg p-4 flex justify-between items-center">
-                        <div class="flex items-center gap-3">
+                    <div class="header-bg p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                        <div class="flex items-center gap-3 shrink-0">
                             <div class="w-8 h-8 rounded-lg bg-pink-950 flex items-center justify-center text-pink-400">
                                 <i class="fa-solid fa-user-graduate"></i>
                             </div>
                             <h3 class="font-bold text-base text-white">Enrolled Student Registry</h3>
                         </div>
+
+                        <div class="relative flex items-center w-full sm:w-64">
+                            <i class="bi bi-search absolute left-3 text-gray-500 text-xs leading-none"></i>
+                            <input type="text" id="studentSearchInput" placeholder="Search students..."
+                                autocomplete="off"
+                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-pink-500 transition">
+                        </div>
+
                         <span
-                            class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
+                            class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400 shrink-0"
+                            id="studentCountBadge">
                             {{ $students->count() }} Registered
                         </span>
-                        {{-- <div class="kpi-value">{{ $totalStudents }}</div> --}}
-
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -119,7 +133,7 @@
                             </thead>
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
                                 @forelse($students as $student)
-                                    <tr id="student-{{ $student->id }}" class="hover:bg-slate-900/40">
+                                    <tr id="student-{{ $student->id }}" class="student-row hover:bg-slate-900/40">
                                         <td class="p-4 text-blue-400 font-mono font-medium">
                                             #{{ $student->roll_number }}
                                         </td>
@@ -409,5 +423,43 @@
                 }
             }
         });
+        const teacherSearchInput = document.getElementById('teacherSearchInput');
+        const teacherCountBadge = document.getElementById('teacherCountBadge');
+
+        if (teacherSearchInput) {
+            teacherSearchInput.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                const rows = document.querySelectorAll('.teacher-row');
+                let visibleCount = 0;
+
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    const matches = text.includes(query);
+                    row.style.display = matches ? '' : 'none';
+                    if (matches) visibleCount++;
+                });
+
+                teacherCountBadge.textContent = `${visibleCount} Shown`;
+            });
+        }
+        const studentSearchInput = document.getElementById('studentSearchInput');
+        const studentCountBadge = document.getElementById('studentCountBadge');
+
+        if (studentSearchInput) {
+            studentSearchInput.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                const rows = document.querySelectorAll('.student-row');
+                let visibleCount = 0;
+
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    const matches = text.includes(query);
+                    row.style.display = matches ? '' : 'none';
+                    if (matches) visibleCount++;
+                });
+
+                studentCountBadge.textContent = `${visibleCount} Shown`;
+            });
+        }
     </script>
 </x-layout>
