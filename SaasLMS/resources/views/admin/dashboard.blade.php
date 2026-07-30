@@ -255,40 +255,44 @@
                                     style="font-size:0.72rem; color:#60a5fa; text-decoration:none; font-weight:600;">View
                                     All →</a>
                             </div>
-                            <table class="table-mini">
-                                <thead>
-                                    <tr>
-                                        <th>Member</th>
-                                        <th>Role</th>
-                                        <th>Class / Section</th>
-                                        <th>Status</th>
-                                        <th>Joined</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($recentMembers as $member)
+                            <div style="overflow-x: auto;">
+                                <table class="table-mini">
+                                    <thead>
                                         <tr>
-                                            <td><strong style="color:white;">{{ $member->name }}</strong></td>
-                                            <td>{{ ucfirst($member->role) }}</td>
-                                            <td>
-                                                {{ $member->role === 'teacher' ? $member->assigned_class ?? '—' : ($member->classRoom ? $member->classRoom->name . ' - ' . $member->classRoom->section : '—') }}
-                                            </td>
-                                            <td>
-                                                <span class="status-dot-sm" style="background:var(--green);"></span>
-                                                Active
-                                            </td>
-                                            <td style="font-size:0.7rem;">{{ $member->created_at->format('M Y') }}
-                                            </td>
+                                            <th>Member</th>
+                                            <th>Role</th>
+                                            <th>Class / Section</th>
+                                            <th>Status</th>
+                                            <th>Joined</th>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="5"
-                                                style="text-align:center; color:#94a3b8; font-size:0.8rem;">No members
-                                                yet.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($recentMembers as $member)
+                                            <tr>
+                                                <td><strong style="color:white;">{{ $member->name }}</strong></td>
+                                                <td>{{ ucfirst($member->role) }}</td>
+                                                <td>
+                                                    {{ $member->role === 'teacher' ? $member->assigned_class ?? '—' : ($member->classRoom ? $member->classRoom->name . ' - ' . $member->classRoom->section : '—') }}
+                                                </td>
+                                                <td>
+                                                    <span class="status-dot-sm"
+                                                        style="background:var(--green);"></span>
+                                                    Active
+                                                </td>
+                                                <td style="font-size:0.7rem;">{{ $member->created_at->format('M Y') }}
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="5"
+                                                    style="text-align:center; color:#94a3b8; font-size:0.8rem;">No
+                                                    members
+                                                    yet.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                     </div>
@@ -325,12 +329,14 @@
 
                         <div class="form-row grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="form-group">
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Security Password</label>
+                                <label class="block text-xs font-semibold text-gray-400 mb-1">Security
+                                    Password</label>
                                 <input type="password" name="password" placeholder="••••••••" required
                                     class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500 transition">
                             </div>
                             <div class="form-group">
-                                <label class="block text-xs font-semibold text-gray-400 mb-1">Assigned Classes</label>
+                                <label class="block text-xs font-semibold text-gray-400 mb-1">Assigned
+                                    Classes</label>
                                 <select name="assigned_class"
                                     class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-gray-400 focus:outline-none focus:border-blue-500 transition">
                                     <option value="">Select Class...</option>
@@ -388,7 +394,8 @@
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div class="form-group">
-                                <label class="block font-medium mb-1 text-sm text-gray-300">Student Roll No.</label>
+                                <label class="block font-medium mb-1 text-sm text-gray-300">Student Roll
+                                    No.</label>
                                 <input type="text" name="roll_number" placeholder="Enter roll number" required
                                     class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
                             </div>
