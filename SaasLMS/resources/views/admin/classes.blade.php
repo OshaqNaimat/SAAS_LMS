@@ -135,15 +135,24 @@
 
             <div class="space-y-8">
                 <div class="card-bg rounded-2xl shadow-lg overflow-hidden">
-                    <div class="header-bg p-4 flex justify-between items-center">
-                        <div class="flex items-center gap-3">
+                    <div class="header-bg p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                        <div class="flex items-center gap-3 shrink-0">
                             <div class="w-8 h-8 rounded-lg bg-blue-950 flex items-center justify-center text-blue-400">
                                 <i class="bi bi-collection"></i>
                             </div>
                             <h3 class="font-bold text-base text-white">Active Class Configurations</h3>
                         </div>
+
+                        <div class="relative flex items-center w-full sm:w-64">
+                            <i class="bi bi-search absolute left-3 text-gray-500 text-xs leading-none"></i>
+                            <input type="text" id="classSearchInput" placeholder="Search classes..."
+                                autocomplete="off"
+                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition">
+                        </div>
+
                         <span
-                            class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
+                            class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400 shrink-0"
+                            id="classCountBadge">
                             {{ $classes->count() }}
                         </span>
                     </div>
@@ -162,7 +171,7 @@
                             <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
                                 @forelse($classes as $class)
                                     @php $count = $class->studentCount(); @endphp
-                                    <tr id="class-{{ $class->id }}" class="hover:bg-slate-900/40">
+                                    <tr id="class-{{ $class->id }}" class="class-row hover:bg-slate-900/40">
                                         <td class="p-4 font-semibold text-white">
                                             <div class="flex flex-col">
                                                 <span>{{ $class->name }} - {{ $class->section }}</span>
@@ -388,5 +397,24 @@
                 }
             }
         });
+        const classSearchInput = document.getElementById('classSearchInput');
+        const classCountBadge = document.getElementById('classCountBadge');
+
+        if (classSearchInput) {
+            classSearchInput.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                const rows = document.querySelectorAll('.class-row');
+                let visibleCount = 0;
+
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    const matches = text.includes(query);
+                    row.style.display = matches ? '' : 'none';
+                    if (matches) visibleCount++;
+                });
+
+                classCountBadge.textContent = visibleCount;
+            });
+        }
     </script>
 </x-layout>
