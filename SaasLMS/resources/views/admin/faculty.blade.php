@@ -2,9 +2,7 @@
     <div class="flex h-screen relative">
 
         <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
-
         <x-admin-sidebar />
-
         <main class="flex-1 flex flex-col min-w-0 overflow-y-auto p-6 lg:p-8">
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
@@ -13,16 +11,6 @@
                     <p class="text-sm text-gray-400 mt-1">Manage your institution's educators, personnel, and registered
                         student data arrays.</p>
                 </div>
-                {{-- <div class="flex items-center gap-3 shrink-0 sm:self-center">
-                    <button onclick="toggleModal('inviteModal')"
-                        class="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-sm font-semibold transition text-gray-200">
-                        Add a Member
-                    </button>
-                    <button onclick="toggleModal('studentModal')"
-                        class="flex items-center gap-2 px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition text-white shadow-md">
-                        Add New Student
-                    </button>
-                </div> --}}
             </div>
 
             <div class="space-y-8">
