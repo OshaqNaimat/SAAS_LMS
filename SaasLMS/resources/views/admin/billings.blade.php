@@ -16,7 +16,7 @@
                 <div class="flex items-center gap-3 shrink-0 sm:self-center">
                     <button onclick="toggleModal('collectionModal')"
                         class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-semibold transition text-white shadow-lg shadow-blue-600/10">
-                        <i class="bi bi-plus-lg"></i> Record Manual Payment
+                        <i class="bi bi-plus-lg"></i> Record Payment
                     </button>
                 </div>
             </div>
