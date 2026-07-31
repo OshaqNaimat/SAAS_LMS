@@ -29,7 +29,7 @@
                             <i class="bi bi-search absolute left-3 text-gray-500 text-xs leading-none"></i>
                             <input type="text" id="teacherSearchInput" placeholder="Search teachers..."
                                 autocomplete="off"
-                                class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition">
+                                class="w-full bg-[#090d17] border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition">
                         </div>
 
                         <span
