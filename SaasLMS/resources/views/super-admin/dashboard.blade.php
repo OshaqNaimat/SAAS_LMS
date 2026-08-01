@@ -771,42 +771,49 @@
                         <div class="stats-grid">
                             <div class="stat-card">
                                 <div class="stat-header">
-                                    <div class="stat-label">Total Revenue</div>
+                                    <div class="stat-label">SaaS Revenue (This Month)</div>
                                     <div class="stat-icon-box blue"><i class="bi bi-currency-dollar"></i></div>
                                 </div>
-                                <div class="stat-value">$2,847.50</div>
-                                <span class="stat-change positive"><i class="bi bi-arrow-up-short"></i> +12.5% vs last
-                                    month</span>
+                                <div class="stat-value">Rs. {{ number_format($saasRevenueThisMonth) }}</div>
+                                <span class="stat-change {{ $saasGrowthPct >= 0 ? 'positive' : 'negative' }}">
+                                    <i class="bi bi-arrow-{{ $saasGrowthPct >= 0 ? 'up' : 'down' }}-short"></i>
+                                    {{ $saasGrowthPct >= 0 ? '+' : '' }}{{ $saasGrowthPct }}% vs last month
+                                </span>
                             </div>
 
                             <div class="stat-card">
                                 <div class="stat-header">
-                                    <div class="stat-label">Active Users</div>
+                                    <div class="stat-label">Active Organizations</div>
+                                    <div class="stat-icon-box green"><i class="bi bi-building"></i></div>
+                                </div>
+                                <div class="stat-value">{{ $activeOrganizations }}</div>
+                                <span class="stat-change positive">
+                                    <i class="bi bi-arrow-up-short"></i> {{ $totalOrganizations }} total
+                                </span>
+                            </div>
+
+                            <div class="stat-card">
+                                <div class="stat-header">
+                                    <div class="stat-label">Total Users</div>
                                     <div class="stat-icon-box green"><i class="bi bi-people-fill"></i></div>
                                 </div>
-                                <div class="stat-value">12,483</div>
-                                <span class="stat-change positive"><i class="bi bi-arrow-up-short"></i> +5.2% this
-                                    week</span>
+                                <div class="stat-value">{{ number_format($totalUsers) }}</div>
+                                <span class="stat-change {{ $userGrowthPct >= 0 ? 'positive' : 'negative' }}">
+                                    <i class="bi bi-arrow-{{ $userGrowthPct >= 0 ? 'up' : 'down' }}-short"></i>
+                                    {{ $userGrowthPct >= 0 ? '+' : '' }}{{ $userGrowthPct }}% this week
+                                </span>
                             </div>
 
                             <div class="stat-card">
                                 <div class="stat-header">
-                                    <div class="stat-label">System Uptime</div>
-                                    <div class="stat-icon-box green"><i class="bi bi-check-circle-fill"></i></div>
+                                    <div class="stat-label">Fee Revenue (This Month)</div>
+                                    <div class="stat-icon-box pink"><i class="bi bi-cash-stack"></i></div>
                                 </div>
-                                <div class="stat-value">99.98%</div>
-                                <span class="stat-change positive"><i class="bi bi-arrow-up-short"></i> +0.02% from
-                                    yesterday</span>
-                            </div>
-
-                            <div class="stat-card">
-                                <div class="stat-header">
-                                    <div class="stat-label">Avg Response Time</div>
-                                    <div class="stat-icon-box pink"><i class="bi bi-lightning-fill"></i></div>
-                                </div>
-                                <div class="stat-value">124ms</div>
-                                <span class="stat-change negative"><i class="bi bi-arrow-down-short"></i> -2.1%
-                                    improvement</span>
+                                <div class="stat-value">Rs. {{ number_format($feeRevenueThisMonth) }}</div>
+                                <span class="stat-change positive">
+                                    <i class="bi bi-arrow-up-short"></i> Rs. {{ number_format($feeRevenueTotal) }}
+                                    all-time
+                                </span>
                             </div>
                         </div>
 
@@ -909,55 +916,22 @@
                                     Recent Activity
                                 </div>
 
-                                <div class="activity-item">
-                                    <div class="activity-avatar"
-                                        style="background:linear-gradient(135deg,#3b82f6,#6366f1);">AC</div>
-                                    <div class="activity-content">
-                                        <div class="activity-title">Apex Global added 150 users</div>
-                                        <div class="activity-description">Organization enrollment spike</div>
+                                @forelse($recentActivity as $activity)
+                                    <div class="activity-item">
+                                        <div class="activity-avatar"
+                                            style="background:linear-gradient(135deg,#3b82f6,#6366f1);">
+                                            {{ $activity['initials'] }}
+                                        </div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">{{ $activity['title'] }}</div>
+                                            <div class="activity-description">{{ $activity['description'] }}</div>
+                                        </div>
+                                        <div class="activity-time">
+                                            {{ \Carbon\Carbon::parse($activity['time'])->diffForHumans() }}</div>
                                     </div>
-                                    <div class="activity-time">2 min ago</div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-avatar"
-                                        style="background:linear-gradient(135deg,#a855f7,#ec4899);">VF</div>
-                                    <div class="activity-content">
-                                        <div class="activity-title">Vanguard Fitness renewed subscription</div>
-                                        <div class="activity-description">Enterprise plan extended to 2025</div>
-                                    </div>
-                                    <div class="activity-time">14 min ago</div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-avatar"
-                                        style="background:linear-gradient(135deg,#f59e0b,#f97316);">NS</div>
-                                    <div class="activity-content">
-                                        <div class="activity-title">Nexus Systems completed evaluation</div>
-                                        <div class="activity-description">Transitioned to active plan</div>
-                                    </div>
-                                    <div class="activity-time">32 min ago</div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-avatar"
-                                        style="background:linear-gradient(135deg,#ef4444,#f43f5e);">OM</div>
-                                    <div class="activity-content">
-                                        <div class="activity-title">OmniRetail Services suspended</div>
-                                        <div class="activity-description">Non-payment notification sent</div>
-                                    </div>
-                                    <div class="activity-time">1 hour ago</div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div class="activity-avatar"
-                                        style="background:linear-gradient(135deg,#06b6d4,#0891b2);">TC</div>
-                                    <div class="activity-content">
-                                        <div class="activity-title">System backup completed</div>
-                                        <div class="activity-description">All data synchronized to replicas</div>
-                                    </div>
-                                    <div class="activity-time">3 hours ago</div>
-                                </div>
+                                @empty
+                                    <p style="color: var(--text-muted); font-size: 0.8rem;">No recent activity yet.</p>
+                                @endforelse
                             </div>
 
                             <!-- System Status -->
