@@ -10,7 +10,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-super admin routes
+// super admin routes
 Route::view("/super-admin-dashboard",'super-admin.dashboard');
 Route::view("/super-admin-organizations",'super-admin.organizations');
 Route::view("/super-admin-analytics",'super-admin.analytics');
