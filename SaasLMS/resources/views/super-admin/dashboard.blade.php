@@ -829,42 +829,7 @@
                                     <button class="chart-menu"><i class="bi bi-three-dots"></i></button>
                                 </div>
                                 <div class="chart-canvas">
-                                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
-                                        <!-- Grid -->
-                                        <line x1="30" y1="20" x2="30" y2="160"
-                                            stroke="rgba(148, 163, 184, 0.1)" stroke-width="1" />
-                                        <line x1="30" y1="160" x2="390" y2="160"
-                                            stroke="rgba(148, 163, 184, 0.1)" stroke-width="1" />
-
-                                        <!-- Area gradient -->
-                                        <defs>
-                                            <linearGradient id="revenueGradient" x1="0%" y1="0%"
-                                                x2="0%" y2="100%">
-                                                <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.3" />
-                                                <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0" />
-                                            </linearGradient>
-                                        </defs>
-
-                                        <!-- Area -->
-                                        <polygon
-                                            points="30,130 80,90 130,110 180,60 230,80 280,40 330,70 380,50 380,160 30,160"
-                                            fill="url(#revenueGradient)" />
-
-                                        <!-- Line -->
-                                        <polyline points="30,130 80,90 130,110 180,60 230,80 280,40 330,70 380,50"
-                                            fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-
-                                        <!-- Points -->
-                                        <circle cx="30" cy="130" r="3" fill="#7c3aed" />
-                                        <circle cx="80" cy="90" r="3" fill="#7c3aed" />
-                                        <circle cx="130" cy="110" r="3" fill="#7c3aed" />
-                                        <circle cx="180" cy="60" r="3" fill="#7c3aed" />
-                                        <circle cx="230" cy="80" r="3" fill="#7c3aed" />
-                                        <circle cx="280" cy="40" r="3" fill="#7c3aed" />
-                                        <circle cx="330" cy="70" r="3" fill="#7c3aed" />
-                                        <circle cx="380" cy="50" r="3" fill="#7c3aed" />
-                                    </svg>
+                                    <canvas id="revenueChart"></canvas>
                                 </div>
                             </div>
 
@@ -878,31 +843,7 @@
                                     <button class="chart-menu"><i class="bi bi-three-dots"></i></button>
                                 </div>
                                 <div class="chart-canvas">
-                                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
-                                        <!-- Grid -->
-                                        <line x1="30" y1="20" x2="30" y2="160"
-                                            stroke="rgba(148, 163, 184, 0.1)" stroke-width="1" />
-                                        <line x1="30" y1="160" x2="390" y2="160"
-                                            stroke="rgba(148, 163, 184, 0.1)" stroke-width="1" />
-
-                                        <!-- Bars -->
-                                        <rect x="45" y="100" width="25" height="60"
-                                            fill="rgba(96, 165, 250, 0.6)" rx="3" />
-                                        <rect x="85" y="85" width="25" height="75"
-                                            fill="rgba(96, 165, 250, 0.8)" rx="3" />
-                                        <rect x="125" y="70" width="25" height="90" fill="#60a5fa"
-                                            rx="3" />
-                                        <rect x="165" y="55" width="25" height="105"
-                                            fill="rgba(96, 165, 250, 0.8)" rx="3" />
-                                        <rect x="205" y="45" width="25" height="115" fill="#60a5fa"
-                                            rx="3" />
-                                        <rect x="245" y="35" width="25" height="125"
-                                            fill="rgba(96, 165, 250, 0.9)" rx="3" />
-                                        <rect x="285" y="50" width="25" height="110" fill="#60a5fa"
-                                            rx="3" />
-                                        <rect x="325" y="65" width="25" height="95"
-                                            fill="rgba(96, 165, 250, 0.8)" rx="3" />
-                                    </svg>
+                                    <canvas id="userGrowthChart"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -1041,6 +982,99 @@
 
             window.addEventListener('resize', () => {
                 if (window.innerWidth >= 1024) closeSidebar();
+            });
+            const revenueData = @json($revenueTrend);
+            const revenueLabels = [6, 5, 4, 3, 2, 1, 0].map(d => {
+                const date = new Date();
+                date.setDate(date.getDate() - d);
+                return date.toLocaleDateString('en-US', {
+                    weekday: 'short'
+                });
+            });
+
+            new Chart(document.getElementById('revenueChart'), {
+                type: 'line',
+                data: {
+                    labels: revenueLabels,
+                    datasets: [{
+                        data: revenueData,
+                        borderColor: '#7c3aed',
+                        backgroundColor: 'rgba(124, 58, 237, 0.15)',
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#7c3aed',
+                        pointRadius: 3,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(148,163,184,0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const userGrowthData = @json($userGrowthTrend);
+            const userGrowthLabels = userGrowthData.map((_, i) => `Wk ${i + 1}`);
+
+            new Chart(document.getElementById('userGrowthChart'), {
+                type: 'bar',
+                data: {
+                    labels: userGrowthLabels,
+                    datasets: [{
+                        data: userGrowthData,
+                        backgroundColor: '#60a5fa',
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(148,163,184,0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        }
+                    }
+                }
             });
         </script>
     </body>
