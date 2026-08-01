@@ -12,7 +12,6 @@ class AuthController extends Controller
      */
 public function login(Request $request)
 {
-    // 1. Validate basic inputs
     $request->validate([
         'login_identity' => 'required|string',
         'password'       => 'required|string',
@@ -21,21 +20,20 @@ public function login(Request $request)
     $identity = $request->input('login_identity');
     $password = $request->input('password');
 
-    // 2. AUTOMATIC DETECTION LAYER
     if (str_contains($identity, '@')) {
-        // It's an email -> Could be an Admin or a Teacher
         $credentials = ['email' => $identity, 'password' => $password];
     } else {
-        // No @ symbol -> It's a Student Roll Number
         $credentials = ['roll_number' => $identity, 'password' => $password];
     }
 
-    // 3. Attempt Authentication
     if (Auth::attempt($credentials, $request->boolean('remember'))) {
         $request->session()->regenerate();
         $user = Auth::user();
 
-        // 4. Smart Redirection based on the authenticated user's actual database role
+        if ($user->role === 'super_admin') {
+            return redirect()->route('super-admin.dashboard')->with('success', 'Welcome Super Admin.');
+        }
+
         if ($user->role === 'admin') {
             return redirect()->route('dashboard')->with('success', 'Welcome Admin.');
         }
@@ -47,9 +45,14 @@ public function login(Request $request)
         if ($user->role === 'student') {
             return redirect()->route('student.dashboard')->with('success', 'Welcome Student.');
         }
+
+        // Safety net: any role that reaches here has no defined redirect
+        Auth::logout();
+        return back()->withErrors([
+            'login_identity' => 'Your account role is not configured for dashboard access.',
+        ]);
     }
 
-    // Fallback if credentials fail
     return back()->withErrors([
         'login_identity' => 'The provided security credentials do not match our logs.',
     ])->onlyInput('login_identity');

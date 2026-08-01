@@ -25,19 +25,18 @@ class SuperAdminDashboardController extends Controller
             : ($usersThisWeek > 0 ? 100 : 0);
 
         // SaaS revenue (subscriptions — what orgs pay YOU)
-        $saasRevenueThisMonth = Subscription::where('status', 'active')
-            ->whereMonth('starts_at', now()->month)
-            ->whereYear('starts_at', now()->year)
-            ->sum('amount');
+       // SaaS revenue — from subscription payment history
+$saasRevenueThisMonth = Subscription::whereMonth('period_starts_at', now()->month)
+    ->whereYear('period_starts_at', now()->year)
+    ->sum('amount');
 
-        $saasRevenueLastMonth = Subscription::where('status', 'active')
-            ->whereMonth('starts_at', now()->subMonth()->month)
-            ->whereYear('starts_at', now()->subMonth()->year)
-            ->sum('amount');
+$saasRevenueLastMonth = Subscription::whereMonth('period_starts_at', now()->subMonth()->month)
+    ->whereYear('period_starts_at', now()->subMonth()->year)
+    ->sum('amount');
 
-        $saasGrowthPct = $saasRevenueLastMonth > 0
-            ? round((($saasRevenueThisMonth - $saasRevenueLastMonth) / $saasRevenueLastMonth) * 100, 1)
-            : ($saasRevenueThisMonth > 0 ? 100 : 0);
+$saasGrowthPct = $saasRevenueLastMonth > 0
+    ? round((($saasRevenueThisMonth - $saasRevenueLastMonth) / $saasRevenueLastMonth) * 100, 1)
+    : ($saasRevenueThisMonth > 0 ? 100 : 0);
 
         // School fee revenue (what students pay schools — payments table)
         $feeRevenueTotal = Payment::where('status', 'cleared')->sum('amount');
@@ -46,11 +45,9 @@ class SuperAdminDashboardController extends Controller
             ->whereYear('created_at', now()->year)
             ->sum('amount');
 
-        // Revenue trend for chart — last 7 days of SaaS subscription starts
-        $revenueTrend = collect(range(6, 0))->map(function ($daysAgo) {
-            $date = now()->subDays($daysAgo);
-            return Subscription::whereDate('starts_at', $date)->sum('amount');
-        });
+       $revenueTrend = collect(range(6, 0))->map(fn($daysAgo) =>
+    Subscription::whereDate('period_starts_at', now()->subDays($daysAgo))->sum('amount')
+);
 
         // User growth for chart — last 8 weeks
         $userGrowthTrend = collect(range(7, 0))->map(function ($weeksAgo) {
