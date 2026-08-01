@@ -69,5 +69,13 @@ public function classRoom()
 {
     return $this->belongsTo(ClassRoom::class);
 }
+public function organization()
+{
+    return $this->belongsTo(Organization::class);
+}
 
+public function isSuperAdmin(): bool
+{
+    return $this->role === 'super_admin';
+}
 }
