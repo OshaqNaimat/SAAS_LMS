@@ -19,6 +19,7 @@ class AdminController extends Controller
 {
     public function storeTeacher(Request $request)
 {
+
     $request->validate([
         'name'           => 'required|string|max:255',
         'email'          => 'required|email|unique:users,email',
@@ -32,6 +33,7 @@ class AdminController extends Controller
         'password'       => Hash::make($request->password),
         'role'           => 'teacher', // hardcode server-side, don't trust the hidden input
         'assigned_class' => $request->assigned_class,
+        'organization_id' => Auth::user()->organization_id,
     ]);
 
     return back()->with('success', 'Teacher Registered successfully!');
@@ -54,22 +56,27 @@ public function storeStudent(Request $request)
         'class_room_id' => $request->class_room_id,
         'password'      => Hash::make($request->password),
         'role'          => 'student',
+        'organization_id' => Auth::user()->organization_id,
     ]);
 
     return back()->with('success', 'New Student Registered successfully!');
 }
 public function facultyRoster()
 {
-    $teachers = User::where('role', 'teacher')->latest()->get();
-    $students = User::where('role', 'student')->latest()->get();
+        $orgId = Auth::user()->organization_id;
+
+     $teachers = User::where('organization_id', $orgId)->where('role', 'teacher')->latest()->get();
+    $students = User::where('organization_id', $orgId)->where('role', 'student')->latest()->get();
 
     return view('admin.faculty', compact('teachers', 'students')); // ✅ correct
 }
 public function dashboard()
 {
-    $totalTeachers = User::where('role', 'teacher')->count();
-    $totalStudents = User::where('role', 'student')->count();
-    $totalRevenue = Payment::where('status', 'cleared')->sum('amount');
+        $orgId = Auth::user()->organization_id;
+
+   $totalTeachers = User::where('organization_id', $orgId)->where('role', 'teacher')->count();
+    $totalStudents = User::where('organization_id', $orgId)->where('role', 'student')->count();
+    $totalRevenue = Payment::where('organization_id', $orgId)->where('status', 'cleared')->sum('amount');
 
     $teacherTrend = [];
     $studentTrend = [];

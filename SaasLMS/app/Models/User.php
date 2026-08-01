@@ -18,17 +18,9 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-   protected $fillable = [
-    'name',
-    'father_name',
-    'email',
-    'roll_number',
-    'password',
-    'role',
-    'class',
-    'section',
-    'assigned_class',
-     'class_room_id',
+  protected $fillable = [
+    'name', 'email', 'password', 'role', 'father_name', 'roll_number',
+    'class', 'section', 'assigned_class', 'class_room_id', 'organization_id',
 ];
 
     /**
@@ -77,8 +69,5 @@ public function classRoom()
 {
     return $this->belongsTo(ClassRoom::class);
 }
-public function organization()
-{
-    return $this->belongsTo(Organization::class);
-}
+
 }

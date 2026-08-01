@@ -7,13 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Organization extends Model
 {
     protected $fillable = [
-        'name', 'slug', 'contact_email', 'contact_phone',
-        'plan', 'status', 'subscription_starts_at', 'subscription_ends_at', 'max_users',
-    ];
-
-    protected $casts = [
-        'subscription_starts_at' => 'date',
-        'subscription_ends_at' => 'date',
+        'name', 'slug', 'email', 'phone', 'status', 'owner_id',
     ];
 
     public function users()
@@ -21,14 +15,18 @@ class Organization extends Model
         return $this->hasMany(User::class);
     }
 
-    public function admins()
+    public function owner()
     {
-        return $this->hasMany(User::class)->where('role', 'admin');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function isSubscriptionActive()
+    public function subscriptions()
     {
-        return $this->status === 'active' &&
-            (!$this->subscription_ends_at || $this->subscription_ends_at->isFuture());
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function activeSubscription()
+    {
+        return $this->hasOne(Subscription::class)->where('status', 'active')->latestOfMany();
     }
 }
