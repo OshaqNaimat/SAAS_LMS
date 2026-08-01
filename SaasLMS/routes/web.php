@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SuperAdminDashboardController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,10 +12,14 @@ Route::get('/', function () {
 });
 
 // super admin routes
-Route::view("/super-admin-dashboard",'super-admin.dashboard');
-Route::view("/super-admin-organizations",'super-admin.organizations');
-Route::view("/super-admin-analytics",'super-admin.analytics');
-Route::view("/super-admin-settings",'super-admin.settings');
+Route::middleware(['auth', 'super_admin'])->group(function () {
+    Route::get('/super-admin-dashboard', [SuperAdminDashboardController::class, 'index'])
+        ->name('super-admin.dashboard');
+
+    Route::view('/super-admin-organizations', 'super-admin.organizations');
+    Route::view('/super-admin-analytics', 'super-admin.analytics');
+    Route::view('/super-admin-settings', 'super-admin.settings');
+});
 
 
 Route::get('/', function () {

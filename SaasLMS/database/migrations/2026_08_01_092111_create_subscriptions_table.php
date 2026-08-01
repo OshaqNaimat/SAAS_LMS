@@ -11,12 +11,11 @@ return new class extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('organization_id')->constrained()->cascadeOnDelete();
-            $table->string('plan');                       // Basic, Pro, Enterprise
-            $table->unsignedBigInteger('amount');          // in PKR, no decimals — matches payments table style
+            $table->string('plan');                        // snapshot of plan at time of payment
+            $table->unsignedBigInteger('amount');           // in PKR
             $table->enum('billing_cycle', ['monthly', 'yearly'])->default('monthly');
-            $table->enum('status', ['active', 'expired', 'cancelled'])->default('active');
-            $table->date('starts_at');
-            $table->date('ends_at')->nullable();
+            $table->date('period_starts_at');
+            $table->date('period_ends_at')->nullable();
             $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamps();

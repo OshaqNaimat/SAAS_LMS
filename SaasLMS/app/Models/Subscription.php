@@ -8,12 +8,12 @@ class Subscription extends Model
 {
     protected $fillable = [
         'organization_id', 'plan', 'amount', 'billing_cycle',
-        'status', 'starts_at', 'ends_at', 'recorded_by', 'notes',
+        'period_starts_at', 'period_ends_at', 'recorded_by', 'notes',
     ];
 
     protected $casts = [
-        'starts_at' => 'date',
-        'ends_at' => 'date',
+        'period_starts_at' => 'date',
+        'period_ends_at' => 'date',
     ];
 
     public function organization()
