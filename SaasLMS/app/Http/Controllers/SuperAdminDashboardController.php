@@ -84,10 +84,13 @@ class SuperAdminDashboardController extends Controller
             ->values();
 
         // System status — real checks
-        $systemStatus = [
-            'database' => $this->checkDatabase(),
-            'storage' => $this->checkStorage(),
-        ];
+       $systemStatus = [
+    'app' => $this->appServerStatus(),
+    'database' => $this->checkDatabase(),
+    'cache' => $this->checkCache(),
+    'queue' => $this->checkQueue(),
+    'storage' => $this->checkStorage(),
+];
 
         return view('super-admin.dashboard', compact(
             'totalOrganizations',
@@ -105,20 +108,49 @@ class SuperAdminDashboardController extends Controller
         ));
     }
 
-    private function checkDatabase(): bool
-    {
-        try {
-            DB::connection()->getPdo();
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    private function checkStorage(): float
-    {
-        $total = disk_total_space(storage_path());
-        $free = disk_free_space(storage_path());
-        return round((($total - $free) / $total) * 100, 1);
+   private function checkDatabase(): bool
+{
+    try {
+        DB::connection()->getPdo();
+        return true;
+    } catch (\Exception $e) {
+        return false;
     }
 }
+
+
+private function checkStorage(): float
+{
+    $total = disk_total_space(storage_path());
+    $free = disk_free_space(storage_path());
+    return round((($total - $free) / $total) * 100, 1);
+}
+    private function checkCache(): array
+{
+    $driver = config('cache.default');
+    try {
+        $testKey = '_health_check_' . time();
+        cache()->put($testKey, true, 5);
+        $working = cache()->get($testKey) === true;
+        cache()->forget($testKey);
+        return ['driver' => $driver, 'online' => $working];
+    } catch (\Exception $e) {
+        return ['driver' => $driver, 'online' => false];
+    }
+}
+private function checkQueue(): array
+{
+    $driver = config('queue.default');
+    // 'sync' means jobs run immediately inline — there's no real queue/worker to monitor
+    return ['driver' => $driver, 'is_real_queue' => $driver !== 'sync'];
+}
+private function appServerStatus(): array
+{
+    return [
+        'php_version' => PHP_VERSION,
+        'laravel_version' => app()->version(),
+        'environment' => app()->environment(),
+    ];
+}
+}
+

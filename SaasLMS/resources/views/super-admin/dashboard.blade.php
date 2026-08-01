@@ -948,86 +948,74 @@
                                     <div class="status-name">
                                         <div class="status-indicator online"></div>
                                         <div>
-                                            <div class="status-text">API Servers</div>
-                                            <div class="status-value">12 nodes operational</div>
+                                            <div class="status-text">Application Server</div>
+                                            <div class="status-value">PHP {{ $systemStatus['app']['php_version'] }} •
+                                                Laravel {{ $systemStatus['app']['laravel_version'] }}</div>
                                         </div>
-                                    </div>
-                                    <div class="status-usage">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width:68%;"></div>
-                                        </div>
-                                        <span
-                                            style="font-size:0.75rem; color:var(--text-muted); min-width:30px;">68%</span>
                                     </div>
                                 </div>
 
                                 <div class="status-item">
                                     <div class="status-name">
-                                        <div class="status-indicator online"></div>
+                                        <div
+                                            class="status-indicator {{ $systemStatus['database'] ? 'online' : 'offline' }}">
+                                        </div>
                                         <div>
-                                            <div class="status-text">Database Cluster</div>
-                                            <div class="status-value">3 replicas synchronized</div>
+                                            <div class="status-text">Database</div>
+                                            <div class="status-value">
+                                                {{ $systemStatus['database'] ? 'MySQL connected' : 'Connection failed' }}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="status-usage">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width:42%;"></div>
-                                        </div>
-                                        <span
-                                            style="font-size:0.75rem; color:var(--text-muted); min-width:30px;">42%</span>
                                     </div>
                                 </div>
 
                                 <div class="status-item">
                                     <div class="status-name">
-                                        <div class="status-indicator online"></div>
+                                        <div
+                                            class="status-indicator {{ $systemStatus['cache']['online'] ? 'online' : 'offline' }}">
+                                        </div>
                                         <div>
                                             <div class="status-text">Cache Layer</div>
-                                            <div class="status-value">Redis cluster healthy</div>
+                                            <div class="status-value">{{ ucfirst($systemStatus['cache']['driver']) }}
+                                                driver{{ $systemStatus['cache']['online'] ? ' — healthy' : ' — not responding' }}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="status-usage">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width:85%;"></div>
-                                        </div>
-                                        <span
-                                            style="font-size:0.75rem; color:var(--text-muted); min-width:30px;">85%</span>
                                     </div>
                                 </div>
 
                                 <div class="status-item">
                                     <div class="status-name">
-                                        <div class="status-indicator online"></div>
+                                        <div
+                                            class="status-indicator {{ $systemStatus['queue']['is_real_queue'] ? 'online' : 'warning' }}">
+                                        </div>
                                         <div>
-                                            <div class="status-text">Message Queue</div>
-                                            <div class="status-value">RabbitMQ running</div>
+                                            <div class="status-text">Queue</div>
+                                            <div class="status-value">
+                                                {{ ucfirst($systemStatus['queue']['driver']) }} driver
+                                                {{ $systemStatus['queue']['is_real_queue'] ? '' : '— running synchronously, no worker needed' }}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="status-usage">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill" style="width:35%;"></div>
-                                        </div>
-                                        <span
-                                            style="font-size:0.75rem; color:var(--text-muted); min-width:30px;">35%</span>
                                     </div>
                                 </div>
 
                                 <div class="status-item">
                                     <div class="status-name">
-                                        <div class="status-indicator warning"></div>
+                                        <div
+                                            class="status-indicator {{ $systemStatus['storage'] < 85 ? 'online' : 'warning' }}">
+                                        </div>
                                         <div>
                                             <div class="status-text">Storage Capacity</div>
-                                            <div class="status-value">78% utilization</div>
+                                            <div class="status-value">{{ $systemStatus['storage'] }}% utilization
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="status-usage">
                                         <div class="progress-bar">
                                             <div class="progress-fill"
-                                                style="width:78%; background: linear-gradient(90deg, var(--yellow), var(--yellow));">
-                                            </div>
+                                                style="width:{{ $systemStatus['storage'] }}%;"></div>
                                         </div>
                                         <span
-                                            style="font-size:0.75rem; color:var(--text-muted); min-width:30px;">78%</span>
+                                            style="font-size:0.75rem; color:var(--text-muted); min-width:30px;">{{ $systemStatus['storage'] }}%</span>
                                     </div>
                                 </div>
                             </div>
