@@ -77,4 +77,8 @@ public function classRoom()
 {
     return $this->belongsTo(ClassRoom::class);
 }
+public function organization()
+{
+    return $this->belongsTo(Organization::class);
+}
 }
