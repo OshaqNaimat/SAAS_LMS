@@ -21,18 +21,18 @@ class Organization extends Model
         return $this->hasMany(User::class);
     }
 
-    public function admin()
+    public function admins()
     {
-        return $this->hasOne(User::class)->where('role', 'admin');
+        return $this->hasMany(User::class)->where('role', 'admin');
     }
 
+    public function isSubscriptionActive()
+    {
+        return $this->status === 'active' &&
+            (!$this->subscription_ends_at || $this->subscription_ends_at->isFuture());
+    }
     public function payments()
     {
         return $this->hasMany(Payment::class);
-    }
-
-    public function subscriptionHistory()
-    {
-        return $this->hasMany(Subscription::class);
     }
 }
