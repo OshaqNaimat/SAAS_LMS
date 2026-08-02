@@ -39,23 +39,23 @@
                             <h3 class="text-base font-bold text-white flex items-center gap-2">
                                 <i class="bi bi-building text-blue-400"></i> Institute Details
                             </h3>
-                            <p class="text-xs text-gray-400 mt-1">Update primary global identifying names and license
-                                text fields displayed across generated headers.</p>
+                            <p class="text-xs text-gray-400 mt-1">Organization name and plan are managed by the platform
+                                administrator. You can update your contact details below.</p>
                         </div>
 
-                        <form class="space-y-4"
-                            onsubmit="handleSettingsSave(event, 'Institutional profile settings updated successfully!')">
+                        <form action="{{ route('admin.settings.profile') }}" method="POST" class="space-y-4">
+                            @csrf
+                            @method('PUT')
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-400">Organization Name</label>
-                                    <input type="text" value="Apex Global Institute"
-                                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
-                                        required>
+                                    <input type="text" value="{{ $organization->name }}"
+                                        class="w-full bg-[#090d16]/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed focus:outline-none"
+                                        readonly>
                                 </div>
                                 <div class="space-y-1.5">
-                                    <label class="block text-xs font-semibold text-gray-400">Enterprise Registry
-                                        Tier</label>
-                                    <input type="text" value="Enterprise Plan"
+                                    <label class="block text-xs font-semibold text-gray-400">Subscription Plan</label>
+                                    <input type="text" value="{{ ucfirst($organization->plan) }} Plan"
                                         class="w-full bg-[#090d16]/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed focus:outline-none"
                                         readonly>
                                 </div>
@@ -65,14 +65,16 @@
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-400">Primary Contact
                                         Email</label>
-                                    <input type="email" value="admin@apex.edu"
+                                    <input type="email" name="contact_email"
+                                        value="{{ old('contact_email', $organization->contact_email) }}"
                                         class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
                                         required>
                                 </div>
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-400">Institutional Contact
                                         Desk</label>
-                                    <input type="text" value="+92 21 111 273 9"
+                                    <input type="text" name="contact_phone"
+                                        value="{{ old('contact_phone', $organization->contact_phone) }}"
                                         class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                                 </div>
                             </div>
@@ -86,7 +88,7 @@
                         </form>
                     </section>
 
-                    <section id="academic" class="bg-[#111c2a] border border-slate-800 rounded-2xl p-6 space-y-6">
+                    {{-- <section id="academic" class="bg-[#111c2a] border border-slate-800 rounded-2xl p-6 space-y-6">
                         <div class="border-b border-slate-800 pb-4">
                             <h3 class="text-base font-bold text-white flex items-center gap-2">
                                 <i class="bi bi-mortarboard text-blue-400"></i> Academic Configurations
@@ -151,7 +153,7 @@
                                 </button>
                             </div>
                         </form>
-                    </section>
+                    </section> --}}
 
                     <section id="security" class="bg-[#111c2a] border border-slate-800 rounded-2xl p-6 space-y-6">
                         <div class="border-b border-slate-800 pb-4">
@@ -162,11 +164,20 @@
                                 active passwords frequently.</p>
                         </div>
 
-                        <form class="space-y-4"
-                            onsubmit="handleSettingsSave(event, 'Security access password modified safely!')">
+                        @if ($errors->any())
+                            <div class="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl p-3">
+                                @foreach ($errors->all() as $error)
+                                    <p>{{ $error }}</p>
+                                @endforeach
+                            </div>
+                        @endif
+
+                        <form action="{{ route('admin.settings.password') }}" method="POST" class="space-y-4">
+                            @csrf
+                            @method('PUT')
                             <div class="space-y-1.5">
                                 <label class="block text-xs font-semibold text-gray-400">Current Login Password</label>
-                                <input type="password" placeholder="••••••••••••"
+                                <input type="password" name="current_password" placeholder="••••••••••••"
                                     class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
                                     required>
                             </div>
@@ -175,16 +186,17 @@
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-400">New Account
                                         Password</label>
-                                    <input type="password" placeholder="Min. 8 characters"
+                                    <input type="password" name="new_password" placeholder="Min. 8 characters"
                                         class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
-                                        required>
+                                        required minlength="8">
                                 </div>
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-400">Confirm Security
                                         Mask</label>
-                                    <input type="password" placeholder="Match new password"
+                                    <input type="password" name="new_password_confirmation"
+                                        placeholder="Match new password"
                                         class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
-                                        required>
+                                        required minlength="8">
                                 </div>
                             </div>
 
@@ -238,5 +250,33 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastAlert');
+            const messageSpan = document.getElementById('toastMessage');
+
+            if (isError) {
+                toast.classList.remove('border-emerald-500/30', 'text-emerald-400');
+                toast.classList.add('border-rose-500/30', 'text-rose-400');
+            } else {
+                toast.classList.remove('border-rose-500/30', 'text-rose-400');
+                toast.classList.add('border-emerald-500/30', 'text-emerald-400');
+            }
+
+            messageSpan.innerText = message;
+            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }, 3500);
+        }
+
+        @if (session('success'))
+            document.addEventListener('DOMContentLoaded', () => {
+                showToast(@json(session('success')));
+            });
+        @endif
     </script>
 </x-layout>

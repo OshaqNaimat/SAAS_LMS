@@ -80,7 +80,9 @@ Route::put('/admin/schedule/{schedule}', [AdminController::class, 'updateSchedul
 Route::delete('/admin/schedule/{schedule}', [AdminController::class, 'destroySchedule'])->name('admin.schedule.destroy');
        Route::get('/admin/search', [AdminController::class, 'globalSearch'])->name('admin.search');
 
-    Route::view('/admin-setting','admin.setting');
+    Route::get('/admin-setting', [AdminController::class, 'settingsIndex'])->name('admin.settings');
+Route::put('/admin/settings/profile', [AdminController::class, 'updateProfile'])->name('admin.settings.profile');
+Route::put('/admin/settings/password', [AdminController::class, 'updatePassword'])->name('admin.settings.password');
 });
 
 

@@ -733,4 +733,42 @@ public function globalSearch(Request $request)
 
     return response()->json(['results' => $results]);
 }
+public function settingsIndex()
+{
+    $organization = Auth::user()->organization;
+    return view('admin.setting', compact('organization'));
+}
+public function updateProfile(Request $request)
+{
+    $request->validate([
+        'contact_email' => 'required|email|max:255',
+        'contact_phone' => 'nullable|string|max:255',
+    ]);
+
+    $organization = Auth::user()->organization;
+    $organization->update([
+        'contact_email' => $request->contact_email,
+        'contact_phone' => $request->contact_phone,
+    ]);
+
+    return back()->with('success', 'Institutional profile updated successfully!');
+}
+public function updatePassword(Request $request)
+{
+    $request->validate([
+        'current_password' => 'required',
+        'new_password' => 'required|string|min:8|confirmed',
+    ]);
+
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
+
+    if (!Hash::check($request->current_password, $user->password)) {
+        return back()->withErrors(['current_password' => 'Your current password is incorrect.']);
+    }
+
+    $user->update(['password' => Hash::make($request->new_password)]);
+
+    return back()->with('success', 'Password updated successfully!');
+}
 };
