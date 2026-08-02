@@ -22,10 +22,10 @@
                         class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-blue-600/10 text-blue-400 font-semibold text-sm transition border border-blue-500/20">
                         <i class="bi bi-building"></i> Institutional Profile
                     </a>
-                    <a href="#academic"
+                    {{-- <a href="#academic"
                         class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-400 hover:bg-slate-900/40 hover:text-white font-medium text-sm transition border border-transparent">
                         <i class="bi bi-mortarboard"></i> Academic Configurations
-                    </a>
+                    </a> --}}
                     <a href="#security"
                         class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-gray-400 hover:bg-slate-900/40 hover:text-white font-medium text-sm transition border border-transparent">
                         <i class="bi bi-shield-lock"></i> Password & Security
