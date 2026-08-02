@@ -3,8 +3,8 @@
         <div class="sidebar-brand">
             <div class="brand-icon"><i class="bi bi-building"></i></div>
             <div class="brand-text">
-                <span class="org-name">Apex Global Institute</span>
-                <span class="org-plan">Enterprise Plan</span>
+                <span class="org-name">{{ $organization->name ?? 'Unknown Institute' }}</span>
+                <span class="org-plan">{{ $organization ? ucfirst($organization->plan) . ' Plan' : '' }}</span>
             </div>
         </div>
 
@@ -33,7 +33,13 @@
 
         <div class="sidebar-footer">
             <div class="user-card">
-                <div class="user-avatar">AM</div>
+                @php
+                    $adminName = Auth::user()->name ?? 'Admin';
+                    $words = explode(' ', $adminName);
+                    $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                @endphp
+
+                <div class="user-avatar">{{ $initials }}</div>
                 <div class="user-info">
                     <strong>{{ Auth::user()->name }}</strong>
                     <small>{{ ucfirst(Auth::user()->role) }}</small>

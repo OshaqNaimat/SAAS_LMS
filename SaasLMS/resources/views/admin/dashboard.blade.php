@@ -272,7 +272,12 @@
                                                 <td><strong style="color:white;">{{ $member->name }}</strong></td>
                                                 <td>{{ ucfirst($member->role) }}</td>
                                                 <td>
-                                                    {{ $member->role === 'teacher' ? $member->assigned_class ?? '—' : ($member->classRoom ? $member->classRoom->name . ' - ' . $member->classRoom->section : '—') }}
+                                                    @if ($member->role === 'teacher')
+                                                        @php $ledClass = $member->ledClasses->first(); @endphp
+                                                        {{ $ledClass ? $ledClass->name . ' - ' . $ledClass->section : $member->assigned_class ?? '—' }}
+                                                    @else
+                                                        {{ $member->classRoom ? $member->classRoom->name . ' - ' . $member->classRoom->section : '—' }}
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     <span class="status-dot-sm"

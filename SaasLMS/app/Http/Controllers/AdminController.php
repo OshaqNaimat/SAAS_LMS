@@ -89,7 +89,7 @@ public function dashboard()
         $studentTrend[] = $this->dayAttendancePct('student', $day, $orgId);
     }
 
-    $recentMembers = User::where('organization_id', $orgId)
+   $recentMembers = User::with('ledClasses')
         ->whereIn('role', ['teacher', 'student'])
         ->latest()
         ->take(4)
