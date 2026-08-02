@@ -1008,24 +1008,31 @@
                         </div>
                     </div>
                     <!-- Filters -->
-                    <div class="filters-bar">
+                    <form method="GET" action="{{ route('super-admin.organizations') }}" class="filters-bar">
                         <div class="search-box">
                             <i class="bi bi-search"></i>
-                            <input type="text" placeholder="Search tenants or admins...">
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                placeholder="Search tenants or admins...">
                         </div>
                         <div class="select-group">
-                            <select class="custom-select">
-                                <option>Status: All</option>
-                                <option>Active</option>
-                                <option>Evaluation</option>
-                                <option>Revoked</option>
+                            <select name="status" class="custom-select" onchange="this.form.submit()">
+                                <option value="all" {{ request('status', 'all') === 'all' ? 'selected' : '' }}>
+                                    Status: All</option>
+                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active
+                                </option>
+                                <option value="suspended" {{ request('status') === 'suspended' ? 'selected' : '' }}>
+                                    Suspended</option>
+                                <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>
+                                    Cancelled</option>
                             </select>
-                            <select class="custom-select">
-                                <option>Sort: Newest</option>
-                                <option>Most Users</option>
+                            <select name="sort" class="custom-select" onchange="this.form.submit()">
+                                <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>
+                                    Sort: Newest</option>
+                                <option value="most_users" {{ request('sort') === 'most_users' ? 'selected' : '' }}>
+                                    Most Users</option>
                             </select>
                         </div>
-                    </div>
+                    </form>
 
                     <!-- Table -->
                     <div class="table-wrapper">
@@ -1041,141 +1048,84 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="org-cell">
-                                                <div class="org-avatar"
-                                                    style="background:linear-gradient(135deg,#3b82f6,#6366f1);">A</div>
-                                                <div>
-                                                    <strong style="color:white; font-size:0.85rem;">Apex Global
-                                                        Institute</strong>
-                                                    <br><span style="font-size:0.7rem; color:var(--text-muted);">Added
-                                                        12 May 2026</span>
+                                    @forelse($organizations as $org)
+                                        @php
+                                            $admin = $org->admins->first();
+                                            $statusClass = match ($org->status) {
+                                                'active' => 'status-active',
+                                                'suspended' => 'status-eval',
+                                                'cancelled' => 'status-revoked',
+                                            };
+                                            $dotColor = match ($org->status) {
+                                                'active' => 'var(--green)',
+                                                'suspended' => 'var(--yellow)',
+                                                'cancelled' => 'var(--red)',
+                                            };
+                                            $initial = strtoupper(substr($org->name, 0, 1));
+                                            $colors = [
+                                                '#3b82f6,#6366f1',
+                                                '#a855f7,#ec4899',
+                                                '#f59e0b,#f97316',
+                                                '#ef4444,#f43f5e',
+                                                '#06b6d4,#0891b2',
+                                            ];
+                                            $gradient = $colors[$org->id % count($colors)];
+                                        @endphp
+                                        <tr id="org-{{ $org->id }}">
+                                            <td>
+                                                <div class="org-cell">
+                                                    <div class="org-avatar"
+                                                        style="background:linear-gradient(135deg,{{ $gradient }});">
+                                                        {{ $initial }}</div>
+                                                    <div>
+                                                        <strong
+                                                            style="color:white; font-size:0.85rem;">{{ $org->name }}</strong>
+                                                        <br><span
+                                                            style="font-size:0.7rem; color:var(--text-muted);">Added
+                                                            {{ $org->created_at->format('d M Y') }}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span style="color:white; font-size:0.83rem;">Alex Mercer</span>
-                                            <br><span style="font-size:0.7rem;">alex@apex-edu.com</span>
-                                        </td>
-                                        <td style="font-weight:600; color:var(--text-primary);">1,240</td>
-                                        <td><span class="status status-active"><span class="status-dot"
-                                                    style="background:var(--green);"></span> Active</span></td>
-                                        <td>
-                                            <div class="action-btns">
-                                                <button class="icon-btn" title="Edit Organization"
-                                                    onclick="openEditModal('Apex Global Institute','Alex Mercer','alex@apex-edu.com','active')"><i
-                                                        class="bi bi-pencil-square"></i></button>
-                                                <button class="icon-btn" title="Manage Actions"
-                                                    onclick="openActionsModal('Apex Global Institute')"><i
-                                                        class="bi bi-sliders"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="org-cell">
-                                                <div class="org-avatar"
-                                                    style="background:linear-gradient(135deg,#a855f7,#ec4899);">V</div>
-                                                <div>
-                                                    <strong style="color:white; font-size:0.85rem;">Vanguard Fitness
-                                                        Corp</strong>
-                                                    <br><span style="font-size:0.7rem; color:var(--text-muted);">Added
-                                                        28 Apr 2026</span>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    style="color:white; font-size:0.83rem;">{{ $admin->name ?? 'No admin assigned' }}</span>
+                                                <br><span style="font-size:0.7rem;">{{ $admin->email ?? '—' }}</span>
+                                            </td>
+                                            <td style="font-weight:600; color:var(--text-primary);">
+                                                {{ $org->users_count }}</td>
+                                            <td><span class="status {{ $statusClass }}"><span class="status-dot"
+                                                        style="background:{{ $dotColor }};"></span>
+                                                    {{ ucfirst($org->status) }}</span></td>
+                                            <td>
+                                                <div class="action-btns">
+                                                    <button class="icon-btn" title="Edit Organization"
+                                                        onclick="openEditModal({{ $org->id }}, '{{ $org->name }}', '{{ $admin->name ?? '' }}', '{{ $admin->email ?? '' }}', '{{ $org->status }}')">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </button>
+                                                    <button class="icon-btn" title="Manage Actions"
+                                                        onclick="openActionsModal({{ $org->id }}, '{{ $org->name }}')">
+                                                        <i class="bi bi-sliders"></i>
+                                                    </button>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span style="color:white; font-size:0.83rem;">Sarah Jenkins</span>
-                                            <br><span style="font-size:0.7rem;">s.jenkins@vanguard.com</span>
-                                        </td>
-                                        <td style="font-weight:600; color:var(--text-primary);">342</td>
-                                        <td><span class="status status-active"><span class="status-dot"
-                                                    style="background:var(--green);"></span> Active</span></td>
-                                        <td>
-                                            <div class="action-btns">
-                                                <button class="icon-btn" title="Edit Organization"
-                                                    onclick="openEditModal('Vanguard Fitness Corp','Sarah Jenkins','s.jenkins@vanguard.com','active')"><i
-                                                        class="bi bi-pencil-square"></i></button>
-                                                <button class="icon-btn" title="Manage Actions"
-                                                    onclick="openActionsModal('Vanguard Fitness Corp')"><i
-                                                        class="bi bi-sliders"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="org-cell">
-                                                <div class="org-avatar"
-                                                    style="background:linear-gradient(135deg,#f59e0b,#f97316);">N</div>
-                                                <div>
-                                                    <strong style="color:white; font-size:0.85rem;">Nexus Systems
-                                                        Lab</strong>
-                                                    <br><span style="font-size:0.7rem; color:var(--text-muted);">Added
-                                                        20 May 2026</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span style="color:white; font-size:0.83rem;">Zayn Malik</span>
-                                            <br><span style="font-size:0.7rem;">z.malik@nexus-labs.io</span>
-                                        </td>
-                                        <td style="font-weight:600; color:var(--text-primary);">18</td>
-                                        <td><span class="status status-eval"><span class="status-dot"
-                                                    style="background:var(--yellow);"></span> Evaluation</span></td>
-                                        <td>
-                                            <div class="action-btns">
-                                                <button class="icon-btn" title="Edit Organization"
-                                                    onclick="openEditModal('Nexus Systems Lab','Zayn Malik','z.malik@nexus-labs.io','evaluation')"><i
-                                                        class="bi bi-pencil-square"></i></button>
-                                                <button class="icon-btn" title="Manage Actions"
-                                                    onclick="openActionsModal('Nexus Systems Lab')"><i
-                                                        class="bi bi-sliders"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="org-cell">
-                                                <div class="org-avatar"
-                                                    style="background:linear-gradient(135deg,#ef4444,#f43f5e);">O</div>
-                                                <div>
-                                                    <strong style="color:white; font-size:0.85rem;">OmniRetail
-                                                        Services</strong>
-                                                    <br><span style="font-size:0.7rem; color:var(--text-muted);">Added
-                                                        15 Jan 2026</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span style="color:white; font-size:0.83rem;">Robert Chen</span>
-                                            <br><span style="font-size:0.7rem;">robert@omniretail.com</span>
-                                        </td>
-                                        <td style="font-weight:600; color:var(--text-primary);">0</td>
-                                        <td><span class="status status-revoked"><span class="status-dot"
-                                                    style="background:var(--red);"></span> Revoked</span></td>
-                                        <td>
-                                            <div class="action-btns">
-                                                <button class="icon-btn" title="Edit Organization"
-                                                    onclick="openEditModal('OmniRetail Services','Robert Chen','robert@omniretail.com','revoked')"><i
-                                                        class="bi bi-pencil-square"></i></button>
-                                                <button class="icon-btn" title="Manage Actions"
-                                                    onclick="openActionsModal('OmniRetail Services')"><i
-                                                        class="bi bi-sliders"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5"
+                                                style="text-align:center; padding:2rem; color:var(--text-muted);">No
+                                                organizations registered yet.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
                         <div class="pagination">
-                            <div>Showing <span style="color:white; font-weight:600;">1–4</span> of <span
-                                    style="color:white; font-weight:600;">12</span> organizations</div>
+                            <div>Showing <span
+                                    style="color:white; font-weight:600;">{{ $organizations->firstItem() ?? 0 }}–{{ $organizations->lastItem() ?? 0 }}</span>
+                                of <span style="color:white; font-weight:600;">{{ $organizations->total() }}</span>
+                                organizations</div>
                             <div class="page-btns">
-                                <button class="page-btn" disabled><i class="bi bi-chevron-left"></i></button>
-                                <button class="page-btn active">1</button>
-                                <button class="page-btn">2</button>
-                                <button class="page-btn"><i class="bi bi-chevron-right"></i></button>
+                                {{ $organizations->links() }}
                             </div>
                         </div>
                     </div>
@@ -1185,119 +1135,133 @@
     </div>
 
     <!-- ── ADD ORG MODAL ── -->
-    <div id="addOrgModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="addOrgTitle">
+    <div id="addOrgModal" class="modal-overlay" role="dialog" aria-modal="true">
         <div class="modal">
             <div class="modal-header">
-                <h3 id="addOrgTitle"><i class="bi bi-plus-lg" style="color:#8b5cf6;"></i> Register Organization</h3>
-                <button class="modal-close" onclick="closeModal('addOrgModal')" aria-label="Close"><i
-                        class="bi bi-x-lg"></i></button>
+                <h3><i class="bi bi-plus-lg" style="color:#8b5cf6;"></i> Register Organization</h3>
+                <button class="modal-close" onclick="closeModal('addOrgModal')"><i class="bi bi-x-lg"></i></button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Organization Name</label>
-                    <input type="text" placeholder="Enter organization name">
-                </div>
-                <div class="form-row">
+            <form action="{{ route('super-admin.organizations.store') }}" method="POST">
+                @csrf
+                <div class="modal-body">
                     <div class="form-group">
-                        <label>Admin Name</label>
-                        <input type="text" placeholder="Full name">
+                        <label>Organization Name</label>
+                        <input type="text" name="org_name" placeholder="Enter organization name" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Admin Name</label>
+                            <input type="text" name="admin_name" placeholder="Full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Admin Email</label>
+                            <input type="email" name="admin_email" placeholder="admin@org.com" required>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label>Admin Email</label>
-                        <input type="email" placeholder="admin@org.com">
+                        <label>Admin Password</label>
+                        <input type="password" name="admin_password"
+                            placeholder="Set login password for this org's admin" required minlength="6">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Plan</label>
+                            <select name="plan">
+                                <option value="enterprise">Enterprise</option>
+                                <option value="standard">Standard</option>
+                                <option value="basic">Basic</option>
+                                <option value="trial">Trial</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>User Limit</label>
+                            <input type="number" name="max_users" placeholder="e.g. 500" value="500" required
+                                min="1">
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Domain</label>
-                    <input type="text" placeholder="org.platform.com">
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('addOrgModal')">Cancel</button>
+                    <button type="submit" class="btn-submit"><i class="bi bi-check-lg"></i> Register</button>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Plan</label>
-                        <select>
-                            <option>Enterprise</option>
-                            <option>Professional</option>
-                            <option>Starter</option>
-                            <option>Trial</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>User Limit</label>
-                        <input type="number" placeholder="e.g. 500">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeModal('addOrgModal')">Cancel</button>
-                <button class="btn-submit" onclick="closeModal('addOrgModal')"><i class="bi bi-check-lg"></i>
-                    Register</button>
-            </div>
+            </form>
         </div>
     </div>
 
     <!-- ── EDIT ORG MODAL ── -->
-    <div id="editOrgModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="editOrgTitle">
+    <div id="editOrgModal" class="modal-overlay" role="dialog" aria-modal="true">
         <div class="modal">
             <div class="modal-header">
-                <h3 id="editOrgTitle"><i class="bi bi-pencil-square" style="color:#f59e0b;"></i> Edit Organization
-                </h3>
-                <button class="modal-close" onclick="closeModal('editOrgModal')" aria-label="Close"><i
-                        class="bi bi-x-lg"></i></button>
+                <h3><i class="bi bi-pencil-square" style="color:#f59e0b;"></i> Edit Organization</h3>
+                <button class="modal-close" onclick="closeModal('editOrgModal')"><i class="bi bi-x-lg"></i></button>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Organization Name</label>
-                    <input type="text" id="editOrgName" placeholder="Organization name">
-                </div>
-                <div class="form-row">
+            <form id="editOrgForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
                     <div class="form-group">
-                        <label>Admin Name</label>
-                        <input type="text" id="editAdminName" placeholder="Admin name">
+                        <label>Organization Name</label>
+                        <input type="text" name="org_name" id="editOrgName" placeholder="Organization name"
+                            required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Admin Name</label>
+                            <input type="text" name="admin_name" id="editAdminName" placeholder="Admin name"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label>Admin Email</label>
+                            <input type="email" name="admin_email" id="editAdminEmail" placeholder="admin@org.com"
+                                required>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label>Admin Email</label>
-                        <input type="email" id="editAdminEmail" placeholder="admin@org.com">
+                        <label>Status</label>
+                        <select name="status" id="editOrgStatus">
+                            <option value="active">Active</option>
+                            <option value="suspended">Suspended</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Status</label>
-                    <select id="editOrgStatus">
-                        <option value="active">Active</option>
-                        <option value="evaluation">Evaluation</option>
-                        <option value="revoked">Revoked</option>
-                    </select>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('editOrgModal')">Cancel</button>
+                    <button type="submit" class="btn-submit"><i class="bi bi-check-lg"></i> Save Changes</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" onclick="closeModal('editOrgModal')">Cancel</button>
-                <button class="btn-submit" onclick="closeModal('editOrgModal')"><i class="bi bi-check-lg"></i> Save
-                    Changes</button>
-            </div>
+            </form>
         </div>
     </div>
 
     <!-- ── ACTIONS MODAL ── -->
-    <div id="actionsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="actionsTitle">
+    <div id="actionsModal" class="modal-overlay" role="dialog" aria-modal="true">
         <div class="modal" style="max-width:430px;">
             <div class="modal-header">
-                <h3 id="actionsTitle"><i class="bi bi-sliders" style="color:#a78bfa;"></i> Actions: <span
-                        id="actionOrgName" style="color:#e2e8f0;"></span></h3>
-                <button class="modal-close" onclick="closeModal('actionsModal')" aria-label="Close"><i
-                        class="bi bi-x-lg"></i></button>
+                <h3><i class="bi bi-sliders" style="color:#a78bfa;"></i> Actions: <span id="actionOrgName"
+                        style="color:#e2e8f0;"></span></h3>
+                <button class="modal-close" onclick="closeModal('actionsModal')"><i class="bi bi-x-lg"></i></button>
             </div>
             <div class="modal-body" style="gap:0.6rem;">
-                <button class="btn-submit btn-full" onclick="closeModal('actionsModal')">
-                    <i class="bi bi-arrow-repeat"></i> Renew Subscription
-                </button>
-                <button class="btn-warn" onclick="closeModal('actionsModal')">
-                    <i class="bi bi-pause-circle"></i> Suspend Organization
-                </button>
-                <button class="btn-cancel btn-full" onclick="closeModal('actionsModal')">
-                    <i class="bi bi-envelope"></i> Send Notification
-                </button>
-                <button class="btn-danger" onclick="closeModal('actionsModal')">
-                    <i class="bi bi-trash"></i> Delete Organization
-                </button>
+                <form id="renewOrgForm" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-submit btn-full">
+                        <i class="bi bi-arrow-repeat"></i> Renew Subscription
+                    </button>
+                </form>
+                <form id="suspendOrgForm" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-warn">
+                        <i class="bi bi-pause-circle"></i> Suspend Organization
+                    </button>
+                </form>
+                <form id="deleteOrgForm" method="POST"
+                    onsubmit="return confirm('This will permanently delete this organization and ALL its data (users, classes, attendance, payments). This cannot be undone. Continue?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-danger">
+                        <i class="bi bi-trash"></i> Delete Organization
+                    </button>
+                </form>
             </div>
             <div class="modal-footer">
                 <button class="btn-cancel" onclick="closeModal('actionsModal')">Close</button>
@@ -1335,17 +1299,20 @@
         }
 
         // Edit modal with pre-fill
-        function openEditModal(orgName, adminName, adminEmail, status) {
+        function openEditModal(orgId, orgName, adminName, adminEmail, status) {
+            document.getElementById('editOrgForm').action = `/super-admin/organizations/${orgId}`;
             document.getElementById('editOrgName').value = orgName;
             document.getElementById('editAdminName').value = adminName;
             document.getElementById('editAdminEmail').value = adminEmail;
             document.getElementById('editOrgStatus').value = status;
             openModal('editOrgModal');
         }
-
         // Actions modal
-        function openActionsModal(orgName) {
+        function openActionsModal(orgId, orgName) {
             document.getElementById('actionOrgName').textContent = orgName;
+            document.getElementById('renewOrgForm').action = `/super-admin/organizations/${orgId}/renew`;
+            document.getElementById('suspendOrgForm').action = `/super-admin/organizations/${orgId}/suspend`;
+            document.getElementById('deleteOrgForm').action = `/super-admin/organizations/${orgId}`;
             openModal('actionsModal');
         }
 
