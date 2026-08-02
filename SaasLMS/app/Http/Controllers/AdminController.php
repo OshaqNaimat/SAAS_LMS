@@ -72,9 +72,9 @@ public function facultyRoster()
 }
 public function dashboard()
 {
-        $orgId = Auth::user()->organization_id;
+    $orgId = Auth::user()->organization_id;
 
-   $totalTeachers = User::where('organization_id', $orgId)->where('role', 'teacher')->count();
+    $totalTeachers = User::where('organization_id', $orgId)->where('role', 'teacher')->count();
     $totalStudents = User::where('organization_id', $orgId)->where('role', 'student')->count();
     $totalRevenue = Payment::where('organization_id', $orgId)->where('status', 'cleared')->sum('amount');
 
@@ -85,16 +85,29 @@ public function dashboard()
     for ($i = 6; $i >= 0; $i--) {
         $day = Carbon::today()->subDays($i);
         $trendLabels[] = $i === 0 ? 'Today' : $day->format('D');
-        $teacherTrend[] = $this->dayAttendancePct('teacher', $day);
-        $studentTrend[] = $this->dayAttendancePct('student', $day);
+        $teacherTrend[] = $this->dayAttendancePct('teacher', $day, $orgId);
+        $studentTrend[] = $this->dayAttendancePct('student', $day, $orgId);
     }
 
-    $recentMembers = User::latest()->take(4)->get();
+    $recentMembers = User::where('organization_id', $orgId)
+        ->whereIn('role', ['teacher', 'student'])
+        ->latest()
+        ->take(4)
+        ->get();
 
     return view('admin.dashboard', compact(
         'totalTeachers', 'totalStudents', 'totalRevenue',
         'teacherTrend', 'studentTrend', 'trendLabels', 'recentMembers'
     ));
+}
+
+private function dayAttendancePct($role, $day, $orgId)
+{
+    $userIds = User::where('organization_id', $orgId)->where('role', $role)->pluck('id');
+    $total = Attendance::whereIn('user_id', $userIds)->where('date', $day)->count();
+    if ($total === 0) return 0;
+    $present = Attendance::whereIn('user_id', $userIds)->where('date', $day)->where('status', 'present')->count();
+    return round(($present / $total) * 100);
 }
 public function destroy(User $user)
 {
@@ -580,16 +593,6 @@ public function updatePayment(Request $request, Payment $payment)
     return response()->json(['success' => true, 'message' => 'Status updated successfully!']);
 }
 
-
-
-private function dayAttendancePct($role, $day)
-{
-    $userIds = User::where('role', $role)->pluck('id');
-    $total = Attendance::whereIn('user_id', $userIds)->where('date', $day)->count();
-    if ($total === 0) return 0;
-    $present = Attendance::whereIn('user_id', $userIds)->where('date', $day)->where('status', 'present')->count();
-    return round(($present / $total) * 100);
-}
 public function scheduleIndex()
 {
     $schedules = Schedule::with(['teacher', 'classRoom'])->orderBy('day_of_week')->orderBy('period_number')->get();
