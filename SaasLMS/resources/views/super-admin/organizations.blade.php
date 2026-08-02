@@ -980,34 +980,33 @@
                         <div class="stat-card">
                             <div class="stat-info">
                                 <h4>CONNECTED SITES</h4>
-                                <div class="stat-number">12</div>
+                                <div class="stat-number">{{ $totalOrgs }}</div>
                             </div>
                             <div class="stat-icon" style="color:#a78bfa;"><i class="bi bi-building"></i></div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-info">
                                 <h4>ACTIVE SECTORS</h4>
-                                <div class="stat-number" style="color:var(--green);">10</div>
+                                <div class="stat-number" style="color:var(--green);">{{ $activeOrgs }}</div>
                             </div>
                             <div class="stat-icon" style="color:var(--green);"><i class="bi bi-patch-check"></i></div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-info">
                                 <h4>TRIAL ACCOUNTS</h4>
-                                <div class="stat-number" style="color:var(--yellow);">02</div>
+                                <div class="stat-number" style="color:var(--yellow);">{{ $trialOrgs }}</div>
                             </div>
                             <div class="stat-icon" style="color:var(--yellow);"><i class="bi bi-hourglass-split"></i>
                             </div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-info">
-                                <h4>LOADED NODES</h4>
-                                <div class="stat-number" style="color:var(--pink);">48</div>
+                                <h4>TOTAL USERS</h4>
+                                <div class="stat-number" style="color:var(--pink);">{{ $totalUsers }}</div>
                             </div>
                             <div class="stat-icon" style="color:var(--pink);"><i class="bi bi-cpu-fill"></i></div>
                         </div>
                     </div>
-
                     <!-- Filters -->
                     <div class="filters-bar">
                         <div class="search-box">
