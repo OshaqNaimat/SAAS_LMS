@@ -8,7 +8,7 @@ class Payment extends Model
 {
     protected $fillable = [
         'voucher_id', 'student_id', 'student_name', 'roll_number',
-        'category', 'channel', 'amount', 'status', 'recorded_by',
+        'category', 'channel', 'amount', 'status', 'recorded_by', 'organization_id'
     ];
 
     public function student()

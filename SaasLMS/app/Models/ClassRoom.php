@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ClassRoom extends Model
 {
-    protected $fillable = [
-        'name', 'section', 'stream', 'room', 'max_seats', 'teacher_id',
-        'total_lessons', 'completed_lessons',
-    ];
+   protected $fillable = [
+    'name', 'section', 'stream', 'room', 'max_seats', 'teacher_id',
+    'total_lessons', 'completed_lessons', 'organization_id',
+];
 
     // Original: single "lead mentor" relationship (used by Classes page, admin.classesIndex)
     public function teacher()

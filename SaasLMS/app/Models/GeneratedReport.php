@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GeneratedReport extends Model
 {
-    protected $fillable = ['type', 'filename', 'department', 'path', 'size_bytes'];
+    protected $fillable = ['type', 'filename', 'department', 'path', 'size_bytes', 'organization_id'];
 
     public function humanSize()
     {

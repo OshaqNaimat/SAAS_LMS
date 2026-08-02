@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attendance extends Model
 {
-    protected $fillable = ['user_id', 'date', 'status', 'note', 'marked_by'];
+    protected $fillable = ['user_id', 'date', 'status', 'note', 'marked_by', 'organization_id'];
 
     public function user()
     {

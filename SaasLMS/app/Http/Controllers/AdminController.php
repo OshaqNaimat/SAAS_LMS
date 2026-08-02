@@ -164,20 +164,18 @@ public function classesIndex()
 public function storeClass(Request $request)
 {
     $request->validate([
-        'name'              => 'required|string|max:255',
-        'section'           => 'required|string|max:255',
-        'stream'            => 'nullable|string|max:255',
-        'room'              => 'nullable|string|max:255',
-        'max_seats'         => 'required|integer|min:1',
-        'teacher_id'        => 'nullable|exists:users,id',
-        'total_lessons'     => 'nullable|integer|min:0',
-        'completed_lessons' => 'nullable|integer|min:0',
+        'name'           => 'required|string|max:255',
+        'section'        => 'required|string|max:255',
+        'stream'         => 'nullable|string|max:255',
+        'room'           => 'nullable|string|max:255',
+        'max_seats'      => 'required|integer|min:1',
+        'teacher_id'     => 'nullable|exists:users,id',
     ]);
 
-    ClassRoom::create($request->only(
-        'name', 'section', 'stream', 'room', 'max_seats', 'teacher_id',
-        'total_lessons', 'completed_lessons'
-    ));
+    ClassRoom::create([
+        ...$request->only('name', 'section', 'stream', 'room', 'max_seats', 'teacher_id'),
+        'organization_id' => Auth::user()->organization_id,
+    ]);
 
     return back()->with('success', 'Class created successfully!');
 }

@@ -8,7 +8,7 @@ class Schedule extends Model
 {
     protected $fillable = [
         'teacher_id', 'class_room_id', 'subject', 'day_of_week',
-        'period_number', 'start_time', 'end_time', 'room',
+        'period_number', 'start_time', 'end_time', 'room', 'organization_id'
     ];
 
     public function teacher()
