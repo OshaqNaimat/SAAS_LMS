@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\SuperAdminDashboardController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
@@ -16,7 +17,13 @@ Route::middleware(['auth', 'super_admin'])->group(function () {
     Route::get('/super-admin-dashboard', [SuperAdminDashboardController::class, 'index'])
         ->name('super-admin.dashboard');
 
-    Route::view('/super-admin-organizations', 'super-admin.organizations');
+   Route::get('/super-admin-organizations', [SuperAdminController::class, 'organizations'])->name('super-admin.organizations');
+    Route::post('/super-admin/organizations', [SuperAdminController::class, 'storeOrganization'])->name('super-admin.organizations.store');
+    Route::put('/super-admin/organizations/{organization}', [SuperAdminController::class, 'updateOrganization'])->name('super-admin.organizations.update');
+    Route::post('/super-admin/organizations/{organization}/suspend', [SuperAdminController::class, 'suspendOrganization'])->name('super-admin.organizations.suspend');
+    Route::post('/super-admin/organizations/{organization}/renew', [SuperAdminController::class, 'renewOrganization'])->name('super-admin.organizations.renew');
+    Route::delete('/super-admin/organizations/{organization}', [SuperAdminController::class, 'destroyOrganization'])->name('super-admin.organizations.destroy');
+
     Route::view('/super-admin-analytics', 'super-admin.analytics');
     Route::view('/super-admin-settings', 'super-admin.settings');
 });
