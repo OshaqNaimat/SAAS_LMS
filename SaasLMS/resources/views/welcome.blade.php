@@ -2,7 +2,7 @@
     <div class="min-h-screen bg-[#090d16] flex flex-col justify-center items-center p-4 relative overflow-y-hidden">
 
         <div id="roleGlow"
-            class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px] pointer-events-none transition-all duration-500">
+            class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-125  bg-blue-600/5 rounded-full blur-[120px] pointer-events-none transition-all duration-500">
         </div>
 
         <div class="w-full max-w-[450px] z-10 space-y-6">
@@ -13,8 +13,8 @@
                     <i id="brandIcon" class="bi bi-building"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white">Apex Global Institute</h1>
-                    <p class="text-xs text-gray-400 mt-1">Unified Multi-Role Portal Engine</p>
+                    <h1 class="text-xl font-bold tracking-tight text-white">NEXUS <span class="text-blue-400">LMS</span>
+                    </h1> {{-- <p class="text-xs text-gray-400 mt-1">Unified Multi-Role Portal Engine</p> --}}
                 </div>
             </div>
 
