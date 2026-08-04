@@ -537,6 +537,8 @@ public function billingIndex(Request $request)
 
 public function storePayment(Request $request)
 {
+    $orgId = Auth::user()->organization_id;
+
     $request->validate([
         'roll_number'  => 'required|string',
         'student_name' => 'required|string|max:255',
@@ -546,24 +548,31 @@ public function storePayment(Request $request)
         'status'       => 'required|in:cleared,pending,overdue',
     ]);
 
-    $student = \App\Models\User::where('roll_number', $request->roll_number)->where('role', 'student')->first();
+    $student = User::where('roll_number', $request->roll_number)
+        ->where('role', 'student')
+        ->where('organization_id', $orgId)
+        ->first();
 
-    $voucherId = '#VCH-' . now()->format('Y') . '-' . str_pad(Payment::count() + 9041, 4, '0', STR_PAD_LEFT);
+    $voucherId = '#VCH-' . now()->format('Y') . '-' . str_pad(
+        Payment::where('organization_id', $orgId)->count() + 9041, 4, '0', STR_PAD_LEFT
+    );
 
     Payment::create([
-        'voucher_id'   => $voucherId,
-        'student_id'   => $student->id ?? null,
-        'student_name' => $request->student_name,
-        'roll_number'  => $request->roll_number,
-        'category'     => $request->category,
-        'channel'      => $request->channel,
-        'amount'       => $request->amount,
-        'status'       => $request->status,
-        'recorded_by'  => Auth::id(),
+        'voucher_id'      => $voucherId,
+        'student_id'      => $student->id ?? null,
+        'student_name'    => $request->student_name,
+        'roll_number'     => $request->roll_number,
+        'category'        => $request->category,
+        'channel'         => $request->channel,
+        'amount'          => $request->amount,
+        'status'          => $request->status,
+        'recorded_by'     => Auth::id(),
+        'organization_id' => $orgId,   // ← this line must be present
     ]);
 
     return back()->with('success', 'Payment recorded successfully!');
 }
+
 public function searchPayments(Request $request)
 {
     $search = $request->get('search', '');
