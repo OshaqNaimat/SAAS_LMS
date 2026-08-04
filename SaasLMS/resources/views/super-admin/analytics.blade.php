@@ -681,8 +681,11 @@
                                     <i class="bi bi-currency-dollar"></i>
                                 </div>
                             </div>
-                            <div class="kpi-value">$24,847</div>
-                            <span class="kpi-change up"><i class="bi bi-arrow-up-short"></i> +12.5% vs last month</span>
+                            <div class="kpi-value">Rs. {{ number_format($totalRevenue) }}</div>
+                            <span class="kpi-change {{ $revenueGrowthPct >= 0 ? 'up' : 'down' }}">
+                                <i class="bi bi-arrow-{{ $revenueGrowthPct >= 0 ? 'up' : 'down' }}-short"></i>
+                                {{ $revenueGrowthPct >= 0 ? '+' : '' }}{{ $revenueGrowthPct }}% vs last month
+                            </span>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-header">
@@ -691,28 +694,33 @@
                                     <i class="bi bi-people-fill"></i>
                                 </div>
                             </div>
-                            <div class="kpi-value">8,421</div>
-                            <span class="kpi-change up"><i class="bi bi-arrow-up-short"></i> +8.2% this month</span>
+                            <div class="kpi-value">{{ number_format($totalUsers) }}</div>
+                            <span class="kpi-change {{ $userGrowthPct >= 0 ? 'up' : 'down' }}">
+                                <i class="bi bi-arrow-{{ $userGrowthPct >= 0 ? 'up' : 'down' }}-short"></i>
+                                {{ $userGrowthPct >= 0 ? '+' : '' }}{{ $userGrowthPct }}% this week
+                            </span>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-header">
-                                <span class="kpi-label">Avg. Session</span>
+                                <span class="kpi-label">Avg Users / Org</span>
                                 <div class="kpi-icon-box"
-                                    style="background:rgba(251,191,36,0.12); color:var(--yellow);"><i
-                                        class="bi bi-clock-fill"></i></div>
+                                    style="background:rgba(251,191,36,0.12); color:var(--yellow);">
+                                    <i class="bi bi-diagram-3-fill"></i>
+                                </div>
                             </div>
-                            <div class="kpi-value">24m 38s</div>
-                            <span class="kpi-change up"><i class="bi bi-arrow-up-short"></i> +3.1% engagement</span>
+                            <div class="kpi-value">{{ $avgUsersPerOrg }}</div>
+                            <span class="kpi-change up"><i class="bi bi-building"></i> across {{ $totalOrgs }}
+                                orgs</span>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-header">
-                                <span class="kpi-label">Bounce Rate</span>
+                                <span class="kpi-label">Trial Conversion</span>
                                 <div class="kpi-icon-box" style="background:rgba(244,114,182,0.12); color:var(--pink);">
-                                    <i class="bi bi-graph-down"></i></div>
+                                    <i class="bi bi-arrow-up-right-circle"></i>
+                                </div>
                             </div>
-                            <div class="kpi-value">18.4%</div>
-                            <span class="kpi-change down"><i class="bi bi-arrow-down-short"></i> -2.1%
-                                improvement</span>
+                            <div class="kpi-value">{{ $trialConversionPct }}%</div>
+                            <span class="kpi-change up"><i class="bi bi-check-circle"></i> off trial plan</span>
                         </div>
                     </div>
 
@@ -731,31 +739,7 @@
                                     <option>30 Days</option>
                                 </select>
                             </div>
-                            <div class="chart-canvas">
-                                <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
-                                    <defs>
-                                        <linearGradient id="revGrad" x1="0%" y1="0%" x2="0%"
-                                            y2="100%">
-                                            <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.3" />
-                                            <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0" />
-                                        </linearGradient>
-                                    </defs>
-                                    <line x1="35" y1="165" x2="385" y2="165"
-                                        stroke="rgba(148,163,184,0.1)" stroke-width="1" />
-                                    <polygon
-                                        points="35,140 65,130 95,145 125,110 155,120 185,90 215,100 245,70 275,85 305,55 335,65 365,45 385,55 385,165 35,165"
-                                        fill="url(#revGrad)" />
-                                    <polyline
-                                        points="35,140 65,130 95,145 125,110 155,120 185,90 215,100 245,70 275,85 305,55 335,65 365,45 385,55"
-                                        fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <circle cx="35" cy="140" r="3.5" fill="#7c3aed" />
-                                    <circle cx="125" cy="110" r="3.5" fill="#7c3aed" />
-                                    <circle cx="245" cy="70" r="3.5" fill="#7c3aed" />
-                                    <circle cx="365" cy="45" r="3.5" fill="#7c3aed" />
-                                    <circle cx="385" cy="55" r="3.5" fill="#7c3aed" />
-                                </svg>
-                            </div>
+                            <div class="chart-canvas"><canvas id="revenueTrendChart"></canvas></div>
                         </div>
 
                         <!-- User Acquisition -->
@@ -770,36 +754,7 @@
                                     <option>2025</option>
                                 </select>
                             </div>
-                            <div class="chart-canvas">
-                                <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
-                                    <line x1="30" y1="160" x2="390" y2="160"
-                                        stroke="rgba(148,163,184,0.1)" stroke-width="1" />
-                                    <rect x="38" y="90" width="22" height="70" fill="rgba(96,165,250,0.5)"
-                                        rx="3" />
-                                    <rect x="68" y="80" width="22" height="80" fill="rgba(96,165,250,0.6)"
-                                        rx="3" />
-                                    <rect x="98" y="65" width="22" height="95" fill="rgba(96,165,250,0.7)"
-                                        rx="3" />
-                                    <rect x="128" y="50" width="22" height="110" fill="rgba(96,165,250,0.8)"
-                                        rx="3" />
-                                    <rect x="158" y="45" width="22" height="115" fill="#60a5fa"
-                                        rx="3" />
-                                    <rect x="188" y="55" width="22" height="105" fill="rgba(96,165,250,0.85)"
-                                        rx="3" />
-                                    <rect x="218" y="40" width="22" height="120" fill="#60a5fa"
-                                        rx="3" />
-                                    <rect x="248" y="35" width="22" height="125" fill="rgba(96,165,250,0.9)"
-                                        rx="3" />
-                                    <rect x="278" y="48" width="22" height="112" fill="rgba(96,165,250,0.8)"
-                                        rx="3" />
-                                    <rect x="308" y="60" width="22" height="100" fill="rgba(96,165,250,0.7)"
-                                        rx="3" />
-                                    <rect x="338" y="70" width="22" height="90" fill="rgba(96,165,250,0.6)"
-                                        rx="3" />
-                                    <rect x="368" y="55" width="22" height="105" fill="#60a5fa"
-                                        rx="3" />
-                                </svg>
-                            </div>
+                            <div class="chart-canvas"><canvas id="userAcquisitionChart"></canvas></div>
                         </div>
                     </div>
 
@@ -815,33 +770,20 @@
                             </div>
                             <div class="chart-canvas">
                                 <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
-                                    <!-- Enterprise - 45% -->
-                                    <rect x="30" y="40" width="340" height="28" rx="6"
-                                        fill="rgba(124,58,237,0.7)" />
-                                    <text x="40" y="59" fill="white" font-size="11"
-                                        font-weight="600">Enterprise</text>
-                                    <text x="355" y="59" fill="white" font-size="10" font-weight="700"
-                                        text-anchor="end">45%</text>
-                                    <!-- Professional - 30% -->
-                                    <rect x="30" y="78" width="227" height="28" rx="6"
-                                        fill="rgba(96,165,250,0.7)" />
-                                    <text x="40" y="97" fill="white" font-size="11"
-                                        font-weight="600">Professional</text>
-                                    <text x="242" y="97" fill="white" font-size="10" font-weight="700"
-                                        text-anchor="end">30%</text>
-                                    <!-- Starter - 17% -->
-                                    <rect x="30" y="116" width="128" height="28" rx="6"
-                                        fill="rgba(52,211,153,0.7)" />
-                                    <text x="40" y="135" fill="white" font-size="11"
-                                        font-weight="600">Starter</text>
-                                    <text x="143" y="135" fill="white" font-size="10" font-weight="700"
-                                        text-anchor="end">17%</text>
-                                    <!-- Trial - 8% -->
-                                    <rect x="30" y="154" width="60" height="28" rx="6"
-                                        fill="rgba(251,191,36,0.7)" />
-                                    <text x="40" y="173" fill="white" font-size="11" font-weight="600">Trial</text>
-                                    <text x="75" y="173" fill="white" font-size="10" font-weight="700"
-                                        text-anchor="end">8%</text>
+                                    @php $colors = ['enterprise' => 'rgba(124,58,237,0.7)', 'standard' => 'rgba(96,165,250,0.7)', 'basic' => 'rgba(52,211,153,0.7)', 'trial' => 'rgba(251,191,36,0.7)']; @endphp
+                                    @foreach ($planDistribution as $i => $p)
+                                        @php
+                                            $y = 40 + $i * 38;
+                                            $width = max(30, ($p['pct'] / 100) * 340);
+                                        @endphp
+                                        <rect x="30" y="{{ $y }}" width="{{ $width }}"
+                                            height="28" rx="6" fill="{{ $colors[$p['plan']] }}" />
+                                        <text x="40" y="{{ $y + 19 }}" fill="white" font-size="11"
+                                            font-weight="600">{{ ucfirst($p['plan']) }}</text>
+                                        <text x="{{ 30 + $width - 5 }}" y="{{ $y + 19 }}" fill="white"
+                                            font-size="10" font-weight="700"
+                                            text-anchor="end">{{ $p['pct'] }}%</text>
+                                    @endforeach
                                 </svg>
                             </div>
                         </div>
@@ -859,153 +801,40 @@
                                     <tr>
                                         <th>Organization</th>
                                         <th>Users</th>
-                                        <th>Growth</th>
-                                        <th>Usage</th>
+                                        <th>Plan</th>
+                                        <th>Capacity</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td><strong style="color:white;">Apex Global Institute</strong></td>
-                                        <td>1,240</td>
-                                        <td><span style="color:var(--green);">+12%</span></td>
-                                        <td>
-                                            <div class="progress-cell">
-                                                <div class="progress-mini">
-                                                    <div class="progress-mini-fill"
-                                                        style="width:85%; background:var(--accent);"></div>
+                                    @forelse($topOrganizations as $org)
+                                        <tr>
+                                            <td><strong style="color:white;">{{ $org['name'] }}</strong></td>
+                                            <td>{{ number_format($org['users_count']) }}</td>
+                                            <td><span style="color:var(--cyan);">{{ ucfirst($org['plan']) }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="progress-cell">
+                                                    <div class="progress-mini">
+                                                        <div class="progress-mini-fill"
+                                                            style="width:{{ $org['usage_pct'] }}%; background:var(--accent);">
+                                                        </div>
+                                                    </div>
+                                                    <span style="font-size:0.7rem;">{{ $org['usage_pct'] }}%</span>
                                                 </div>
-                                                <span style="font-size:0.7rem;">85%</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong style="color:white;">Vanguard Fitness Corp</strong></td>
-                                        <td>342</td>
-                                        <td><span style="color:var(--green);">+8%</span></td>
-                                        <td>
-                                            <div class="progress-cell">
-                                                <div class="progress-mini">
-                                                    <div class="progress-mini-fill"
-                                                        style="width:62%; background:var(--blue);"></div>
-                                                </div>
-                                                <span style="font-size:0.7rem;">62%</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong style="color:white;">TechVantage Solutions</strong></td>
-                                        <td>287</td>
-                                        <td><span style="color:var(--green);">+18%</span></td>
-                                        <td>
-                                            <div class="progress-cell">
-                                                <div class="progress-mini">
-                                                    <div class="progress-mini-fill"
-                                                        style="width:48%; background:var(--cyan);"></div>
-                                                </div>
-                                                <span style="font-size:0.7rem;">48%</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong style="color:white;">Nexus Systems Lab</strong></td>
-                                        <td>18</td>
-                                        <td><span style="color:var(--yellow);">+2%</span></td>
-                                        <td>
-                                            <div class="progress-cell">
-                                                <div class="progress-mini">
-                                                    <div class="progress-mini-fill"
-                                                        style="width:22%; background:var(--yellow);"></div>
-                                                </div>
-                                                <span style="font-size:0.7rem;">22%</span>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" style="text-align:center; color:var(--text-muted);">No
+                                                organizations yet.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- Bottom Row -->
-                    <div class="chart-grid">
-                        <!-- Key Metrics -->
-                        <div class="chart-card">
-                            <div class="chart-header">
-                                <div>
-                                    <div class="chart-title">Key Metrics</div>
-                                    <div class="chart-subtitle">Platform performance</div>
-                                </div>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-name">API Requests (24h)</span>
-                                <span class="metric-value">2.4M</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-name">Avg. Response Time</span>
-                                <span class="metric-value">124ms</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-name">Error Rate</span>
-                                <span class="metric-value" style="color:var(--green);">0.12%</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-name">Uptime (30 days)</span>
-                                <span class="metric-value" style="color:var(--green);">99.98%</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-name">Storage Used</span>
-                                <span class="metric-value">1.2 TB / 2 TB</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-name">Bandwidth (Month)</span>
-                                <span class="metric-value">8.7 TB</span>
-                            </div>
-                            <div class="metric-row">
-                                <span class="metric-name">Active Integrations</span>
-                                <span class="metric-value">24</span>
-                            </div>
-                        </div>
 
-                        <!-- Traffic Sources -->
-                        <div class="chart-card">
-                            <div class="chart-header">
-                                <div>
-                                    <div class="chart-title">Traffic Sources</div>
-                                    <div class="chart-subtitle">User acquisition channels</div>
-                                </div>
-                            </div>
-                            <div class="chart-canvas">
-                                <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
-                                    <!-- Direct - 40% -->
-                                    <rect x="30" y="30" width="340" height="30" rx="6"
-                                        fill="rgba(124,58,237,0.8)" />
-                                    <text x="40" y="50" fill="white" font-size="11" font-weight="600">Direct</text>
-                                    <text x="355" y="50" fill="white" font-size="10" font-weight="700"
-                                        text-anchor="end">40%</text>
-                                    <!-- Referral - 28% -->
-                                    <rect x="30" y="68" width="238" height="30" rx="6"
-                                        fill="rgba(96,165,250,0.8)" />
-                                    <text x="40" y="88" fill="white" font-size="11"
-                                        font-weight="600">Referral</text>
-                                    <text x="253" y="88" fill="white" font-size="10" font-weight="700"
-                                        text-anchor="end">28%</text>
-                                    <!-- Organic - 20% -->
-                                    <rect x="30" y="106" width="170" height="30" rx="6"
-                                        fill="rgba(52,211,153,0.8)" />
-                                    <text x="40" y="126" fill="white" font-size="11" font-weight="600">Organic
-                                        Search</text>
-                                    <text x="185" y="126" fill="white" font-size="10" font-weight="700"
-                                        text-anchor="end">20%</text>
-                                    <!-- Social - 12% -->
-                                    <rect x="30" y="144" width="102" height="30" rx="6"
-                                        fill="rgba(244,114,182,0.8)" />
-                                    <text x="40" y="164" fill="white" font-size="11" font-weight="600">Social
-                                        Media</text>
-                                    <text x="117" y="164" fill="white" font-size="10" font-weight="700"
-                                        text-anchor="end">12%</text>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1026,6 +855,87 @@
 
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
+        });
+        new Chart(document.getElementById('revenueTrendChart'), {
+            type: 'line',
+            data: {
+                labels: @json($revenueTrendLabels),
+                datasets: [{
+                    data: @json($revenueTrend),
+                    borderColor: '#7c3aed',
+                    backgroundColor: 'rgba(124,58,237,0.15)',
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#7c3aed',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(148,163,184,0.1)'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('userAcquisitionChart'), {
+            type: 'bar',
+            data: {
+                labels: @json($revenueTrendLabels),
+                datasets: [{
+                    data: @json($userAcquisitionTrend),
+                    backgroundColor: '#60a5fa',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(148,163,184,0.1)'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    }
+                }
+            }
         });
     </script>
 </body>

@@ -24,7 +24,8 @@ Route::middleware(['auth', 'super_admin'])->group(function () {
     Route::post('/super-admin/organizations/{organization}/renew', [SuperAdminController::class, 'renewOrganization'])->name('super-admin.organizations.renew');
     Route::delete('/super-admin/organizations/{organization}', [SuperAdminController::class, 'destroyOrganization'])->name('super-admin.organizations.destroy');
 
-    Route::view('/super-admin-analytics', 'super-admin.analytics');
+    Route::get('/super-admin-analytics', [SuperAdminController::class, 'analytics'])
+    ->name('super-admin.analytics');
     Route::view('/super-admin-settings', 'super-admin.settings');
 });
 
