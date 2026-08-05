@@ -9,15 +9,28 @@
 
      <div class="sidebar-section">
          <div class="sidebar-label">Overview</div>
-         <a class="nav-item" href="/super-admin-dashboard"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
-         <a class="nav-item active" href="/super-admin-organizations"><i class="bi bi-building"></i> Organizations <span
-                 class="nav-badge">12</span></a>
+         <a class="nav-item {{ request()->routeIs('super-admin.dashboard') ? 'active' : '' }}"
+             href="{{ route('super-admin.dashboard') }}">
+             Dashboard
+         </a>
+         <a class="nav-item {{ request()->routeIs('super-admin-organizations') ? 'active' : '' }}"
+             href="{{ route('super-admin.organizations') }}">
+             <i class="bi bi-building"></i> Organizations
+             <span class="nav-badge">12</span>
+         </a>
      </div>
 
      <div class="sidebar-section">
          <div class="sidebar-label">System</div>
-         <a class="nav-item" href="/super-admin-analytics"><i class="bi bi-bar-chart-fill"></i> Analytics</a>
-         <a class="nav-item" href="/super-admin-settings"><i class="bi bi-gear-fill"></i> Settings</a>
+
+         <a class="nav-item {{ request()->routeIs('super-admin-analytics') ? 'active' : '' }}"
+             href="{{ route('super-admin.analytics') }}">
+             <i class="bi bi-bar-chart-fill"></i> Analytics
+         </a>
+         {{-- <a class="nav-item {{ request()->routeIs('super-admin-settings') ? 'active' : '' }}"
+             href="{{ route('super-admin.settings') }}">
+             <i class="bi bi-gear-fill"></i> Settings
+         </a> --}}
          <a class="nav-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a>
      </div>
 
