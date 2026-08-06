@@ -375,16 +375,16 @@
             }
         });
 
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            if (sidebar) sidebar.classList.remove('open');
-            if (overlay) overlay.classList.remove('show');
-        }
+        // function closeSidebar() {
+        //     const sidebar = document.getElementById('sidebar');
+        //     const overlay = document.getElementById('sidebarOverlay');
+        //     if (sidebar) sidebar.classList.remove('open');
+        //     if (overlay) overlay.classList.remove('show');
+        // }
 
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 1024) closeSidebar();
-        });
+        // window.addEventListener('resize', () => {
+        //     if (window.innerWidth >= 1024) closeSidebar();
+        // });
 
         function toggleActionMenu(id) {
             document.querySelectorAll('[id^="menu-"]').forEach(menu => {
@@ -449,5 +449,16 @@
                 studentCountBadge.textContent = `${visibleCount} Shown`;
             });
         }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('show');
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) closeSidebar();
+        });
     </script>
 </x-layout>
