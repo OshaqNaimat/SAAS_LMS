@@ -12,9 +12,7 @@
                     <p class="text-sm text-gray-400 mt-1">Manage your institution's educators, personnel, and registered
                         student data arrays.</p>
                 </div>
-                <button onclick="toggleSidebar()"
-                    class="mobile-menu-btn lg:hidden w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-white hover:bg-slate-700 transition shrink-0"
-                    aria-label="Open menu">
+                <button onclick="toggleSidebar()" class="hamburger-btn lg:hidden" aria-label="Open menu">
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
