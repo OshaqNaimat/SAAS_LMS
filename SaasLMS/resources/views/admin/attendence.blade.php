@@ -24,6 +24,9 @@
                         <i class="bi bi-save"></i> Save Changes
                         <span id="pendingCount" class="bg-white/20 rounded-full px-2 py-0.5 text-xs">0</span>
                     </button>
+                    <button onclick="toggleSidebar()" class="hamburger-btn lg:hidden" aria-label="Open menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
                 </div>
             </div>
 
@@ -593,6 +596,17 @@
                 const presentBtn = group.querySelector('button:nth-child(1)');
                 if (presentBtn) setStatus(presentBtn, 'present');
             });
+        }
+        /* ─── Sidebar Toggle ─── */
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            }
         }
 
         function closeSidebar() {
