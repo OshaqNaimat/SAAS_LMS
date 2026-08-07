@@ -1113,22 +1113,28 @@ body {
 /* ── Desktop: sidebar always visible ── */
 @media (min-width: 1024px) {
     .sidebar {
-        position: fixed;
+        /* position: fixed; */
         top: 0;
         left: 0;
         height: 100vh;
         transform: translateX(0);
+        position: relative;
+        transform: none !important;
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
     }
 
     main {
-        margin-left: var(--sidebar-width);
+        margin-left: 0 !important;
     }
 
     .mobile-header {
         display: none !important;
     }
 
-    .sidebar-overlay {
+    .sidebar-overlay,
+    .hamburger-btn,
+    .mobile-header {
         display: none !important;
     }
 
@@ -1144,6 +1150,8 @@ body {
         top: 0;
         left: 0;
         bottom: 0;
+        width: var(--sidebar-width);
+        min-width: var(--sidebar-width);
         transform: translateX(-100%);
         transition: transform 0.28s ease;
         box-shadow: 10px 0 40px rgba(0, 0, 0, 0.5);
