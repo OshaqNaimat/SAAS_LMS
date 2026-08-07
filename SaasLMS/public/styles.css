@@ -53,6 +53,7 @@ body {
     background: var(--bg-surface);
     border-right: 1px solid var(--border);
     display: flex;
+    position: fixed;
     flex-direction: column;
     height: 100vh;
     overflow-y: auto;
@@ -257,7 +258,7 @@ body {
     overflow: hidden;
 }
 
-.mobile-header {
+/* .mobile-header {
     display: none;
     align-items: center;
     justify-content: space-between;
@@ -268,7 +269,7 @@ body {
     top: 0;
     z-index: 50;
     flex-shrink: 0;
-}
+} */
 
 .brand-mobile {
     display: flex;
@@ -1221,7 +1222,7 @@ body {
     justify-content: center;
     font-size: 1.2rem;
 }
-
+/*
 .sidebar-overlay {
     position: fixed;
     inset: 0;
@@ -1231,15 +1232,15 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.25s;
-}
+} */
 
-.sidebar-overlay.show {
+/* .sidebar-overlay.show {
     opacity: 1;
     pointer-events: all;
-}
+} */
 
 @media (max-width: 1023px) {
-    .sidebar {
+    /* .sidebar {
         position: fixed;
         top: 0;
         left: 0;
@@ -1247,7 +1248,7 @@ body {
         transform: translateX(-100%);
         transition: transform 0.28s ease;
         z-index: 100;
-    }
+    } */
 
     .sidebar.open {
         transform: translateX(0);
@@ -1289,9 +1290,5 @@ body {
 @media (min-width: 1024px) {
     .sidebar {
         transform: translateX(0); /* always visible on desktop */
-    }
-
-    main {
-        margin-left: 260px; /* reserve space only here, explicitly */
     }
 }

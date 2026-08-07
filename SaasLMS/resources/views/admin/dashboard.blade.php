@@ -1,7 +1,4 @@
 <x-layout>
-
-
-
     <div>
 
         <div class="app-container">
@@ -40,16 +37,11 @@
                                 <p>Here's what's happening with your organization today.</p>
                             </div>
 
-                            <div class="relative w-full max-w-xs mx-4">
-                                <div class="relative flex items-center">
-                                    <i class="bi bi-search absolute left-3 text-gray-500 text-xs leading-none"></i>
-                                    <input type="text" id="globalSearchInput"
-                                        placeholder="Search students, teachers, classes..." autocomplete="off"
-                                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 transition">
-                                </div>
-                                <div id="globalSearchResults"
-                                    class="hidden absolute top-full mt-2 w-full bg-[#111c2a] border border-slate-800 rounded-xl shadow-2xl overflow-hidden z-50 max-h-80 overflow-y-auto">
-                                </div>
+                            <div class="header-search">
+                                <i class="bi bi-search header-search-icon"></i>
+                                <input type="text" id="globalSearchInput" class="header-search-input"
+                                    placeholder="Search students, teachers, classes..." autocomplete="off">
+                                <div id="globalSearchResults" class="header-search-results"></div>
                             </div>
 
                             <div class="header-actions">
@@ -88,9 +80,10 @@
                         </div>
 
                         <!-- Charts Row -->
-                        <div class="chart-grid grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                        <div class="chart-grid w-full">
                             <!-- Project Progress Chart -->
-                            <div class="chart-card w-full border rounded-xl p-4 bg-white shadow-sm">
+                            <div
+                                class="chart-card w-full border border-slate-800 rounded-xl p-4 bg-[#1a2236] shadow-sm">
                                 <div class="chart-card-header flex justify-between items-center mb-4">
                                     <h3 class="font-semibold text-lg">Teacher Attendance</h3>
                                     <span
@@ -145,7 +138,8 @@
                                 </div>
                             </div>
 
-                            <div class="chart-card w-full border rounded-xl p-4 bg-white shadow-sm">
+                            <div
+                                class="chart-card w-full border border-slate-800 rounded-xl p-4 bg-[#1a2236] shadow-sm">
                                 <div class="chart-card-header flex justify-between items-center mb-4">
                                     <h3 class="font-semibold text-lg">Student Attendance</h3>
                                     <span
@@ -526,7 +520,7 @@
                 const query = this.value.trim();
 
                 if (query.length < 2) {
-                    searchResults.classList.add('hidden');
+                    searchResults.classList.remove('show');
                     return;
                 }
 
@@ -536,28 +530,27 @@
                         .then(data => {
                             if (data.results.length === 0) {
                                 searchResults.innerHTML =
-                                    `<div class="p-4 text-xs text-gray-500 text-center">No results found</div>`;
+                                    `<div style="padding:1rem; font-size:0.75rem; color:var(--text-muted); text-align:center;">No results found</div>`;
                             } else {
                                 searchResults.innerHTML = data.results.map(r => `
-                        <a href="${r.url}" class="flex items-center justify-between px-4 py-2.5 hover:bg-slate-900/60 transition border-b border-slate-800/60 last:border-0">
+                        <a href="${r.url}" style="display:flex; align-items:center; justify-content:space-between; padding:0.65rem 1rem; text-decoration:none; border-bottom:1px solid var(--border);">
                             <div>
-                                <p class="text-xs font-semibold text-white">${r.label}</p>
-                                <p class="text-[10px] text-gray-500">${r.sub}</p>
+                                <p style="font-size:0.75rem; font-weight:600; color:var(--text-primary); margin:0;">${r.label}</p>
+                                <p style="font-size:0.65rem; color:var(--text-muted); margin:0;">${r.sub}</p>
                             </div>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-gray-400">${r.type}</span>
+                            <span style="font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:6px; background:var(--bg-input); color:var(--text-muted);">${r.type}</span>
                         </a>
                     `).join('');
                             }
-                            searchResults.classList.remove('hidden');
+                            searchResults.classList.add('show');
                         })
                         .catch(err => console.error(err));
                 }, 300);
             });
 
-            // Close dropdown when clicking outside
             document.addEventListener('click', (e) => {
                 if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.classList.add('hidden');
+                    searchResults.classList.remove('show');
                 }
             });
         </script>
