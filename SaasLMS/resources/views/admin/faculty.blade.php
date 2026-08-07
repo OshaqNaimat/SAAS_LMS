@@ -5,12 +5,18 @@
         <x-admin-sidebar />
         <main class="flex-1 flex flex-col min-w-0 overflow-y-auto p-6 lg:p-8">
 
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <!-- Header with hamburger on mobile -->
+            <div class="flex items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight text-white">Faculty & Roster Hub</h1>
                     <p class="text-sm text-gray-400 mt-1">Manage your institution's educators, personnel, and registered
                         student data arrays.</p>
                 </div>
+                <button onclick="toggleSidebar()"
+                    class="mobile-menu-btn lg:hidden w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-white hover:bg-slate-700 transition shrink-0"
+                    aria-label="Open menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
             </div>
 
             <div class="space-y-8">
@@ -46,7 +52,6 @@
                                     <th class="p-4">Name</th>
                                     <th class="p-4">Assigned Class</th>
                                     <th class="p-4">Email Address</th>
-                                    {{-- <th class="p-4">Status</th> --}}
                                     <th class="p-4 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -132,11 +137,6 @@
                                         <td class="p-4">{{ $student->created_at->format('M d, Y') }}</td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-3">
-                                                {{-- <button onclick="openEditStudent({{ $student->id }})"
-                                                    class="text-yellow-400 hover:text-yellow-300 transition"
-                                                    title="Edit">
-                                                    <i class="fa-solid fa-pen"></i>
-                                                </button> --}}
                                                 <form action="{{ route('admin.user.destroy', $student->id) }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Remove {{ $student->name }}? This cannot be undone.');"
@@ -167,6 +167,7 @@
         </main>
     </div>
 
+    <!-- Forms & Modals (unchanged) -->
     <form action="{{ route('admin.add-teacher') }}" method="POST" class="p-6 space-y-5">
         @csrf
         <input type="hidden" name="role" value="teacher">
@@ -332,60 +333,64 @@
     </div>
 
     <script>
+        /* ─── Sidebar Toggle ─── */
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('show');
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) closeSidebar();
+        });
+
+        /* ─── Modal Logic ─── */
         function toggleModal(modalId) {
             const modal = document.getElementById(modalId);
-            const container = modal.querySelector('.transform'); // Finds the inner modal box
+            const container = modal.querySelector('.transform');
 
             if (modal.classList.contains('hidden')) {
-                // 1. Unhide container element first
                 modal.classList.remove('hidden');
-
-                // 2. Tiny timeout allows the browser to register the display change before animating
                 setTimeout(() => {
                     modal.classList.remove('opacity-0');
                     modal.classList.add('opacity-100');
-
                     if (container) {
                         container.classList.remove('opacity-0', 'scale-95', 'translate-y-4');
                         container.classList.add('opacity-100', 'scale-100', 'translate-y-0');
                     }
                 }, 20);
             } else {
-                // 1. Fade out and scale down
                 modal.classList.remove('opacity-100');
                 modal.classList.add('opacity-0');
-
                 if (container) {
                     container.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
                     container.classList.add('opacity-0', 'scale-95', 'translate-y-4');
                 }
-
-                // 2. Wait for the CSS animation duration (200ms) before adding 'hidden' back
                 setTimeout(() => {
                     modal.classList.add('hidden');
                 }, 200);
             }
         }
 
-        // Global window listener to close modal if backdrop background wrapper is clicked
         window.addEventListener('click', function(event) {
-            // Check if the clicked target is one of our modal container wrappers
             if (event.target.id === 'inviteModal' || event.target.id === 'studentModal') {
                 toggleModal(event.target.id);
             }
         });
 
-        // function closeSidebar() {
-        //     const sidebar = document.getElementById('sidebar');
-        //     const overlay = document.getElementById('sidebarOverlay');
-        //     if (sidebar) sidebar.classList.remove('open');
-        //     if (overlay) overlay.classList.remove('show');
-        // }
-
-        // window.addEventListener('resize', () => {
-        //     if (window.innerWidth >= 1024) closeSidebar();
-        // });
-
+        /* ─── Action Menus ─── */
         function toggleActionMenu(id) {
             document.querySelectorAll('[id^="menu-"]').forEach(menu => {
                 if (menu.id !== 'menu-' + id) menu.classList.add('hidden');
@@ -398,6 +403,8 @@
                 document.querySelectorAll('[id^="menu-"]').forEach(menu => menu.classList.add('hidden'));
             }
         });
+
+        /* ─── Search & Highlight ─── */
         document.addEventListener('DOMContentLoaded', () => {
             if (window.location.hash) {
                 const target = document.querySelector(window.location.hash);
@@ -411,54 +418,37 @@
                 }
             }
         });
+
         const teacherSearchInput = document.getElementById('teacherSearchInput');
         const teacherCountBadge = document.getElementById('teacherCountBadge');
-
         if (teacherSearchInput) {
             teacherSearchInput.addEventListener('input', function() {
                 const query = this.value.trim().toLowerCase();
                 const rows = document.querySelectorAll('.teacher-row');
                 let visibleCount = 0;
-
                 rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    const matches = text.includes(query);
+                    const matches = row.textContent.toLowerCase().includes(query);
                     row.style.display = matches ? '' : 'none';
                     if (matches) visibleCount++;
                 });
-
                 teacherCountBadge.textContent = `${visibleCount} Shown`;
             });
         }
+
         const studentSearchInput = document.getElementById('studentSearchInput');
         const studentCountBadge = document.getElementById('studentCountBadge');
-
         if (studentSearchInput) {
             studentSearchInput.addEventListener('input', function() {
                 const query = this.value.trim().toLowerCase();
                 const rows = document.querySelectorAll('.student-row');
                 let visibleCount = 0;
-
                 rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    const matches = text.includes(query);
+                    const matches = row.textContent.toLowerCase().includes(query);
                     row.style.display = matches ? '' : 'none';
                     if (matches) visibleCount++;
                 });
-
                 studentCountBadge.textContent = `${visibleCount} Shown`;
             });
         }
-
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            if (sidebar) sidebar.classList.remove('open');
-            if (overlay) overlay.classList.remove('show');
-        }
-
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 1024) closeSidebar();
-        });
     </script>
 </x-layout>
