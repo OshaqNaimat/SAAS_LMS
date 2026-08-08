@@ -9,12 +9,19 @@
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight text-white">Teacher Schedule Management</h1>
                     <p class="text-sm text-gray-400 mt-1">Assign periods, subjects, and rooms to teachers across the
-                        week.</p>
+                        week.</p> week.</p>
                 </div>
-                <button onclick="openAddSchedule()"
-                    class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition text-white shadow-md shadow-blue-600/10">
-                    <i class="bi bi-plus-lg"></i> Assign Period
-                </button>
+                <div class="flex items-center gap-3 shrink-0 sm:self-center">
+
+                    <button onclick="openAddSchedule()"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition text-white shadow-md shadow-blue-600/10">
+                        <i class="bi bi-plus-lg"></i> Assign Period
+                    </button>
+                    <!-- Hamburger — only shows below 1024px -->
+                    <button onclick="toggleSidebar()" class="hamburger-btn lg:hidden" aria-label="Open menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="card-bg rounded-2xl shadow-lg overflow-hidden">
@@ -328,5 +335,25 @@
                 toggleModal('scheduleModal');
             });
         @endif
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('show');
+        }
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) closeSidebar();
+        });
     </script>
 </x-layout>
