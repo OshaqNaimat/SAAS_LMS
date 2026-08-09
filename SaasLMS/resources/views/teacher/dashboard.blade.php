@@ -1,7 +1,7 @@
 <x-layout>
     <div class="flex h-screen bg-[#090d16] overflow-hidden relative">
 
-        <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+        {{-- <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div> --}}
 
         <x-teacher-sidebar />
 
