@@ -14,7 +14,8 @@
         </a>
         <a class="nav-item {{ request()->is('super-admin-organizations') ? 'active' : '' }}"
             href="/super-admin-organizations">
-            <i class="bi bi-building"></i> Organizations <span class="nav-badge">12</span>
+            <i class="bi bi-building"></i> Organizations
+            {{-- <span class="nav-badge">12</span> --}}
         </a>
     </div>
 

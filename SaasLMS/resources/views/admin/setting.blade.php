@@ -13,6 +13,10 @@
                     <p class="text-sm text-gray-400 mt-1">Configure your institute rules, update metadata parameters, and
                         manage administrative safety presets.</p>
                 </div>
+                <button onclick="toggleSidebar()" class="hamburger-btn lg:hidden self-start sm:self-center"
+                    aria-label="Open menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start mb-8">
@@ -278,5 +282,27 @@
                 showToast(@json(session('success')));
             });
         @endif
+        /* ─── Sidebar Toggle ─── */
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                sidebar.classList.add('open');
+                overlay.classList.add('show');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('show');
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) closeSidebar();
+        });
     </script>
 </x-layout>
