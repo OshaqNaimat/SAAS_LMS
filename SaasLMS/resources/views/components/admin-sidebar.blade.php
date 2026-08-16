@@ -2,8 +2,8 @@
     <div class="sidebar-brand">
         <div class="brand-icon"><i class="bi bi-building"></i></div>
         <div class="brand-text">
-            <span class="org-name">{{ $organization->name ?? 'Unknown Institute' }}</span>
-            <span class="org-plan">{{ $organization ? ucfirst($organization->plan) . ' Plan' : '' }}</span>
+            <span class="org-name">School Name</span>
+
         </div>
     </div>
 
