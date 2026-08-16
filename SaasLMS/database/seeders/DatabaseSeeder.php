@@ -2,31 +2,38 @@
 
 namespace Database\Seeders;
 
+use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $organization = Organization::firstOrCreate(
+            ['slug' => 'first-school'],
+            [
+                'name' => 'First School',
+                'contact_email' => 'admin1505@gmail.com',
+                'plan' => 'trial',
+                'status' => 'active',
+                'subscription_starts_at' => now(),
+                'max_users' => 100,
+            ]
+        );
 
-       if (app()->environment('local')) {
-    User::factory()->create([
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-    ]);
-}
-       $this->call([
-        SuperAdminSeeder::class,
-    ]);
-
-
-}
+        User::firstOrCreate(
+            ['email' => 'admin1505@gmail.com'],
+            [
+                'name' => 'System Admin',
+                'password' => Hash::make('#oshaqnaimat0515'),
+                'role' => 'admin',
+                'organization_id' => $organization->id,
+            ]
+        );
+    }
 }

@@ -8,30 +8,24 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $cascadeTables = ['attendances', 'class_rooms', 'generated_reports', 'payments', 'schedules'];
+        $tables = ['users', 'class_rooms', 'attendances', 'payments', 'schedules', 'generated_reports'];
 
-        foreach ($cascadeTables as $tableName) {
-            Schema::table($tableName, function (Blueprint $table) {
-                $table->foreign('organization_id')
-                      ->references('id')->on('organizations')
-                      ->cascadeOnDelete();
+        foreach ($tables as $table) {
+            Schema::table($table, function (Blueprint $t) use ($table) {
+                if (!Schema::hasColumn($table, 'organization_id')) {
+                    $t->foreignId('organization_id')->nullable()->constrained()->cascadeOnDelete();
+                }
             });
         }
-
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreign('organization_id')
-                  ->references('id')->on('organizations')
-                  ->nullOnDelete();
-        });
     }
 
     public function down(): void
     {
-        $tables = ['attendances', 'class_rooms', 'generated_reports', 'payments', 'schedules', 'users'];
-
-        foreach ($tables as $tableName) {
-            Schema::table($tableName, function (Blueprint $table) {
-                $table->dropForeign(['organization_id']);
+        $tables = ['users', 'class_rooms', 'attendances', 'payments', 'schedules', 'generated_reports'];
+        foreach ($tables as $table) {
+            Schema::table($table, function (Blueprint $t) {
+                $t->dropForeign(['organization_id']);
+                $t->dropColumn('organization_id');
             });
         }
     }
