@@ -760,6 +760,7 @@ public function updateProfile(Request $request)
 
     return back()->with('success', 'Institutional profile updated successfully!');
 }
+
 public function updatePassword(Request $request)
 {
     $request->validate([

@@ -53,15 +53,10 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-400">Organization Name</label>
-                                    <input type="text" value="{{ $organization->name }}"
-                                        class="w-full bg-[#090d16]/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed focus:outline-none"
-                                        readonly>
-                                </div>
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-semibold text-gray-400">Subscription Plan</label>
-                                    <input type="text" value="{{ ucfirst($organization->plan) }} Plan"
-                                        class="w-full bg-[#090d16]/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed focus:outline-none"
-                                        readonly>
+                                    <input type="text" name="org_name"
+                                        value="{{ old('org_name', $organization->name) }}"
+                                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                                        required>
                                 </div>
                             </div>
 
