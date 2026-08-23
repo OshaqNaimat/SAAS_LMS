@@ -69,6 +69,9 @@ Route::delete('/admin/schedule/{schedule}', [AdminController::class, 'destroySch
     Route::get('/admin-setting', [AdminController::class, 'settingsIndex'])->name('admin.settings');
 Route::put('/admin/settings/profile', [AdminController::class, 'updateProfile'])->name('admin.settings.profile');
 Route::put('/admin/settings/password', [AdminController::class, 'updatePassword'])->name('admin.settings.password');
+
+Route::get('/admin/student/{student}', [AdminController::class, 'showStudentProfile'])->name('admin.student.profile');
+
 });
 
 

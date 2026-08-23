@@ -57,7 +57,10 @@
                                 @forelse($teachers as $teacher)
                                     <tr id="teacher-{{ $teacher->id }}" class="teacher-row hover:bg-slate-900/40">
                                         <td class="p-4 font-semibold text-white">{{ $teacher->name }}</td>
-                                        <td class="p-4 text-gray-400">{{ $teacher->assigned_class ?? '—' }}</td>
+                                        <td class="p-4 text-gray-400">
+                                            @php $ledClass = $teacher->ledClasses->first(); @endphp
+                                            {{ $ledClass ? $ledClass->name . ' - ' . $ledClass->section : $teacher->assigned_class ?? '—' }}
+                                        </td>
                                         <td class="p-4">{{ $teacher->email }}</td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-3">
@@ -135,6 +138,12 @@
                                         <td class="p-4">{{ $student->created_at->format('M d, Y') }}</td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-3">
+                                                <button
+                                                    onclick="window.location.href='{{ route('admin.student.profile', $student->id) }}'"
+                                                    class="text-blue-400 hover:text-blue-300 transition"
+                                                    title="View Profile">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </button>
                                                 <form action="{{ route('admin.user.destroy', $student->id) }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Remove {{ $student->name }}? This cannot be undone.');"
@@ -166,7 +175,7 @@
     </div>
 
     <!-- Forms & Modals (unchanged) -->
-    <form action="{{ route('admin.add-teacher') }}" method="POST" class="p-6 space-y-5">
+    {{-- <form action="{{ route('admin.add-teacher') }}" method="POST" class="p-6 space-y-5">
         @csrf
         <input type="hidden" name="role" value="teacher">
 
@@ -209,9 +218,9 @@
                 <i class="bi bi-send text-xs"></i> Register Teacher
             </button>
         </div>
-    </form>
+    </form> --}}
 
-    <form action="{{ route('admin.add-student') }}" method="POST" class="p-6 space-y-5">
+    {{-- <form action="{{ route('admin.add-student') }}" method="POST" class="p-6 space-y-5">
         @csrf
         <input type="hidden" name="role" value="student">
 
@@ -261,7 +270,7 @@
                 class="px-5 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-500 transition">Save
                 Entry</button>
         </div>
-    </form>
+    </form> --}}
 
     <div id="studentModal"
         class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden"

@@ -725,16 +725,16 @@ public function globalSearch(Request $request)
             'url' => route('admin.faculty') . '#teacher-' . $t->id,
         ]);
 
-    $students = User::where('role', 'student')
-        ->where(function ($q) use ($query) {
-            $q->where('name', 'like', "%{$query}%")->orWhere('roll_number', 'like', "%{$query}%");
-        })
-        ->limit(5)->get()->map(fn ($s) => [
-            'type' => 'Student',
-            'label' => $s->name,
-            'sub' => 'Roll No. ' . $s->roll_number,
-            'url' => route('admin.faculty') . '#student-' . $s->id,
-        ]);
+   $students = User::where('role', 'student')
+    ->where(function ($q) use ($query) {
+        $q->where('name', 'like', "%{$query}%")->orWhere('roll_number', 'like', "%{$query}%");
+    })
+    ->limit(5)->get()->map(fn ($s) => [
+        'type' => 'Student',
+        'label' => $s->name,
+        'sub' => 'Roll No. ' . $s->roll_number,
+        'url' => route('admin.student.profile', $s->id), // ← changed from Faculty page anchor
+    ]);
 
     $classes = ClassRoom::where('name', 'like', "%{$query}%")
         ->orWhere('section', 'like', "%{$query}%")
@@ -787,5 +787,32 @@ public function updatePassword(Request $request)
     $user->update(['password' => Hash::make($request->new_password)]);
 
     return back()->with('success', 'Password updated successfully!');
+}
+public function showStudentProfile(User $student)
+{
+    $orgId = Auth::user()->organization_id;
+
+    if ($student->organization_id !== $orgId || $student->role !== 'student') {
+        abort(404);
+    }
+
+    $attendanceRecords = Attendance::where('user_id', $student->id)
+        ->orderByDesc('date')
+        ->take(30)
+        ->get();
+
+    $attendanceRate = $student->attendanceRate();
+
+    $payments = Payment::where('roll_number', $student->roll_number)
+        ->where('organization_id', $orgId)
+        ->orderByDesc('created_at')
+        ->get();
+
+    $totalPaid = $payments->where('status', 'cleared')->sum('amount');
+    $totalDue = $payments->whereIn('status', ['pending', 'overdue'])->sum('amount');
+
+    return view('admin.student-profile', compact(
+        'student', 'attendanceRecords', 'attendanceRate', 'payments', 'totalPaid', 'totalDue'
+    ));
 }
 };
