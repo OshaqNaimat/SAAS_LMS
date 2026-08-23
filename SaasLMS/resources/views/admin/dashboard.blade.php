@@ -46,7 +46,7 @@
 
                             <div class="header-actions">
                                 <button class="btn-secondary" onclick="openModal('inviteModal')"><i
-                                        class="bi bi-person-plus"></i> Add Member</button>
+                                        class="bi bi-person-plus"></i> Add Teacher</button>
                                 <button class="btn-primary" onclick="openModal('projectModal')"><i
                                         class="bi bi-plus-lg"></i> Add New Student</button>
                             </div>

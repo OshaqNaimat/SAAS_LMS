@@ -24,7 +24,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Total Classes</span>
@@ -38,27 +38,19 @@
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Avg Attendance</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">94.2%</h4>
-                        <span class="text-[11px] text-emerald-400 flex items-center gap-1"><i
-                                class="bi bi-arrow-up-short"></i> +0.8% MoM</span>
+                        <h4 class="text-2xl font-bold text-white tracking-tight">{{ $avgAttendance }}%</h4>
+                        <span
+                            class="text-[11px] {{ $avgAttendance >= 75 ? 'text-emerald-400' : 'text-rose-400' }} flex items-center gap-1">
+                            <i class="bi {{ $avgAttendance >= 75 ? 'bi-arrow-up-short' : 'bi-arrow-down-short' }}"></i>
+                            Last 30 days
+                        </span>
                     </div>
                     <div
                         class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">
                         <i class="bi bi-calendar-check"></i>
                     </div>
                 </div>
-                <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
-                    <div class="space-y-1">
-                        <span class="text-xs text-gray-400 font-medium">Avg Grade Ratio</span>
-                        <h4 class="text-2xl font-bold text-white tracking-tight">B+ (84%)</h4>
-                        <span class="text-[11px] text-amber-400 flex items-center gap-1"><i class="bi bi-dash"></i>
-                            Stable baseline</span>
-                    </div>
-                    <div
-                        class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl">
-                        <i class="bi bi-journal-bookmark-fill"></i>
-                    </div>
-                </div>
+
                 <div class="bg-[#111c2a] border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
                     <div class="space-y-1">
                         <span class="text-xs text-gray-400 font-medium">Overcrowded Classes</span>

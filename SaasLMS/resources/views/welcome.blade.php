@@ -13,7 +13,7 @@
                     <i id="brandIcon" class="bi bi-building"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white">NEXUS <span class="text-blue-400">LMS</span>
+                    <h1 class="text-xl font-bold tracking-tight text-white">Name <span class="text-blue-400">Name</span>
                     </h1> {{-- <p class="text-xs text-gray-400 mt-1">Unified Multi-Role Portal Engine</p> --}}
                 </div>
             </div>

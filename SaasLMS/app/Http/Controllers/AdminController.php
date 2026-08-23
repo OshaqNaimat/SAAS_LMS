@@ -150,13 +150,21 @@ public function updateStudent(Request $request, User $user)
 }
 public function classesIndex()
 {
-    $classes = ClassRoom::with('teacher')->latest()->get();
-    $teachers = User::where('role', 'teacher')->get();
+    $orgId = Auth::user()->organization_id;
+
+    $classes = ClassRoom::with('teacher')->where('organization_id', $orgId)->latest()->get();
+    $teachers = User::where('organization_id', $orgId)->where('role', 'teacher')->get();
 
     $totalClasses = $classes->count();
     $overcrowded = $classes->filter(fn ($c) => $c->studentCount() >= $c->max_seats)->count();
 
-    return view('admin.classes', compact('classes', 'teachers', 'totalClasses', 'overcrowded'));
+    // Real average attendance across all students in this org, last 30 days
+    $studentIds = User::where('organization_id', $orgId)->where('role', 'student')->pluck('id');
+    $totalRecords = Attendance::whereIn('user_id', $studentIds)->where('date', '>=', now()->subDays(30))->count();
+    $presentRecords = Attendance::whereIn('user_id', $studentIds)->where('date', '>=', now()->subDays(30))->where('status', 'present')->count();
+    $avgAttendance = $totalRecords > 0 ? round(($presentRecords / $totalRecords) * 100, 1) : 0;
+
+    return view('admin.classes', compact('classes', 'teachers', 'totalClasses', 'overcrowded', 'avgAttendance'));
 }
 
 public function storeClass(Request $request)
@@ -167,8 +175,7 @@ public function storeClass(Request $request)
         'stream'         => 'nullable|string|max:255',
         'room'           => 'nullable|string|max:255',
         'max_seats'      => 'required|integer|min:1',
-        'teacher_id'     => 'nullable|exists:users,id',
-    ]);
+'teacher_id' => 'nullable|exists:users,id',    ]);
 
     ClassRoom::create([
         ...$request->only('name', 'section', 'stream', 'room', 'max_seats', 'teacher_id'),
@@ -618,15 +625,16 @@ public function scheduleIndex()
 
 public function storeSchedule(Request $request)
 {
-    $request->validate([
-        'teacher_id' => 'required|exists:users,id',
+    // 1. Capture the validated array (strips _token, _method, etc.)
+    $validated = $request->validate([
+        'teacher_id'    => 'required|exists:users,id',
         'class_room_id' => 'required|exists:class_rooms,id',
-        'subject' => 'required|string|max:255',
-        'day_of_week' => 'required|integer|min:1|max:6',
+        'subject'       => 'required|string|max:255',
+        'day_of_week'   => 'required|integer|min:1|max:6',
         'period_number' => 'required|integer|min:1|max:12',
-        'start_time' => 'required',
-        'end_time' => 'required|after:start_time',
-        'room' => 'nullable|string|max:255',
+        'start_time'     => 'required',
+        'end_time'       => 'required|after:start_time',
+        'room'           => 'nullable|string|max:255',
     ]);
 
     // Conflict 1: this class already has a lecture at this day/period
@@ -649,7 +657,8 @@ public function storeSchedule(Request $request)
         return back()->withInput()->with('error', 'This teacher is already assigned to another class at that day and period.');
     }
 
-    Schedule::create($request->all());
+    // 2. Pass only validated data to create()
+    Schedule::create($validated);
 
     return back()->with('success', 'Period assigned successfully!');
 }
