@@ -149,7 +149,7 @@
                     class="p-4 bg-slate-900/60 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <h3 class="font-bold text-base text-white">Institutional Billing History</h3>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="billingSearchInput" placeholder="Search Voucher / Roll No..."
+                        <input type="text" id="billingSearchInput" placeholder="Search Student name..."
                             class="bg-[#090d16] border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 transition w-48 placeholder-gray-600">
                     </div>
                 </div>
