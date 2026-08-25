@@ -23,8 +23,7 @@
             </div>
 
             <!-- ─── MASTER TIMETABLE GRID (Fits normal screen) ─── -->
-            <!-- ─── MASTER TIMETABLE GRID (Fits normal screen) ─── -->
-            <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200 w-full mb-8">
+            <div class="bg-white rounded-2xl shadow-sm  border border-gray-200 w-full mb-8">
                 <div class="p-4 flex justify-between items-center border-b border-gray-200 bg-gray-50">
                     <h3 class="font-bold text-base text-gray-800">Master Timetable Grid</h3>
                     <span
@@ -104,7 +103,7 @@
 
             <!-- ─── CLASS TIMETABLES (Student View) ─── -->
             <div class="mt-8 space-y-6">
-                <h3 class="text-xs font-bold text-gray-500 tracking-wide uppercase">Class Timetables (Student View)</h3>
+                <h3 class="text-xs font-bold text-gray-500 tracking-wide uppercase">Class Timetables </h3>
 
                 @forelse($classes as $class)
                     @php $classSchedules = $schedulesByClass->get($class->id, collect()); @endphp

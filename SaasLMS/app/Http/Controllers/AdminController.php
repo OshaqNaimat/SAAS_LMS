@@ -687,17 +687,16 @@ public function storeSchedule(Request $request)
 
 public function updateSchedule(Request $request, Schedule $schedule)
 {
-    $request->validate([
+    $validated = $request->validate([
         'teacher_id' => 'required|exists:users,id',
         'class_room_id' => 'required|exists:class_rooms,id',
         'subject' => 'required|string|max:255',
-        'day_of_week' => 'required|integer|min:1|max:6',
-        'period_number' => 'required|integer|min:1|max:12',
-        'start_time' => 'required',
-        'end_time' => 'required|after:start_time',
+        'day_of_week' => 'required|integer|between:1,6',
+        'period_number' => 'required|integer|min:1',
+        'start_time' => 'required|date_format:H:i',
+        'end_time' => 'required|date_format:H:i|after:start_time',
         'room' => 'nullable|string|max:255',
     ]);
-
     $classConflict = Schedule::where('class_room_id', $request->class_room_id)
         ->where('day_of_week', $request->day_of_week)
         ->where('period_number', $request->period_number)
@@ -718,7 +717,7 @@ public function updateSchedule(Request $request, Schedule $schedule)
         return back()->withInput()->with('error', 'This teacher is already assigned to another class at that day and period.');
     }
 
-    $schedule->update($request->all());
+       $schedule->update($validated);
 
     return back()->with('success', 'Period updated successfully!');
 }
