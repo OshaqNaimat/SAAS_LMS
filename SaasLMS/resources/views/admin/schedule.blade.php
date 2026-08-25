@@ -3,52 +3,53 @@
         <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
         <x-admin-sidebar />
 
-        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto p-6 lg:p-8">
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto p-6 lg:p-8 bg-gray-50">
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight text-white">Teacher Schedule Management</h1>
-                    <p class="text-sm text-gray-400 mt-1">Assign periods, subjects, and rooms to teachers across the
-                        week.</p> week.</p>
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-900">Teacher Schedule Management</h1>
+                    <p class="text-sm text-gray-500 mt-1">Assign periods, subjects, and rooms to teachers across the
+                        week.</p>
                 </div>
                 <div class="flex items-center gap-3 shrink-0 sm:self-center">
-
                     <button onclick="openAddSchedule()"
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition text-white shadow-md shadow-blue-600/10">
                         <i class="bi bi-plus-lg"></i> Assign Period
                     </button>
-                    <!-- Hamburger — only shows below 1024px -->
                     <button onclick="toggleSidebar()" class="hamburger-btn lg:hidden" aria-label="Open menu">
                         <i class="fa-solid fa-bars"></i>
                     </button>
                 </div>
             </div>
 
-            <div class="card-bg rounded-2xl shadow-lg overflow-hidden w-full">
-                <div class="header-bg p-4 flex justify-between items-center border-b border-slate-800">
-                    <h3 class="font-bold text-base text-white">Master Timetable Grid</h3>
+            <!-- ─── MASTER TIMETABLE GRID (Fits normal screen) ─── -->
+            <!-- ─── MASTER TIMETABLE GRID (Fits normal screen) ─── -->
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200 w-full mb-8">
+                <div class="p-4 flex justify-between items-center border-b border-gray-200 bg-gray-50">
+                    <h3 class="font-bold text-base text-gray-800">Master Timetable Grid</h3>
                     <span
-                        class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
+                        class="text-xs px-3 py-1 rounded-full bg-gray-100 border border-gray-200 font-semibold text-gray-600">
                         {{ $schedules->count() }} Periods
                     </span>
                 </div>
 
                 <div class="overflow-x-auto w-full">
-                    <table class="w-full text-left border-collapse table-fixed min-w-[800px]">
+                    <table class="w-full text-left border-collapse table-fixed">
                         <thead>
                             <tr
-                                class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/60 border-b border-slate-800">
-                                <th class="p-3 sticky left-0 z-10 bg-slate-900 w-24">Period</th>
+                                class="text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/80 border-b border-gray-200">
+                                <th class="p-3 sticky left-0 z-10 bg-gray-50 whitespace-nowrap w-[80px]">Period</th>
                                 @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $dayLabel)
-                                    <th class="p-3 text-center w-[15%]">{{ $dayLabel }}</th>
+                                    <th class="p-3 text-center w-[calc((100%-80px)/6)]">{{ $dayLabel }}</th>
                                 @endforeach
                             </tr>
                         </thead>
-                        <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
+                        <tbody class="text-sm text-gray-600 divide-y divide-gray-100">
                             @if (isset($maxPeriod) && $maxPeriod > 0)
                                 @for ($p = 1; $p <= $maxPeriod; $p++)
-                                    <tr class="hover:bg-slate-900/40 min-h-[60px]">
-                                        <td class="p-3 font-bold text-white sticky left-0 z-10 bg-[#111c2a]">
+                                    <tr class="hover:bg-gray-50 min-h-[60px]">
+                                        <td
+                                            class="p-3 font-bold text-gray-800 sticky left-0 z-10 bg-white whitespace-nowrap w-[80px]">
                                             Period {{ $p }}
                                         </td>
                                         @for ($d = 1; $d <= 6; $d++)
@@ -56,41 +57,34 @@
                                             <td class="p-2 align-top h-16">
                                                 @if ($cell)
                                                     <div
-                                                        class="bg-slate-900 border border-slate-800 rounded-lg p-2 group relative h-full flex flex-col justify-between">
+                                                        class="bg-gray-50 border border-gray-200 rounded-lg p-2 group relative h-full flex flex-col justify-between hover:border-blue-300 transition text-xs">
                                                         <div>
-                                                            <p class="text-xs font-bold text-white truncate"
-                                                                title="{{ $cell->subject }}">
-                                                                {{ $cell->subject }}
-                                                            </p>
-                                                            <p class="text-[10px] text-gray-400 truncate">
+                                                            <p class="font-bold text-gray-800 truncate"
+                                                                title="{{ $cell->subject }}">{{ $cell->subject }}</p>
+                                                            <p class="text-gray-500 truncate">
                                                                 {{ $cell->classRoom->name ?? '' }}-{{ $cell->classRoom->section ?? '' }}
                                                             </p>
-                                                            <p class="text-[10px] text-gray-500 truncate">
-                                                                {{ $cell->teacher->name ?? '—' }}
-                                                            </p>
+                                                            <p class="text-gray-500 truncate">
+                                                                {{ $cell->teacher->name ?? '—' }}</p>
                                                         </div>
                                                         <div
-                                                            class="hidden group-hover:flex absolute top-1 right-1 gap-1 bg-slate-900/90 p-1 rounded border border-slate-700">
+                                                            class="hidden group-hover:flex absolute top-1 right-1 gap-1 bg-white/90 p-1 rounded border border-gray-200 shadow-sm">
                                                             <button
                                                                 onclick="openEditSchedule({{ $cell->id }}, {{ $cell->teacher_id }}, {{ $cell->class_room_id }}, '{{ $cell->subject }}', {{ $cell->day_of_week }}, {{ $cell->period_number }}, '{{ \Carbon\Carbon::parse($cell->start_time)->format('H:i') }}', '{{ \Carbon\Carbon::parse($cell->end_time)->format('H:i') }}', '{{ $cell->room }}')"
-                                                                class="text-yellow-400 hover:text-yellow-300 text-xs">
-                                                                <i class="bi bi-pencil-square"></i>
-                                                            </button>
+                                                                class="text-yellow-600 hover:text-yellow-700 text-xs"><i
+                                                                    class="bi bi-pencil-square"></i></button>
                                                             <form
                                                                 action="{{ route('admin.schedule.destroy', $cell->id) }}"
                                                                 method="POST"
-                                                                onsubmit="return confirm('Remove this period?');">
-                                                                @csrf @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="text-gray-400 hover:text-rose-400 text-xs">
-                                                                    <i class="bi bi-trash3"></i>
-                                                                </button>
-                                                            </form>
+                                                                onsubmit="return confirm('Remove this period?');">@csrf
+                                                                @method('DELETE')<button type="submit"
+                                                                    class="text-gray-400 hover:text-red-500 text-xs"><i
+                                                                        class="bi bi-trash3"></i></button></form>
                                                         </div>
                                                     </div>
                                                 @else
                                                     <span
-                                                        class="text-[10px] text-gray-700 block text-center py-4">—</span>
+                                                        class="text-[10px] text-gray-300 block text-center py-4">—</span>
                                                 @endif
                                             </td>
                                         @endfor
@@ -98,7 +92,7 @@
                                 @endfor
                             @else
                                 <tr>
-                                    <td colspan="7" class="text-center py-8 text-gray-500 text-sm">
+                                    <td colspan="7" class="text-center py-8 text-gray-400 text-sm">
                                         No schedule entries found. Please add periods to generate the grid.
                                     </td>
                                 </tr>
@@ -108,17 +102,18 @@
                 </div>
             </div>
 
+            <!-- ─── CLASS TIMETABLES (Student View) ─── -->
             <div class="mt-8 space-y-6">
-                <h3 class="text-xs font-bold text-gray-400 tracking-wide uppercase">Class Timetables (Student View)</h3>
+                <h3 class="text-xs font-bold text-gray-500 tracking-wide uppercase">Class Timetables (Student View)</h3>
 
                 @forelse($classes as $class)
                     @php $classSchedules = $schedulesByClass->get($class->id, collect()); @endphp
-                    <div class="card-bg rounded-2xl shadow-lg overflow-hidden">
-                        <div class="header-bg p-4 flex justify-between items-center">
-                            <h3 class="font-bold text-base text-white">{{ $class->name }} - {{ $class->section }}
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
+                        <div class="p-4 flex justify-between items-center border-b border-gray-200 bg-gray-50">
+                            <h3 class="font-bold text-base text-gray-800">{{ $class->name }} - {{ $class->section }}
                             </h3>
                             <span
-                                class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
+                                class="text-xs px-3 py-1 rounded-full bg-gray-100 border border-gray-200 font-semibold text-gray-600">
                                 {{ $classSchedules->count() }} Periods
                             </span>
                         </div>
@@ -126,7 +121,7 @@
                             <table class="w-full text-left border-collapse whitespace-nowrap">
                                 <thead>
                                     <tr
-                                        class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/60 border-b border-slate-800">
+                                        class="text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/80 border-b border-gray-200">
                                         <th class="p-4">Day</th>
                                         <th class="p-4">Period</th>
                                         <th class="p-4">Time</th>
@@ -135,22 +130,22 @@
                                         <th class="p-4">Room</th>
                                     </tr>
                                 </thead>
-                                <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
+                                <tbody class="text-sm text-gray-600 divide-y divide-gray-100">
                                     @forelse($classSchedules as $s)
-                                        <tr class="hover:bg-slate-900/40">
-                                            <td class="p-4 font-semibold text-white">{{ $s->dayName() }}</td>
-                                            <td class="p-4 text-gray-400">{{ $s->period_number }}</td>
-                                            <td class="p-4 text-xs font-mono text-blue-400">
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="p-4 font-semibold text-gray-800">{{ $s->dayName() }}</td>
+                                            <td class="p-4 text-gray-500">{{ $s->period_number }}</td>
+                                            <td class="p-4 text-xs font-mono text-blue-600">
                                                 {{ \Carbon\Carbon::parse($s->start_time)->format('H:i') }} -
                                                 {{ \Carbon\Carbon::parse($s->end_time)->format('H:i') }}
                                             </td>
                                             <td class="p-4">{{ $s->subject }}</td>
-                                            <td class="p-4 text-gray-400">{{ $s->teacher->name ?? 'Unknown' }}</td>
-                                            <td class="p-4 text-gray-400">{{ $s->room ?? '—' }}</td>
+                                            <td class="p-4 text-gray-500">{{ $s->teacher->name ?? 'Unknown' }}</td>
+                                            <td class="p-4 text-gray-500">{{ $s->room ?? '—' }}</td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="p-6 text-center text-gray-500 text-sm">No periods
+                                            <td colspan="6" class="p-6 text-center text-gray-400 text-sm">No periods
                                                 scheduled for this class yet.</td>
                                         </tr>
                                     @endforelse
@@ -159,23 +154,23 @@
                         </div>
                     </div>
                 @empty
-                    <p class="text-center text-gray-500 text-sm py-6">No classes exist yet.</p>
+                    <p class="text-center text-gray-400 text-sm py-6">No classes exist yet.</p>
                 @endforelse
             </div>
         </main>
     </div>
 
-    <!-- Assign/Edit Period Modal -->
+    <!-- ─── SCHEDULE MODAL (Light) ─── -->
     <div id="scheduleModal"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
         role="dialog" aria-modal="true">
         <div
-            class="w-full max-w-[550px] bg-[#111c2a] rounded-2xl shadow-2xl border border-slate-800 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
-            <div class="p-5 flex justify-between items-center border-b border-slate-800/60 bg-[#142032]">
-                <h3 id="scheduleModalTitle" class="text-base font-bold flex items-center gap-2.5 text-white">
-                    <i class="bi bi-calendar-plus text-blue-500 text-lg"></i> Assign New Period
+            class="w-full max-w-[550px] bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
+            <div class="p-5 flex justify-between items-center border-b border-gray-200 bg-gray-50">
+                <h3 id="scheduleModalTitle" class="text-base font-bold flex items-center gap-2.5 text-gray-800">
+                    <i class="bi bi-calendar-plus text-blue-600 text-lg"></i> Assign New Period
                 </h3>
-                <button onclick="toggleModal('scheduleModal')" class="text-gray-400 hover:text-white transition">
+                <button onclick="toggleModal('scheduleModal')" class="text-gray-400 hover:text-gray-600 transition">
                     <i class="bi bi-x-lg text-sm"></i>
                 </button>
             </div>
@@ -189,9 +184,9 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Teacher</label>
+                        <label class="block text-xs font-semibold text-gray-500">Teacher</label>
                         <select name="teacher_id" id="scheduleTeacher" required
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition">
                             <option value="">Select Teacher...</option>
                             @foreach ($teachers as $teacher)
                                 <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
@@ -199,9 +194,9 @@
                         </select>
                     </div>
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Class</label>
+                        <label class="block text-xs font-semibold text-gray-500">Class</label>
                         <select name="class_room_id" id="scheduleClass" required
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition">
                             <option value="">Select Class...</option>
                             @foreach ($classes as $class)
                                 <option value="{{ $class->id }}">{{ $class->name }} - {{ $class->section }}
@@ -212,17 +207,17 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-gray-400">Subject</label>
+                    <label class="block text-xs font-semibold text-gray-500">Subject</label>
                     <input type="text" name="subject" id="scheduleSubject" placeholder="e.g. Mathematics"
                         required
-                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Day of Week</label>
+                        <label class="block text-xs font-semibold text-gray-500">Day of Week</label>
                         <select name="day_of_week" id="scheduleDay" required
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition">
                             <option value="1">Monday</option>
                             <option value="2">Tuesday</option>
                             <option value="3">Wednesday</option>
@@ -232,35 +227,35 @@
                         </select>
                     </div>
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Period Number</label>
+                        <label class="block text-xs font-semibold text-gray-500">Period Number</label>
                         <input type="number" name="period_number" id="schedulePeriod" min="1"
                             placeholder="1" required
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">Start Time</label>
+                        <label class="block text-xs font-semibold text-gray-500">Start Time</label>
                         <input type="time" name="start_time" id="scheduleStart" required
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition">
                     </div>
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-400">End Time</label>
+                        <label class="block text-xs font-semibold text-gray-500">End Time</label>
                         <input type="time" name="end_time" id="scheduleEnd" required
-                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition">
                     </div>
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-gray-400">Room (optional)</label>
+                    <label class="block text-xs font-semibold text-gray-500">Room (optional)</label>
                     <input type="text" name="room" id="scheduleRoom" placeholder="e.g. Room 12"
-                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition">
                 </div>
 
-                <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
+                <div class="pt-3 flex justify-end gap-3 border-t border-gray-200">
                     <button type="button" onclick="toggleModal('scheduleModal')"
-                        class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-800 bg-[#172232] text-gray-300 hover:bg-slate-800 hover:text-white transition">Cancel</button>
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-gray-300 bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Cancel</button>
                     <button type="submit" id="scheduleSubmitBtn"
                         class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-lg shadow-blue-600/10">
                         Assign Period
@@ -299,7 +294,7 @@
             document.getElementById('scheduleForm').action = "{{ route('admin.schedule.store') }}";
             document.getElementById('scheduleMethod').value = "POST";
             document.getElementById('scheduleModalTitle').innerHTML =
-                '<i class="bi bi-calendar-plus text-blue-500 text-lg"></i> Assign New Period';
+                '<i class="bi bi-calendar-plus text-blue-600 text-lg"></i> Assign New Period';
             document.getElementById('scheduleSubmitBtn').textContent = 'Assign Period';
             document.getElementById('scheduleForm').reset();
         }
@@ -314,7 +309,7 @@
             document.getElementById('scheduleForm').action = `/admin/schedule/${id}`;
             document.getElementById('scheduleMethod').value = "PUT";
             document.getElementById('scheduleModalTitle').innerHTML =
-                '<i class="bi bi-pencil-square text-yellow-400 text-lg"></i> Edit Period';
+                '<i class="bi bi-pencil-square text-yellow-600 text-lg"></i> Edit Period';
             document.getElementById('scheduleSubmitBtn').textContent = 'Update Period';
             document.getElementById('scheduleTeacher').value = teacherId;
             document.getElementById('scheduleClass').value = classId;
@@ -333,6 +328,7 @@
             if (sidebar) sidebar.classList.remove('open');
             if (overlay) overlay.classList.remove('show');
         }
+
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
@@ -350,11 +346,7 @@
                 showErrorToast(@json(session('error')));
             });
         @endif
-        @if (session('error'))
-            document.addEventListener('DOMContentLoaded', () => {
-                toggleModal('scheduleModal');
-            });
-        @endif
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -372,6 +364,7 @@
             if (sidebar) sidebar.classList.remove('open');
             if (overlay) overlay.classList.remove('show');
         }
+
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
