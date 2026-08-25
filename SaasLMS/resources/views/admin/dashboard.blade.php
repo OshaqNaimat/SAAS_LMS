@@ -15,7 +15,7 @@
             <x-admin-sidebar />
 
             <!-- Main Content -->
-            <div class="main-wrapper">
+            <div class="main-wrapper bg-white">
                 <!-- Mobile Header -->
                 <header class="mobile-header">
                     <div class="brand-mobile">
@@ -82,15 +82,14 @@
                         <!-- Charts Row -->
                         <div class="chart-grid w-full">
                             <!-- Project Progress Chart -->
-                            <div
-                                class="chart-card w-full border border-slate-800 rounded-xl p-4 bg-[#1a2236] shadow-sm">
+                            <div class="chart-card w-full border border-slate-800 rounded-xl p-4 bg-white shadow-sm">
                                 <div class="chart-card-header flex justify-between items-center mb-4">
                                     <h3 class="font-semibold text-lg">Teacher Attendance</h3>
                                     <span
                                         class="text-xs font-semibold text-blue-500 bg-blue-50 px-2.5 py-1 rounded-md">Last
                                         7 Days</span>
                                 </div>
-                                <div class="chart-canvas tall w-full">
+                                <div class="chart-canvas tall w-full ">
                                     @php
                                         $points = collect($teacherTrend)->map(function ($pct, $i) use ($trendLabels) {
                                             $x = 30 + $i * 51;
@@ -138,8 +137,7 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="chart-card w-full border border-slate-800 rounded-xl p-4 bg-[#1a2236] shadow-sm">
+                            <div class="chart-card w-full border border-slate-800 rounded-xl p-4 bg-white shadow-sm">
                                 <div class="chart-card-header flex justify-between items-center mb-4">
                                     <h3 class="font-semibold text-lg">Student Attendance</h3>
                                     <span
@@ -263,7 +261,7 @@
                                     <tbody>
                                         @forelse($recentMembers as $member)
                                             <tr>
-                                                <td><strong style="color:white;">{{ $member->name }}</strong></td>
+                                                <td><strong>{{ $member->name }}</strong></td>
                                                 <td>{{ ucfirst($member->role) }}</td>
                                                 <td>
                                                     @if ($member->role === 'teacher')

@@ -113,19 +113,41 @@ public function destroy(User $user)
     return back()->with('success', ucfirst($user->role) . ' removed successfully!');
 }
 
+// public function updateTeacher(Request $request, User $user)
+// {
+//     $request->validate([
+//         'name'           => 'required|string|max:255',
+//         'email'          => 'required|email|unique:users,email,' . $user->id,
+//         'assigned_class' => 'nullable|string',
+//     ]);
+
+//     $user->update([
+//         'name'           => $request->name,
+//         'email'          => $request->email,
+//         'assigned_class' => $request->assigned_class,
+//     ]);
+
+//     return back()->with('success', 'Teacher updated successfully!');
+// }
 public function updateTeacher(Request $request, User $user)
 {
+    if ($user->organization_id !== Auth::user()->organization_id) {
+        abort(403);
+    }
+
     $request->validate([
         'name'           => 'required|string|max:255',
         'email'          => 'required|email|unique:users,email,' . $user->id,
         'assigned_class' => 'nullable|string',
+        'password'       => 'nullable|string|min:6',
     ]);
 
-    $user->update([
-        'name'           => $request->name,
-        'email'          => $request->email,
-        'assigned_class' => $request->assigned_class,
-    ]);
+    $data = $request->only('name', 'email', 'assigned_class');
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
+    }
+
+    $user->update($data);
 
     return back()->with('success', 'Teacher updated successfully!');
 }

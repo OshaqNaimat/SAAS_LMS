@@ -2,7 +2,7 @@
     <div class="sidebar-brand">
         <div class="brand-icon text-emerald-400"><i class="bi bi-building"></i></div>
         <div class="brand-text">
-            <span class="org-name">Apex Global Institute</span>
+            <span class="org-name">School Name</span>
             <span
                 class="org-plan border border-emerald-500/30 text-emerald-400 bg-emerald-500/5 px-1.5 py-0.5 rounded text-[10px]">Faculty
                 Portal</span>

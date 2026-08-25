@@ -2,7 +2,7 @@
     <div class="sidebar-brand">
         <div class="brand-icon text-blue-400"><i class="bi bi-mortarboard-fill"></i></div>
         <div class="brand-text">
-            <span class="org-name">Apex College</span>
+            <span class="org-name">School Name</span>
             <span
                 class="org-plan border border-blue-500/30 text-blue-400 bg-blue-500/5 px-1.5 py-0.5 rounded text-[10px]">Student
                 Portal</span>

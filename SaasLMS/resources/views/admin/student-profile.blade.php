@@ -1,7 +1,7 @@
 <x-layout>
     <div class="flex h-screen relative">
         <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
-        <x-admin-sidebar />
+        {{-- <x-admin-sidebar /> --}}
 
         <main class="flex-1 flex flex-col min-w-0 overflow-y-auto p-6 lg:p-8 bg-slate-50">
 
@@ -118,4 +118,5 @@
 
             </div>
         </main>
+    </div>
 </x-layout>

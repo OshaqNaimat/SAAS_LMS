@@ -24,65 +24,85 @@
                 </div>
             </div>
 
-            <div class="card-bg rounded-2xl shadow-lg overflow-hidden">
-                <div class="header-bg p-4 flex justify-between items-center">
+            <div class="card-bg rounded-2xl shadow-lg overflow-hidden w-full">
+                <div class="header-bg p-4 flex justify-between items-center border-b border-slate-800">
                     <h3 class="font-bold text-base text-white">Master Timetable Grid</h3>
                     <span
                         class="text-xs px-3 py-1 rounded-full bg-slate-900 border border-slate-700 font-semibold text-gray-400">
                         {{ $schedules->count() }} Periods
                     </span>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse whitespace-nowrap">
+
+                <div class="overflow-x-auto w-full">
+                    <table class="w-full text-left border-collapse table-fixed min-w-[800px]">
                         <thead>
                             <tr
                                 class="text-xs font-semibold text-gray-400 uppercase tracking-wider bg-slate-900/60 border-b border-slate-800">
-                                <th class="p-3 sticky left-0 bg-slate-900/60">Period</th>
-                                @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $i => $dayLabel)
-                                    <th class="p-3 text-center min-w-[160px]">{{ $dayLabel }}</th>
+                                <th class="p-3 sticky left-0 z-10 bg-slate-900 w-24">Period</th>
+                                @foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $dayLabel)
+                                    <th class="p-3 text-center w-[15%]">{{ $dayLabel }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody class="text-sm text-gray-300 divide-y divide-slate-800">
-                            @for ($p = 1; $p <= $maxPeriod; $p++)
-                                <tr class="hover:bg-slate-900/40">
-                                    <td class="p-3 font-bold text-white sticky left-0 bg-[#111c2a]">P{{ $p }}
-                                    </td>
-                                    @for ($d = 1; $d <= 6; $d++)
-                                        @php $cell = $scheduleGrid->get($d, collect())->get($p); @endphp
-                                        <td class="p-2 align-top">
-                                            @if ($cell)
-                                                <div
-                                                    class="bg-slate-900 border border-slate-800 rounded-lg p-2 group relative">
-                                                    <p class="text-xs font-bold text-white truncate">
-                                                        {{ $cell->subject }}</p>
-                                                    <p class="text-[10px] text-gray-500 truncate">
-                                                        {{ $cell->classRoom->name ?? '' }}-{{ $cell->classRoom->section ?? '' }}
-                                                    </p>
-                                                    <p class="text-[10px] text-gray-500 truncate">
-                                                        {{ $cell->teacher->name ?? '—' }}</p>
-                                                    <div class="hidden group-hover:flex absolute top-1 right-1 gap-1">
-                                                        <button
-                                                            onclick="openEditSchedule({{ $cell->id }}, {{ $cell->teacher_id }}, {{ $cell->class_room_id }}, '{{ $cell->subject }}', {{ $cell->day_of_week }}, {{ $cell->period_number }}, '{{ \Carbon\Carbon::parse($cell->start_time)->format('H:i') }}', '{{ \Carbon\Carbon::parse($cell->end_time)->format('H:i') }}', '{{ $cell->room }}')"
-                                                            class="text-yellow-400 hover:text-yellow-300 text-xs"><i
-                                                                class="bi bi-pencil-square"></i></button>
-                                                        <form action="{{ route('admin.schedule.destroy', $cell->id) }}"
-                                                            method="POST"
-                                                            onsubmit="return confirm('Remove this period?');">
-                                                            @csrf @method('DELETE')
-                                                            <button type="submit"
-                                                                class="text-gray-500 hover:text-rose-400 text-xs"><i
-                                                                    class="bi bi-trash3"></i></button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            @else
-                                                <span class="text-[10px] text-gray-700 block text-center py-2">—</span>
-                                            @endif
+                            @if (isset($maxPeriod) && $maxPeriod > 0)
+                                @for ($p = 1; $p <= $maxPeriod; $p++)
+                                    <tr class="hover:bg-slate-900/40 min-h-[60px]">
+                                        <td class="p-3 font-bold text-white sticky left-0 z-10 bg-[#111c2a]">
+                                            Period {{ $p }}
                                         </td>
-                                    @endfor
+                                        @for ($d = 1; $d <= 6; $d++)
+                                            @php $cell = $scheduleGrid->get($d, collect())->get($p); @endphp
+                                            <td class="p-2 align-top h-16">
+                                                @if ($cell)
+                                                    <div
+                                                        class="bg-slate-900 border border-slate-800 rounded-lg p-2 group relative h-full flex flex-col justify-between">
+                                                        <div>
+                                                            <p class="text-xs font-bold text-white truncate"
+                                                                title="{{ $cell->subject }}">
+                                                                {{ $cell->subject }}
+                                                            </p>
+                                                            <p class="text-[10px] text-gray-400 truncate">
+                                                                {{ $cell->classRoom->name ?? '' }}-{{ $cell->classRoom->section ?? '' }}
+                                                            </p>
+                                                            <p class="text-[10px] text-gray-500 truncate">
+                                                                {{ $cell->teacher->name ?? '—' }}
+                                                            </p>
+                                                        </div>
+                                                        <div
+                                                            class="hidden group-hover:flex absolute top-1 right-1 gap-1 bg-slate-900/90 p-1 rounded border border-slate-700">
+                                                            <button
+                                                                onclick="openEditSchedule({{ $cell->id }}, {{ $cell->teacher_id }}, {{ $cell->class_room_id }}, '{{ $cell->subject }}', {{ $cell->day_of_week }}, {{ $cell->period_number }}, '{{ \Carbon\Carbon::parse($cell->start_time)->format('H:i') }}', '{{ \Carbon\Carbon::parse($cell->end_time)->format('H:i') }}', '{{ $cell->room }}')"
+                                                                class="text-yellow-400 hover:text-yellow-300 text-xs">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </button>
+                                                            <form
+                                                                action="{{ route('admin.schedule.destroy', $cell->id) }}"
+                                                                method="POST"
+                                                                onsubmit="return confirm('Remove this period?');">
+                                                                @csrf @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="text-gray-400 hover:text-rose-400 text-xs">
+                                                                    <i class="bi bi-trash3"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <span
+                                                        class="text-[10px] text-gray-700 block text-center py-4">—</span>
+                                                @endif
+                                            </td>
+                                        @endfor
+                                    </tr>
+                                @endfor
+                            @else
+                                <tr>
+                                    <td colspan="7" class="text-center py-8 text-gray-500 text-sm">
+                                        No schedule entries found. Please add periods to generate the grid.
+                                    </td>
                                 </tr>
-                            @endfor
+                            @endif
                         </tbody>
                     </table>
                 </div>

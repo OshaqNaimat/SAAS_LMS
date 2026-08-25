@@ -64,6 +64,28 @@
                                         <td class="p-4">{{ $teacher->email }}</td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-3">
+                                                <button
+                                                    onclick="openEditTeacher({{ $teacher->id }}, '{{ $teacher->name }}', '{{ $teacher->email }}', '{{ $ledClass ? $ledClass->name . ' - ' . $ledClass->section : $teacher->assigned_class ?? '' }}')"
+                                                    class="text-yellow-400 hover:text-yellow-300 transition"
+                                                    title="Edit">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </button>
+                                                <form action="{{ route('admin.user.destroy', $teacher->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Remove {{ $teacher->name }}? This cannot be undone.');"
+                                                    class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="text-red-400 hover:text-red-300 transition"
+                                                        title="Delete">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        <td class="p-4 text-right">
+                                            <div class="flex items-center justify-end gap-3">
                                                 <form action="{{ route('admin.user.destroy', $teacher->id) }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Remove {{ $teacher->name }}? This cannot be undone.');"
@@ -272,6 +294,61 @@
         </div>
     </form> --}}
 
+    <div id="editTeacherModal"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
+        role="dialog" aria-modal="true">
+        <div
+            class="w-full max-w-[500px] bg-[#111c2a] rounded-2xl shadow-2xl border border-slate-800 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
+            <div class="p-5 flex justify-between items-center border-b border-slate-800/60 bg-[#142032]">
+                <h3 class="text-base font-bold flex items-center gap-2 text-white">
+                    <i class="fa-solid fa-user-pen text-yellow-400"></i> Edit Teacher
+                </h3>
+                <button onclick="toggleModal('editTeacherModal')" class="text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="editTeacherForm" method="POST" class="p-6 space-y-5">
+                @csrf
+                @method('PUT')
+
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Full Name</label>
+                    <input type="text" name="name" id="editTeacherName" required
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Email
+                        Address</label>
+                    <input type="email" name="email" id="editTeacherEmail" required
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Assigned
+                        Class</label>
+                    <select name="assigned_class" id="editTeacherClass"
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                        <option value="">No class assigned yet</option>
+                        @foreach (\App\Models\ClassRoom::where('organization_id', Auth::user()->organization_id)->get() as $class)
+                            <option value="{{ $class->name }} - {{ $class->section }}">{{ $class->name }} -
+                                {{ $class->section }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
+                    <button type="button" onclick="toggleModal('editTeacherModal')"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-800 bg-[#172232] text-gray-300 hover:bg-slate-800 hover:text-white transition">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-2 shadow-lg shadow-blue-600/10">
+                        <i class="bi bi-check-lg text-xs"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="studentModal"
         class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden"
         role="dialog" aria-modal="true">
@@ -391,8 +468,14 @@
             }
         }
 
+        // window.addEventListener('click', function(event) {
+        //     if (event.target.id === 'inviteModal' || event.target.id === 'studentModal') {
+        //         toggleModal(event.target.id);
+        //     }
+        // });
         window.addEventListener('click', function(event) {
-            if (event.target.id === 'inviteModal' || event.target.id === 'studentModal') {
+            if (event.target.id === 'inviteModal' || event.target.id === 'studentModal' || event.target.id ===
+                'editTeacherModal') {
                 toggleModal(event.target.id);
             }
         });
@@ -456,6 +539,14 @@
                 });
                 studentCountBadge.textContent = `${visibleCount} Shown`;
             });
+        }
+
+        function openEditTeacher(id, name, email, assignedClass) {
+            document.getElementById('editTeacherForm').action = `/admin/teachers/${id}`;
+            document.getElementById('editTeacherName').value = name;
+            document.getElementById('editTeacherEmail').value = email;
+            document.getElementById('editTeacherClass').value = assignedClass;
+            toggleModal('editTeacherModal');
         }
     </script>
 </x-layout>
