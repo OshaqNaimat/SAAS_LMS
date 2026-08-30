@@ -158,7 +158,11 @@
                                                     <i class="fa-solid fa-eye"></i>
                                                 </button>
                                                 <button
-                                                    onclick="openPromoteStudent({{ $student->id }}, '{{ $student->name }}', '{{ $student->classRoom->name ?? '' }} - {{ $student->classRoom->section ?? '' }}')"
+                                                    onclick="openPromoteStudent(
+        {{ $student->id }},
+        @js($student->name),
+        {{ $student->class_room_id ?? 'null' }}
+    )"
                                                     class="text-purple-400 hover:text-purple-300 transition"
                                                     title="Promote">
                                                     <i class="bi bi-arrow-up-circle"></i>
@@ -344,7 +348,7 @@
                 <div class="space-y-1.5">
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500">Target
                         Class</label>
-                    <select name="class_room_id" id="promoteClassSelect" required
+                    <select name="target_class_id" id="promoteClassSelect" required
                         class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-purple-500 transition">
                         <option value="">Select a class</option>
                         @foreach (\App\Models\ClassRoom::where('organization_id', Auth::user()->organization_id)->get() as $class)
@@ -495,7 +499,13 @@
         function openPromoteStudent(id, name, currentClassId) {
             document.getElementById('promoteStudentForm').action = `/admin/students/${id}/promote`;
             document.getElementById('promoteStudentName').textContent = name;
-            document.getElementById('promoteClassSelect').value = currentClassId || '';
+
+            const select = document.getElementById('promoteClassSelect');
+            select.selectedIndex = 0;
+            if (currentClassId) {
+                select.value = currentClassId;
+            }
+
             toggleModal('promoteStudentModal');
         }
     </script>

@@ -67,7 +67,7 @@ public function classes()
 // In User model, add:
 public function classRoom()
 {
-    return $this->belongsTo(ClassRoom::class);
+    return $this->belongsTo(ClassRoom::class, 'class_room_id');
 }
 public function organization()
 {
