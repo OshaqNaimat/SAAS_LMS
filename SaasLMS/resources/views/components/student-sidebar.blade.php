@@ -1,4 +1,4 @@
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar bg-[#0F172A]" id="sidebar">
     <div class="sidebar-brand">
         <div class="brand-icon text-blue-400"><i class="bi bi-mortarboard-fill"></i></div>
         <div class="brand-text">
