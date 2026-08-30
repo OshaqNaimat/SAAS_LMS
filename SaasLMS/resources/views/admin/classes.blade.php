@@ -14,6 +14,7 @@
                         active curriculums.</p>
                 </div>
                 <div class="flex items-center gap-3 shrink-0 sm:self-center">
+
                     <button onclick="openAddClass()"
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition text-white shadow-md shadow-blue-600/10">
                         <i class="bi bi-plus-lg"></i> Create New Class
@@ -134,6 +135,12 @@
                                         </td>
                                         <td class="p-4 text-right">
                                             <button
+                                                onclick="openPromoteClass({{ $class->id }}, '{{ $class->name }} - {{ $class->section }}', {{ $class->studentCount() }})"
+                                                class="text-purple-400 hover:text-purple-300 transition px-2"
+                                                title="Promote Class">
+                                                <i class="bi bi-arrow-up-circle"></i>
+                                            </button>
+                                            <button
                                                 onclick="openEditClass({{ $class->id }}, '{{ $class->name }}', '{{ $class->section }}', '{{ $class->stream }}', '{{ $class->room }}', {{ $class->max_seats }}, {{ $class->teacher_id ?? 'null' }})"
                                                 class="text-yellow-600 hover:text-yellow-700 transition px-2"><i
                                                     class="bi bi-pencil-square"></i></button>
@@ -145,6 +152,7 @@
                                                     class="text-gray-400 hover:text-red-500 transition px-2"><i
                                                         class="bi bi-trash3"></i></button>
                                             </form>
+
                                         </td>
                                     </tr>
                                 @empty
@@ -155,6 +163,61 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        <div id="promoteClassModal"
+                            class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
+                            role="dialog" aria-modal="true">
+                            <div
+                                class="w-full max-w-[450px] bg-[#111c2a] rounded-2xl shadow-2xl border border-slate-800 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
+                                <div
+                                    class="p-5 flex justify-between items-center border-b border-slate-800/60 bg-[#142032]">
+                                    <h3 class="text-base font-bold flex items-center gap-2 text-white">
+                                        <i class="bi bi-arrow-up-circle text-purple-400"></i>
+                                        Promote Class
+                                    </h3>
+                                    <button onclick="toggleModal('promoteClassModal')"
+                                        class="text-gray-400 hover:text-white transition">
+                                        <i class="bi bi-x-lg text-sm"></i>
+                                    </button>
+                                </div>
+                                <form id="promoteClassForm" method="POST" class="p-6 space-y-4"
+                                    onsubmit="return confirm('Are you absolutely sure? This will move all students immediately.');">
+                                    @csrf
+                                    <p class="text-sm text-gray-300">
+                                        Promote all <span id="promoteStudentCount"
+                                            class="font-bold text-white"></span> student(s) from
+                                        <span id="promoteFromClass" class="font-bold text-white"></span> to:
+                                    </p>
+                                    <div class="space-y-1.5">
+                                        <label class="block text-xs font-semibold text-gray-400">Destination
+                                            Class</label>
+                                        <select name="target_class_id" id="promoteTargetClass" required
+                                            class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/80 transition">
+                                            <option value="">Select destination class...
+                                            </option>
+                                            @foreach ($classes as $class)
+                                                <option value="{{ $class->id }}">
+                                                    {{ $class->name }} - {{ $class->section }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div
+                                        class="bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs rounded-xl p-3">
+                                        <i class="bi bi-exclamation-triangle-fill mr-1"></i> This
+                                        will move every student out of their current class
+                                        permanently. This action cannot be undone.
+                                    </div>
+                                    <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
+                                        <button type="button" onclick="toggleModal('promoteClassModal')"
+                                            class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-800 bg-[#172232] text-gray-300 hover:bg-slate-800 hover:text-white transition">Cancel</button>
+                                        <button type="submit"
+                                            class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-purple-600 hover:bg-purple-500 text-white transition shadow-lg shadow-purple-600/10">
+                                            Confirm Promotion
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -356,5 +419,13 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
+
+        function openPromoteClass(classId, className, studentCount) {
+            document.getElementById('promoteClassForm').action = `/admin/classes/${classId}/promote`;
+            document.getElementById('promoteFromClass').textContent = className;
+            document.getElementById('promoteStudentCount').textContent = studentCount;
+            document.getElementById('promoteTargetClass').value = '';
+            toggleModal('promoteClassModal');
+        }
     </script>
 </x-layout>

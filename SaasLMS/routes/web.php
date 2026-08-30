@@ -72,6 +72,8 @@ Route::put('/admin/settings/password', [AdminController::class, 'updatePassword'
 
 Route::get('/admin/student/{student}', [AdminController::class, 'showStudentProfile'])->name('admin.student.profile');
 
+Route::post('/admin/classes/{classRoom}/promote', [AdminController::class, 'promoteClass'])->name('admin.classes.promote');
+Route::post('/admin/students/{student}/promote', [AdminController::class, 'promoteStudent'])->name('admin.students.promote');
 });
 
 

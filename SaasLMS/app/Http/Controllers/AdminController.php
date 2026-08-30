@@ -836,4 +836,48 @@ public function showStudentProfile(User $student)
         'student', 'attendanceRecords', 'attendanceRate', 'payments', 'totalPaid', 'totalDue'
     ));
 }
+
+public function promoteClass(Request $request, ClassRoom $classRoom)
+{
+    $orgId = Auth::user()->organization_id;
+
+    if ($classRoom->organization_id !== $orgId) {
+        abort(403);
+    }
+
+    $request->validate([
+        'target_class_id' => 'required|exists:class_rooms,id',
+    ]);
+
+    $targetClass = ClassRoom::where('id', $request->target_class_id)
+        ->where('organization_id', $orgId)
+        ->firstOrFail();
+
+    $count = User::where('class_room_id', $classRoom->id)
+        ->where('role', 'student')
+        ->update(['class_room_id' => $targetClass->id]);
+
+    return back()->with('success', "{$count} student(s) promoted to {$targetClass->name} - {$targetClass->section}.");
+}
+
+public function promoteStudent(Request $request, User $student)
+{
+    $orgId = Auth::user()->organization_id;
+
+    if ($student->organization_id !== $orgId || $student->role !== 'student') {
+        abort(403);
+    }
+
+    $request->validate([
+        'target_class_id' => 'required|exists:class_rooms,id',
+    ]);
+
+    $targetClass = ClassRoom::where('id', $request->target_class_id)
+        ->where('organization_id', $orgId)
+        ->firstOrFail();
+
+    $student->update(['class_room_id' => $targetClass->id]);
+
+    return back()->with('success', "{$student->name} promoted to {$targetClass->name} - {$targetClass->section}.");
+}
 };

@@ -85,6 +85,7 @@
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
                                                 </form>
+
                                             </div>
                                         </td>
                                     </tr>
@@ -155,6 +156,12 @@
                                                     class="text-blue-600 hover:text-blue-800 transition"
                                                     title="View Profile">
                                                     <i class="fa-solid fa-eye"></i>
+                                                </button>
+                                                <button
+                                                    onclick="openPromoteStudent({{ $student->id }}, '{{ $student->name }}', '{{ $student->classRoom->name ?? '' }} - {{ $student->classRoom->section ?? '' }}')"
+                                                    class="text-purple-400 hover:text-purple-300 transition"
+                                                    title="Promote">
+                                                    <i class="bi bi-arrow-up-circle"></i>
                                                 </button>
                                                 <form action="{{ route('admin.user.destroy', $student->id) }}"
                                                     method="POST"
@@ -311,6 +318,53 @@
         </div>
     </div>
 
+    <!-- ─── PROMOTE STUDENT MODAL ─── -->
+    <div id="promoteStudentModal"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
+        role="dialog" aria-modal="true">
+        <div
+            class="w-full max-w-[480px] bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
+            <div class="p-5 flex justify-between items-center border-b border-gray-200 bg-gray-50">
+                <h3 class="text-base font-bold flex items-center gap-2 text-gray-800">
+                    <i class="bi bi-arrow-up-circle text-purple-500"></i> Promote Student
+                </h3>
+                <button onclick="toggleModal('promoteStudentModal')"
+                    class="text-gray-400 hover:text-gray-600 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="promoteStudentForm" method="POST" class="p-6 space-y-5">
+                @csrf
+
+                <p class="text-sm text-gray-600">
+                    Promoting <span id="promoteStudentName" class="font-semibold text-gray-800"></span> to a new
+                    class.
+                </p>
+
+                <div class="space-y-1.5">
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500">Target
+                        Class</label>
+                    <select name="class_room_id" id="promoteClassSelect" required
+                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-purple-500 transition">
+                        <option value="">Select a class</option>
+                        @foreach (\App\Models\ClassRoom::where('organization_id', Auth::user()->organization_id)->get() as $class)
+                            <option value="{{ $class->id }}">{{ $class->name }} - {{ $class->section }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="pt-3 flex justify-end gap-3 border-t border-gray-200">
+                    <button type="button" onclick="toggleModal('promoteStudentModal')"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-gray-300 bg-gray-100 text-gray-600 hover:bg-gray-200 transition">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-purple-600 hover:bg-purple-500 text-white transition flex items-center gap-2 shadow-lg shadow-purple-600/10">
+                        <i class="bi bi-arrow-up-circle text-xs"></i> Promote
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         /* ─── Sidebar Toggle ─── */
         function toggleSidebar() {
@@ -436,6 +490,13 @@
             document.getElementById('editTeacherEmail').value = email;
             document.getElementById('editTeacherClass').value = assignedClass;
             toggleModal('editTeacherModal');
+        }
+
+        function openPromoteStudent(id, name, currentClassId) {
+            document.getElementById('promoteStudentForm').action = `/admin/students/${id}/promote`;
+            document.getElementById('promoteStudentName').textContent = name;
+            document.getElementById('promoteClassSelect').value = currentClassId || '';
+            toggleModal('promoteStudentModal');
         }
     </script>
 </x-layout>

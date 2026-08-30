@@ -74,10 +74,7 @@ public function organization()
     return $this->belongsTo(Organization::class);
 }
 
-public function isSuperAdmin(): bool
-{
-    return $this->role === 'super_admin';
-}
+
 public function ledClasses()
 {
     return $this->hasMany(ClassRoom::class, 'teacher_id');
