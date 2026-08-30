@@ -1,8 +1,8 @@
 <aside class="sidebar h-screen flex flex-col bg-[#0f172a]" id="sidebar">
     <div class="sidebar-brand">
         <div class="brand-icon"><i class="bi bi-building"></i></div>
-        <div class="brand-text">
-            <span class="org-name">School Name</span>
+        <div class="brand-text text-white">
+            <span class="org-name ">School Name</span>
 
         </div>
     </div>
