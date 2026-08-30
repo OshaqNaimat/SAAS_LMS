@@ -20,7 +20,7 @@
                 <header class="mobile-header">
                     <div class="brand-mobile">
                         <div class="mini-icon"><i class="bi bi-building"></i></div>
-                        <span>Apex Global</span>
+                        <span>School Name</span>
                     </div>
                     <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu"><i
                             class="bi bi-list"></i></button>
