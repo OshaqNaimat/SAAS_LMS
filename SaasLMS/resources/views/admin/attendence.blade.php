@@ -164,11 +164,11 @@
                 <div class="flex gap-2 pb-px">
                     <button onclick="switchTab('students')" id="tabBtn-students"
                         class="px-4 py-2 text-sm font-semibold transition-all border-b-2 border-blue-500 text-gray-800">
-                        Student Attendance Roster
+                        Student Attendance
                     </button>
                     <button onclick="switchTab('faculty')" id="tabBtn-faculty"
                         class="px-4 py-2 text-sm font-semibold transition-all border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                        Faculty Attendance Roster
+                        Faculty Attendance
                     </button>
                 </div>
 
@@ -192,7 +192,7 @@
                                 <tr
                                     class="text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/80 border-b border-gray-200">
                                     <th class="p-4">Student Information</th>
-                                    <th class="p-4">Academic Roster</th>
+                                    <th class="p-4">Class</th>
                                     <th class="p-4">Rolling Rate</th>
                                     <th class="p-4">Teacher's Marking</th>
                                     <th class="p-4 text-right">Actions</th>

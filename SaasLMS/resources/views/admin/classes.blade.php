@@ -280,7 +280,7 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-semibold text-gray-500">Max Roster Seats</label>
+                    <label class="block text-xs font-semibold text-gray-500">Max Seats</label>
                     <input type="number" name="max_seats" id="classMaxSeats" placeholder="30" required
                         min="1"
                         class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition">
