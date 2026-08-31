@@ -276,7 +276,8 @@
                                                         style="background:var(--green);"></span>
                                                     Active
                                                 </td>
-                                                <td style="font-size:0.7rem;">{{ $member->created_at->format('M Y') }}
+                                                <td style="font-size:0.7rem;">
+                                                    {{ $member->joining_date ? \Carbon\Carbon::parse($member->joining_date)->format('M Y') : '—' }}
                                                 </td>
                                             </tr>
                                         @empty
