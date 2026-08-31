@@ -10,7 +10,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight text-gray-900">Billing & Fee Management</h1>
-                    <p class="text-sm text-gray-500 mt-1">Track manual fee collections, verify ledger entries, and audit
+                    <p class="text-sm text-gray-500 mt-1">Track fee collections, verify record entries, and audit
                         systemic accounts.</p>
                 </div>
                 <div class="flex items-center gap-3 shrink-0 sm:self-center">
@@ -89,9 +89,9 @@
                             <h3 class="text-sm font-bold text-gray-800">Collections by Fee Category</h3>
                             <p class="text-xs text-gray-500">Analysis of capital weightings across systemic items</p>
                         </div>
-                        <span
+                        {{-- <span
                             class="text-[10px] uppercase font-bold text-blue-600 bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md">Q2
-                            Baseline</span>
+                            Baseline</span> --}}
                     </div>
 
                     <div class="flex items-end justify-between h-44 pt-4 px-4 border-b border-gray-200 gap-6">
@@ -190,7 +190,7 @@
             onclick="event.stopPropagation()">
             <div class="p-5 flex justify-between items-center border-b border-gray-200 bg-gray-50">
                 <h3 class="text-base font-bold flex items-center gap-2.5 text-gray-800">
-                    <i class="bi bi-wallet2 text-blue-600 text-lg"></i> Manual Collection Entry
+                    <i class="bi bi-wallet2 text-blue-600 text-lg"></i> Collection Entry
                 </h3>
                 <button onclick="toggleModal('collectionModal')" class="text-gray-400 hover:text-gray-600 transition">
                     <i class="bi bi-x-lg text-sm"></i>
@@ -201,7 +201,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-gray-500">Student Roll Number</label>
-                        <input type="text" name="roll_number" placeholder="e.g. AGI-2026-089" required
+                        <input type="text" name="roll_number" placeholder="e.g. 123" required
                             class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition">
                     </div>
                     <div class="space-y-1.5">
