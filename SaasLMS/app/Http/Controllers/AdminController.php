@@ -17,6 +17,35 @@ use App\Models\Schedule;
 
 class AdminController extends Controller
 {
+    public function index(Request $request)
+    {
+        // 1. Selected day filter (defaults to monday)
+        $selectedDay = strtolower($request->get('day', 'monday'));
+
+        // 2. Fetch all classes dynamically from ClassRoom model
+        $classes = ClassRoom::orderBy('name', 'asc')->get();
+
+        // 3. Fetch unique periods dynamically from Schedule model
+        $periods = Schedule::select('period')
+            ->distinct()
+            ->whereNotNull('period')
+            ->orderBy('period', 'asc')
+            ->pluck('period');
+
+        // 4. Fetch schedules for the selected day with relations
+        $schedules = Schedule::with(['subject', 'teacher'])
+            ->whereRaw('LOWER(day) = ?', [$selectedDay])
+            ->get();
+
+        // 5. Map grid: [class_room_id][period]
+        $grid = [];
+        foreach ($schedules as $entry) {
+            $grid[$entry->class_room_id][$entry->period] = $entry;
+        }
+
+        return view('admin.index', compact('classes', 'periods', 'grid', 'selectedDay'));
+    }
+
 public function storeTeacher(Request $request)
 {
     $request->validate([
@@ -195,6 +224,7 @@ public function classesIndex()
 
     return view('admin.classes', compact('classes', 'teachers', 'totalClasses', 'overcrowded', 'avgAttendance'));
 }
+
 
 public function storeClass(Request $request)
 {
@@ -648,6 +678,7 @@ public function scheduleIndex()
     $maxPeriod = $schedules->max('period_number') ?? 8;
 
     $schedulesByClass = $schedules->groupBy('class_room_id');
+
 
     return view('admin.schedule', compact('schedules', 'teachers', 'classes', 'schedulesByClass', 'scheduleGrid', 'maxPeriod'));
 }

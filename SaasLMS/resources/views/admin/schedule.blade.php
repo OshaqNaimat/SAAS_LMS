@@ -23,7 +23,7 @@
             </div>
 
             <!-- ─── MASTER TIMETABLE GRID (Fits normal screen) ─── -->
-            <div class="bg-white rounded-2xl shadow-sm  border border-gray-200 w-full mb-8">
+            {{-- <div class="bg-white rounded-2xl shadow-sm  border border-gray-200 w-full mb-8">
                 <div class="p-4 flex justify-between items-center border-b border-gray-200 bg-gray-50">
                     <h3 class="font-bold text-base text-gray-800">Master Timetable Grid</h3>
                     <span
@@ -99,7 +99,8 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> --}}
+
 
             <!-- ─── CLASS TIMETABLES (Student View) ─── -->
             <div class="mt-8 space-y-6">
@@ -207,8 +208,7 @@
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-semibold text-gray-500">Subject</label>
-                    <input type="text" name="subject" id="scheduleSubject" placeholder="e.g. Mathematics"
-                        required
+                    <input type="text" name="subject" id="scheduleSubject" placeholder="e.g. Mathematics" required
                         class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition">
                 </div>
 

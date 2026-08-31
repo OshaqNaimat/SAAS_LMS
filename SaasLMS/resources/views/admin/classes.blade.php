@@ -102,8 +102,8 @@
                                     class="text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/80 border-b border-gray-200">
                                     <th class="p-4">Class Identification</th>
                                     <th class="p-4">Assigned Mentor</th>
-                                    <th class="p-4">Active Roster</th>
-                                    <th class="p-4">Syllabus Track</th>
+                                    <th class="p-4">Active Students</th>
+                                    <th class="p-4">Seating Capacity</th>
                                     <th class="p-4 text-right">Actions</th>
                                 </tr>
                             </thead>
