@@ -109,7 +109,7 @@
                                         style="width: {{ $avgAttendance }}%"></div>
                                 </div>
                                 <p class="text-[10px] text-gray-500">Based on your overall attendance record
-                                    (per-subject tracking not yet available)
+
                                 </p>
                             </div>
                         </div>

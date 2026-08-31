@@ -29,12 +29,12 @@
         <div class="sidebar-label">Classrooms</div>
 
         <a href="/teacher-classes" class="nav-item {{ request()->is('teacher-classes') ? 'active' : '' }}">
-            <i class="bi bi-mortarboard-fill"></i> Assigned Batches
+            <i class="bi bi-mortarboard-fill"></i> Assigned Classes
         </a>
 
-        <a href="/teacher-announcements" class="nav-item {{ request()->is('teacher-announcements') ? 'active' : '' }}">
+        {{-- <a href="/teacher-announcements" class="nav-item {{ request()->is('teacher-announcements') ? 'active' : '' }}">
             <i class="bi bi-megaphone-fill"></i> Class Noticeboard
-        </a>
+        </a> --}}
     </div>
 
     <div class="sidebar-spacer"></div>

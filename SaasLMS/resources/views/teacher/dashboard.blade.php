@@ -91,10 +91,14 @@
                         <tbody class="text-sm text-gray-600 divide-y divide-gray-100">
                             @forelse($students as $student)
                                 @php
-                                    $rate = $student->attendanceRate();
-                                    $status = $todayRecords->get($student->id)->status ?? 'present';
-                                    $initials = collect(explode(' ', $student->name))
-                                        ->map(fn($w) => strtoupper($w[0]))
+                                    $rate = method_exists($student, 'attendanceRate')
+                                        ? $student->attendanceRate()
+                                        : null;
+                                    $todayRecord = isset($todayRecords) ? $todayRecords->get($student->id) : null;
+                                    $status = $todayRecord->status ?? 'Not Marked';
+
+                                    $initials = collect(explode(' ', $student->name ?? 'Student'))
+                                        ->map(fn($w) => strtoupper($w[0] ?? ''))
                                         ->take(2)
                                         ->implode('');
                                 @endphp
@@ -108,13 +112,16 @@
                                             <div class="flex flex-col">
                                                 <span class="font-semibold text-gray-800">{{ $student->name }}</span>
                                                 <span class="text-xs font-mono text-gray-500">Roll:
-                                                    {{ $student->roll_number }}</span>
+                                                    {{ $student->roll_number ?? 'N/A' }}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="p-4 text-xs font-medium text-gray-500">
-                                        {{ $student->classRoom->name ?? '—' }} -
-                                        {{ $student->classRoom->section ?? '' }}</td>
+                                        {{ $student->classRoom->name ?? 'Unassigned' }}
+                                        @if (!empty($student->classRoom->section))
+                                            - {{ $student->classRoom->section }}
+                                        @endif
+                                    </td>
                                     <td class="p-4">
                                         @if ($rate !== null)
                                             <div class="flex items-center gap-2">
@@ -123,23 +130,33 @@
                                                         style="width: {{ $rate }}%"></div>
                                                 </div>
                                                 <span
-                                                    class="text-xs font-bold {{ $rate >= 90 ? 'text-emerald-600' : ($rate >= 75 ? 'text-amber-600' : 'text-red-600') }}">{{ $rate }}%</span>
+                                                    class="text-xs font-bold {{ $rate >= 90 ? 'text-emerald-600' : ($rate >= 75 ? 'text-amber-600' : 'text-red-600') }}">
+                                                    {{ $rate }}%
+                                                </span>
                                             </div>
                                         @else
                                             <span class="text-xs text-gray-400">No data</span>
                                         @endif
                                     </td>
                                     <td class="p-4">
-                                        <span
-                                            class="px-2 py-0.5 rounded text-xs font-bold {{ $status === 'present' ? 'bg-emerald-100 border border-emerald-200 text-emerald-700' : 'bg-red-100 border border-red-200 text-red-700' }}">
+                                        @php
+                                            $badgeClasses = match (strtolower($status)) {
+                                                'present' => 'bg-emerald-100 border-emerald-200 text-emerald-700',
+                                                'absent' => 'bg-red-100 border-red-200 text-red-700',
+                                                'late' => 'bg-amber-100 border-amber-200 text-amber-700',
+                                                default => 'bg-gray-100 border-gray-200 text-gray-600',
+                                            };
+                                        @endphp
+                                        <span class="px-2 py-0.5 rounded text-xs font-bold border {{ $badgeClasses }}">
                                             {{ ucfirst(str_replace('_', ' ', $status)) }}
                                         </span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="p-6 text-center text-gray-400 text-sm">No students found
-                                        in your classes.</td>
+                                    <td colspan="4" class="p-6 text-center text-gray-400 text-sm">
+                                        No students found in your assigned classes.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>

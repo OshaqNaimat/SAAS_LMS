@@ -73,37 +73,7 @@ public function timetable(Request $request)
 
     return view('teacher.Schedule', compact('periods', 'selectedDay', 'totalToday', 'workloadHours'));
 }
-public function attendanceIndex(Request $request)
-{
-    $teacher = Auth::user();
-    $classes = ClassRoom::where('teacher_id', $teacher->id)->get();
 
-    $selectedClassId = $request->get('class_id', $classes->first()->id ?? null);
-    $selectedClass = $classes->firstWhere('id', $selectedClassId);
-
-    $students = collect();
-    $todayRecords = collect();
-
-    if ($selectedClass) {
-       $students = User::where('role', 'student')
-    ->where('class_room_id', $selectedClass->id)
-    ->orderBy('roll_number')
-    ->get();
-
-        $todayRecords = Attendance::where('date', Carbon::today())
-            ->whereIn('user_id', $students->pluck('id'))
-            ->get()->keyBy('user_id');
-    }
-
-    $presentCount = $todayRecords->where('status', 'present')->count();
-    $absentCount = $todayRecords->where('status', 'absent')->count();
-    $leaveCount = $todayRecords->where('status', 'approved_leave')->count();
-
-    return view('teacher.attendence-registry', compact(
-        'classes', 'selectedClass', 'selectedClassId', 'students', 'todayRecords',
-        'presentCount', 'absentCount', 'leaveCount'
-    ));
-}
 
 public function saveAttendance(Request $request)
 {
@@ -124,13 +94,67 @@ public function saveAttendance(Request $request)
 
     return back()->with('success', 'Attendance saved successfully!')->with('class_id', $request->class_id);
 }
-public function classesIndex()
-{
-    $teacher = Auth::user();
-    $classes = ClassRoom::where('teacher_id', $teacher->id)->get();
+private function getTeacherClasses($teacherId)
+    {
+        // Get classes where teacher is primary teacher OR assigned in timetable schedule
+        $scheduledClassIds = Schedule::where('teacher_id', $teacherId)
+            ->pluck('class_room_id')
+            ->filter();
 
-    $totalEnrolled = $classes->sum(fn ($c) => $c->studentCount());
+        return ClassRoom::where('teacher_id', $teacherId)
+            ->orWhereIn('id', $scheduledClassIds)
+            ->get();
+    }
 
-    return view('teacher.assigned-batches', compact('classes', 'totalEnrolled'));
-}
+    public function classesIndex()
+    {
+        $teacher = Auth::user();
+        $classes = $this->getTeacherClasses($teacher->id);
+
+        $totalEnrolled = $classes->sum(fn ($c) => method_exists($c, 'studentCount') ? $c->studentCount() : User::where('role', 'student')->where('class_room_id', $c->id)->count());
+
+        return view('teacher.assigned-batches', compact('classes', 'totalEnrolled'));
+    }
+
+    public function attendanceIndex(Request $request)
+    {
+        $teacher = Auth::user();
+
+        // 1. Fetch assigned classes
+        $classes = $this->getTeacherClasses($teacher->id);
+
+        // 2. Select default or requested class
+        $selectedClassId = $request->get('class_id', $classes->first()->id ?? null);
+        $selectedClass = $classes->firstWhere('id', $selectedClassId);
+
+        $students = collect();
+        $todayRecords = collect();
+
+        if ($selectedClass) {
+            // 3. Fetch students belonging to the selected class with relationships
+            $students = User::where('role', 'student')
+                ->where('class_room_id', $selectedClass->id)
+                ->with('classRoom')
+                ->orderBy('roll_number', 'asc')
+                ->orderBy('name', 'asc')
+                ->get();
+
+            // 4. Fetch today's attendance records keyed by user_id
+            if ($students->isNotEmpty()) {
+                $todayRecords = Attendance::whereDate('date', Carbon::today())
+                    ->whereIn('user_id', $students->pluck('id'))
+                    ->get()
+                    ->keyBy('user_id');
+            }
+        }
+
+        $presentCount = $todayRecords->where('status', 'present')->count();
+        $absentCount = $todayRecords->where('status', 'absent')->count();
+        $leaveCount = $todayRecords->whereIn('status', ['approved_leave', 'leave'])->count();
+
+        return view('teacher.attendence-registry', compact(
+            'classes', 'selectedClass', 'selectedClassId', 'students', 'todayRecords',
+            'presentCount', 'absentCount', 'leaveCount'
+        ));
+    }
 }
