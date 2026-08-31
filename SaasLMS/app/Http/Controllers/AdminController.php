@@ -815,18 +815,25 @@ public function settingsIndex()
 }
 public function updateProfile(Request $request)
 {
-    $request->validate([
+    // 1. Validate form fields
+    $validated = $request->validate([
+        'org_name'      => 'required|string|max:255',
         'contact_email' => 'required|email|max:255',
-        'contact_phone' => 'nullable|string|max:255',
+        'contact_phone' => 'nullable|string|max:20',
     ]);
 
-    $organization = Auth::user()->organization;
+    // 2. Fetch the current admin's organization (adjust query as per your setup)
+    $organization = \App\Models\Organization::first(); // or auth()->user()->organization;
+
+    // 3. Update & Save fields
     $organization->update([
-        'contact_email' => $request->contact_email,
-        'contact_phone' => $request->contact_phone,
+        'name'          => $validated['org_name'],
+        'contact_email' => $validated['contact_email'],
+        'contact_phone' => $validated['contact_phone'],
     ]);
 
-    return back()->with('success', 'Institutional profile updated successfully!');
+    // 4. Redirect back with success session message (triggers your JS toast)
+    return redirect()->back()->with('success', 'Institute details updated successfully!');
 }
 
 public function updatePassword(Request $request)

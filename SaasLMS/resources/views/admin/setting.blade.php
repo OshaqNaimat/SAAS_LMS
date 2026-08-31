@@ -37,43 +37,57 @@
                 <div class="lg:col-span-2 space-y-6">
 
                     <!-- ─── INSTITUTE DETAILS ─── -->
+                    <!-- ─── INSTITUTE DETAILS ─── -->
                     <section id="profile" class="bg-white border border-gray-200 rounded-2xl p-6 space-y-6 shadow-sm">
                         <div class="border-b border-gray-200 pb-4">
                             <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">
                                 <i class="bi bi-building text-blue-600"></i> Institute Details
                             </h3>
-                            <p class="text-xs text-gray-500 mt-1">Organization name and plan are managed by the platform
-                                administrator. You can update your contact details below.</p>
+                            <p class="text-xs text-gray-500 mt-1">Update your institute profile parameters below.</p>
                         </div>
 
                         <form action="{{ route('admin.settings.profile') }}" method="POST" class="space-y-4">
                             @csrf
                             @method('PUT')
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Organization Name -->
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-500">Organization Name</label>
                                     <input type="text" name="org_name"
-                                        value="{{ old('org_name', $organization->name) }}"
-                                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
+                                        value="{{ old('org_name', $organization->name ?? '') }}"
+                                        class="w-full bg-white border @error('org_name') border-red-500 @else border-gray-300 @enderror rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
                                         required>
+                                    @error('org_name')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Primary Contact Email -->
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-500">Primary Contact
                                         Email</label>
                                     <input type="email" name="contact_email"
-                                        value="{{ old('contact_email', $organization->contact_email) }}"
-                                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
+                                        value="{{ old('contact_email', $organization->contact_email ?? '') }}"
+                                        class="w-full bg-white border @error('contact_email') border-red-500 @else border-gray-300 @enderror rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
                                         required>
+                                    @error('contact_email')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
+
+                                <!-- Institutional Contact Desk -->
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-500">Institutional Contact
                                         Desk</label>
                                     <input type="text" name="contact_phone"
-                                        value="{{ old('contact_phone', $organization->contact_phone) }}"
-                                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition">
+                                        value="{{ old('contact_phone', $organization->contact_phone ?? '') }}"
+                                        class="w-full bg-white border @error('contact_phone') border-red-500 @else border-gray-300 @enderror rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition">
+                                    @error('contact_phone')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 

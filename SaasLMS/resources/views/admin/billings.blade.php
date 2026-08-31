@@ -108,7 +108,7 @@
 
                 <div class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm">
                     <div>
-                        <h3 class="text-sm font-bold text-gray-800 mb-1">Collection Channels</h3>
+                        <h3 class="text-sm font-bold text-gray-800 mb-1">Payment Gateway</h3>
                         <p class="text-xs text-gray-500">Breakdown of clearing methods chosen by targets</p>
                     </div>
                     <div class="space-y-4 py-2">
@@ -144,7 +144,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-[11px] text-gray-400 text-center">Refers solely to validated ledger inputs.</div>
+                    <div class="text-[11px] text-gray-400 text-center">Refers solely to validated record inputs.</div>
                 </div>
             </div>
 
