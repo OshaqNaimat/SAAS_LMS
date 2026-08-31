@@ -17,22 +17,23 @@ use App\Models\Schedule;
 
 class AdminController extends Controller
 {
-    public function storeTeacher(Request $request)
+public function storeTeacher(Request $request)
 {
-
     $request->validate([
         'name'           => 'required|string|max:255',
         'email'          => 'required|email|unique:users,email',
         'password'       => 'required|string|min:6',
         'assigned_class' => 'nullable|string',
+        'joining_date'   => 'required|date',
     ]);
 
     User::create([
-        'name'           => $request->name,
-        'email'          => $request->email,
-        'password'       => Hash::make($request->password),
-        'role'           => 'teacher', // hardcode server-side, don't trust the hidden input
-        'assigned_class' => $request->assigned_class,
+        'name'            => $request->name,
+        'email'           => $request->email,
+        'password'        => Hash::make($request->password),
+        'role'            => 'teacher',
+        'assigned_class'  => $request->assigned_class,
+        'joining_date'    => $request->joining_date,
         'organization_id' => Auth::user()->organization_id,
     ]);
 
@@ -41,22 +42,28 @@ class AdminController extends Controller
 
 public function storeStudent(Request $request)
 {
+    $orgId = Auth::user()->organization_id;
+
     $request->validate([
         'name'          => 'required|string|max:255',
         'father_name'   => 'required|string|max:255',
         'roll_number'   => 'required|string|unique:users,roll_number',
         'class_room_id' => 'required|exists:class_rooms,id',
         'password'      => 'required|string|min:4',
+        'joining_date'  => 'required|date',
     ]);
 
+    $class = ClassRoom::where('id', $request->class_room_id)->where('organization_id', $orgId)->firstOrFail();
+
     User::create([
-        'name'          => $request->name,
-        'father_name'   => $request->father_name,
-        'roll_number'   => $request->roll_number,
-        'class_room_id' => $request->class_room_id,
-        'password'      => Hash::make($request->password),
-        'role'          => 'student',
-        'organization_id' => Auth::user()->organization_id,
+        'name'            => $request->name,
+        'father_name'     => $request->father_name,
+        'roll_number'     => $request->roll_number,
+        'class_room_id'   => $class->id,
+        'password'        => Hash::make($request->password),
+        'role'            => 'student',
+        'joining_date'    => $request->joining_date,
+        'organization_id' => $orgId,
     ]);
 
     return back()->with('success', 'New Student Registered successfully!');

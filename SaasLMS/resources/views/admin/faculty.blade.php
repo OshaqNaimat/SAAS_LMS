@@ -53,6 +53,7 @@
                                     <th class="p-4">Name</th>
                                     <th class="p-4">Assigned Class</th>
                                     <th class="p-4">Email Address</th>
+                                    <th class="p-4">Joining Date</th>
                                     <th class="p-4 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -65,6 +66,9 @@
                                             {{ $ledClass ? $ledClass->name . ' - ' . $ledClass->section : $teacher->assigned_class ?? '—' }}
                                         </td>
                                         <td class="p-4">{{ $teacher->email }}</td>
+                                        <td class="p-4">
+                                            {{ $teacher->joining_date ? \Carbon\Carbon::parse($teacher->joining_date)->format('M d, Y') : '—' }}
+                                        </td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-3">
                                                 <button
@@ -148,7 +152,9 @@
                                         <td class="p-4 text-gray-500">{{ $student->father_name }}</td>
                                         <td class="p-4">{{ $student->classRoom->name ?? '—' }} -
                                             {{ $student->classRoom->section ?? '' }}</td>
-                                        <td class="p-4">{{ $student->created_at->format('M d, Y') }}</td>
+                                        <td class="p-4">
+                                            {{ $student->joining_date ? \Carbon\Carbon::parse($student->joining_date)->format('M d, Y') : '—' }}
+                                        </td>
                                         <td class="p-4 text-right">
                                             <div class="flex items-center justify-end gap-3">
                                                 <button

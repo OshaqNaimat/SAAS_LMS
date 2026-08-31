@@ -324,6 +324,7 @@
                                 class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-blue-500 transition">
                         </div>
 
+
                         <div class="form-row grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="form-group">
                                 <label class="block text-xs font-semibold text-gray-400 mb-1">Security
@@ -342,6 +343,11 @@
                                             {{ $class->name }} - {{ $class->section }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="block text-xs font-semibold text-gray-400 mb-1">Joining Date</label>
+                                <input type="date" name="joining_date" value="{{ date('Y-m-d') }}" required
+                                    class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 transition">
                             </div>
                         </div>
                     </div>
@@ -418,6 +424,11 @@
                             <div class="form-group">
                                 <label class="block font-medium mb-1 text-sm text-gray-300">Password</label>
                                 <input type="password" name="password" placeholder="••••••••" required
+                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="form-group">
+                                <label class="block font-medium mb-1 text-sm text-gray-300">Joining Date</label>
+                                <input type="date" name="joining_date" value="{{ date('Y-m-d') }}" required
                                     class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
                             </div>
                         </div>
