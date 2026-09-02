@@ -13,7 +13,7 @@ use App\Models\GeneratedReport;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Schedule;
-
+use App\Models\Substitution;
 
 class AdminController extends Controller
 {
@@ -924,5 +924,63 @@ public function promoteStudent(Request $request, User $student)
     $student->update(['class_room_id' => $targetClass->id]);
 
     return back()->with('success', "{$student->name} promoted to {$targetClass->name} - {$targetClass->section}.");
+}
+public function assignSubstitute(Request $request)
+{
+    $orgId = Auth::user()->organization_id;
+
+    $request->validate([
+        'schedule_id' => 'required|exists:schedules,id',
+        'date' => 'required|date',
+        'substitute_teacher_id' => 'required|exists:users,id',
+        'reason' => 'nullable|string|max:255',
+    ]);
+
+    $schedule = Schedule::where('id', $request->schedule_id)->where('organization_id', $orgId)->firstOrFail();
+    $substitute = User::where('id', $request->substitute_teacher_id)->where('organization_id', $orgId)->where('role', 'teacher')->firstOrFail();
+
+    // Check the substitute isn't already teaching another class at that exact day/period on that date
+    $conflict = Schedule::where('organization_id', $orgId)
+        ->where('teacher_id', $substitute->id)
+        ->where('day_of_week', $schedule->day_of_week)
+        ->where('period_number', $schedule->period_number)
+        ->where('id', '!=', $schedule->id)
+        ->exists();
+
+    if ($conflict) {
+        return back()->withInput()->with('error', 'This teacher is already scheduled elsewhere at that period.');
+    }
+
+    // Also check they aren't already substituting somewhere else that same date/period
+    $subConflict = Substitution::where('organization_id', $orgId)
+        ->where('substitute_teacher_id', $substitute->id)
+        ->where('date', $request->date)
+        ->whereHas('schedule', fn($q) => $q->where('period_number', $schedule->period_number))
+        ->exists();
+
+    if ($subConflict) {
+        return back()->withInput()->with('error', 'This teacher is already covering another substitution at that period on this date.');
+    }
+
+    Substitution::updateOrCreate(
+        ['schedule_id' => $schedule->id, 'date' => $request->date],
+        [
+            'substitute_teacher_id' => $substitute->id,
+            'reason' => $request->reason,
+            'organization_id' => $orgId,
+        ]
+    );
+
+    return back()->with('success', "Substitute assigned for {$schedule->subject} on {$request->date}.");
+}
+
+public function removeSubstitute(Substitution $substitution)
+{
+    if ($substitution->organization_id !== Auth::user()->organization_id) {
+        abort(403);
+    }
+
+    $substitution->delete();
+    return back()->with('success', 'Substitution removed. Original teacher restored.');
 }
 };
