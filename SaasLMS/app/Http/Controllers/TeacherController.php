@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Schedule;
 use App\Models\Attendance;
 use App\Models\ClassRoom;
+use App\Models\Substitution;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -39,14 +40,47 @@ class TeacherController extends Controller
 public function timetable(Request $request)
 {
     $teacher = Auth::user();
-    $selectedDay = (int) $request->get('day', now()->dayOfWeekIso); // defaults to today (1-5, weekends clamp oddly but fine for a school app)
+    $selectedDay = (int) $request->get('day', now()->dayOfWeekIso);
     if ($selectedDay < 1 || $selectedDay > 6) $selectedDay = 1;
 
+    // Pin the selected weekday to an actual calendar date within the current week,
+    // since substitutions are tied to a specific date, not a recurring weekday.
+    $targetDate = now()->startOfWeek(Carbon::MONDAY)->addDays($selectedDay - 1)->toDateString();
+
+    // This teacher's own regular periods for that day
     $periods = Schedule::with('classRoom')
         ->where('teacher_id', $teacher->id)
         ->where('day_of_week', $selectedDay)
         ->orderBy('period_number')
         ->get();
+
+    // Any of those periods that got covered by someone else on that date
+    $coveredSubs = Substitution::whereIn('schedule_id', $periods->pluck('id'))
+        ->where('date', $targetDate)
+        ->with('substituteTeacher')
+        ->get()
+        ->keyBy('schedule_id');
+
+    foreach ($periods as $p) {
+        $p->coveredBy = $coveredSubs->get($p->id); // null if not substituted
+        $p->substitutingFor = null;
+    }
+
+    // Periods THIS teacher is covering for someone else on that date
+    $coveringSubs = Substitution::where('substitute_teacher_id', $teacher->id)
+        ->where('date', $targetDate)
+        ->whereHas('schedule', fn ($q) => $q->where('day_of_week', $selectedDay))
+        ->with(['schedule.classRoom', 'schedule.teacher'])
+        ->get();
+
+    foreach ($coveringSubs as $sub) {
+        $p = $sub->schedule;
+        $p->coveredBy = null;
+        $p->substitutingFor = $p->teacher->name ?? 'another teacher';
+        $periods->push($p);
+    }
+
+    $periods = $periods->sortBy('period_number')->values();
 
     $totalToday = $periods->count();
     $workloadMinutes = $periods->sum(function ($p) {
@@ -61,7 +95,9 @@ public function timetable(Request $request)
         $nowTime = \Carbon\Carbon::createFromTimeString($now->format('H:i:s'));
 
         if ($selectedDay != now()->dayOfWeekIso) {
-            $p->computedStatus = 'scheduled'; // not today, no live status
+            $p->computedStatus = 'scheduled';
+        } elseif ($p->coveredBy) {
+            $p->computedStatus = 'covered'; // don't show as ongoing/upcoming if someone else is teaching it
         } elseif ($nowTime->between($start, $end)) {
             $p->computedStatus = 'ongoing';
         } elseif ($nowTime->lt($start)) {

@@ -666,26 +666,36 @@ public function updatePayment(Request $request, Payment $payment)
 
 public function scheduleIndex()
 {
-    $schedules = Schedule::with(['teacher', 'classRoom'])->orderBy('day_of_week')->orderBy('period_number')->get();
-    $teachers = User::where('role', 'teacher')->get();
-    $classes = ClassRoom::all();
+ $orgId = Auth::user()->organization_id;
 
-    // Grid lookup: [day][period] => Schedule (for the flat "All Periods" grid view)
-    $scheduleGrid = $schedules->groupBy('day_of_week')->map(function ($daySchedules) {
-        return $daySchedules->keyBy('period_number');
-    });
+    $schedules = Schedule::where('organization_id', $orgId)
+        ->with(['teacher', 'classRoom'])
+        ->orderBy('day_of_week')->orderBy('period_number')->get();
 
+    $teachers = User::where('role', 'teacher')->where('organization_id', $orgId)->get();
+    $classes = ClassRoom::where('organization_id', $orgId)->get();
+
+    $scheduleGrid = $schedules->groupBy('day_of_week')->map(fn($d) => $d->keyBy('period_number'));
     $maxPeriod = $schedules->max('period_number') ?? 8;
-
     $schedulesByClass = $schedules->groupBy('class_room_id');
 
+    // upcoming/active substitutions, keyed by schedule_id for easy lookup in the view
+    $substitutions = Substitution::where('organization_id', $orgId)
+        ->where('date', '>=', now()->toDateString())
+        ->with('substituteTeacher')
+        ->get()
+        ->groupBy('schedule_id');
 
-    return view('admin.schedule', compact('schedules', 'teachers', 'classes', 'schedulesByClass', 'scheduleGrid', 'maxPeriod'));
+    return view('admin.schedule', compact(
+        'schedules', 'teachers', 'classes', 'schedulesByClass',
+        'scheduleGrid', 'maxPeriod', 'substitutions'
+    ));
 }
 
 public function storeSchedule(Request $request)
 {
-    // 1. Capture the validated array (strips _token, _method, etc.)
+    $orgId = Auth::user()->organization_id;
+
     $validated = $request->validate([
         'teacher_id'    => 'required|exists:users,id',
         'class_room_id' => 'required|exists:class_rooms,id',
@@ -698,7 +708,8 @@ public function storeSchedule(Request $request)
     ]);
 
     // Conflict 1: this class already has a lecture at this day/period
-    $classConflict = Schedule::where('class_room_id', $request->class_room_id)
+    $classConflict = Schedule::where('organization_id', $orgId)
+        ->where('class_room_id', $request->class_room_id)
         ->where('day_of_week', $request->day_of_week)
         ->where('period_number', $request->period_number)
         ->exists();
@@ -708,7 +719,8 @@ public function storeSchedule(Request $request)
     }
 
     // Conflict 2: this teacher is already teaching another class at this day/period
-    $teacherConflict = Schedule::where('teacher_id', $request->teacher_id)
+    $teacherConflict = Schedule::where('organization_id', $orgId)
+        ->where('teacher_id', $request->teacher_id)
         ->where('day_of_week', $request->day_of_week)
         ->where('period_number', $request->period_number)
         ->exists();
@@ -717,8 +729,10 @@ public function storeSchedule(Request $request)
         return back()->withInput()->with('error', 'This teacher is already assigned to another class at that day and period.');
     }
 
-    // 2. Pass only validated data to create()
-    Schedule::create($validated);
+    Schedule::create([
+        ...$validated,
+        'organization_id' => $orgId,
+    ]);
 
     return back()->with('success', 'Period assigned successfully!');
 }
@@ -936,10 +950,45 @@ public function assignSubstitute(Request $request)
         'reason' => 'nullable|string|max:255',
     ]);
 
-    $schedule = Schedule::where('id', $request->schedule_id)->where('organization_id', $orgId)->firstOrFail();
-    $substitute = User::where('id', $request->substitute_teacher_id)->where('organization_id', $orgId)->where('role', 'teacher')->firstOrFail();
+    // Get schedule first
+    $schedule = Schedule::find($request->schedule_id);
 
-    // Check the substitute isn't already teaching another class at that exact day/period on that date
+    if (!$schedule) {
+        return redirect()
+            ->route('admin.schedule')
+            ->with('error', 'The selected schedule does not exist.');
+    }
+
+    // Security check: schedule must belong to current organization
+    if ((int) $schedule->organization_id !== (int) $orgId) {
+        return redirect()
+            ->route('admin.schedule')
+            ->with('error', 'This schedule does not belong to your organization.');
+    }
+
+    // Get substitute teacher
+    $substitute = User::find($request->substitute_teacher_id);
+
+    if (!$substitute) {
+        return redirect()
+            ->route('admin.schedule')
+            ->with('error', 'The selected teacher does not exist.');
+    }
+
+    // Security check
+    if ((int) $substitute->organization_id !== (int) $orgId) {
+        return redirect()
+            ->route('admin.schedule')
+            ->with('error', 'This teacher does not belong to your organization.');
+    }
+
+    if ($substitute->role !== 'teacher') {
+        return redirect()
+            ->route('admin.schedule')
+            ->with('error', 'The selected user is not a teacher.');
+    }
+
+    // Check if substitute is already teaching another class
     $conflict = Schedule::where('organization_id', $orgId)
         ->where('teacher_id', $substitute->id)
         ->where('day_of_week', $schedule->day_of_week)
@@ -948,22 +997,33 @@ public function assignSubstitute(Request $request)
         ->exists();
 
     if ($conflict) {
-        return back()->withInput()->with('error', 'This teacher is already scheduled elsewhere at that period.');
+        return redirect()
+            ->route('admin.schedule')
+            ->with('error', 'This teacher is already scheduled elsewhere at that period.');
     }
 
-    // Also check they aren't already substituting somewhere else that same date/period
+    // Check substitution conflict on the selected date
     $subConflict = Substitution::where('organization_id', $orgId)
         ->where('substitute_teacher_id', $substitute->id)
-        ->where('date', $request->date)
-        ->whereHas('schedule', fn($q) => $q->where('period_number', $schedule->period_number))
+        ->whereDate('date', $request->date)
+        ->whereHas('schedule', function ($q) use ($schedule) {
+            $q->where('period_number', $schedule->period_number)
+              ->where('organization_id', $schedule->organization_id);
+        })
         ->exists();
 
     if ($subConflict) {
-        return back()->withInput()->with('error', 'This teacher is already covering another substitution at that period on this date.');
+        return redirect()
+            ->route('admin.schedule')
+            ->with('error', 'This teacher is already covering another substitution at that period on this date.');
     }
 
+    // Create or update substitution
     Substitution::updateOrCreate(
-        ['schedule_id' => $schedule->id, 'date' => $request->date],
+        [
+            'schedule_id' => $schedule->id,
+            'date' => $request->date,
+        ],
         [
             'substitute_teacher_id' => $substitute->id,
             'reason' => $request->reason,
@@ -971,16 +1031,24 @@ public function assignSubstitute(Request $request)
         ]
     );
 
-    return back()->with('success', "Substitute assigned for {$schedule->subject} on {$request->date}.");
+    return redirect()
+        ->route('admin.schedule')
+        ->with(
+            'success',
+            "Substitute assigned for {$schedule->subject} on {$request->date}."
+        );
 }
 
 public function removeSubstitute(Substitution $substitution)
 {
-    if ($substitution->organization_id !== Auth::user()->organization_id) {
+    if ((int) $substitution->organization_id !== (int) Auth::user()->organization_id) {
         abort(403);
     }
 
     $substitution->delete();
-    return back()->with('success', 'Substitution removed. Original teacher restored.');
+
+    return redirect()
+        ->route('admin.schedule')
+        ->with('success', 'Substitution removed. Original teacher restored.');
 }
 };

@@ -69,6 +69,12 @@
                                         'text-gray-400',
                                         'Later',
                                     ],
+                                    'covered' => [
+                                        'border-amber-300 bg-amber-50/30 opacity-80',
+                                        'bg-amber-100 border-amber-300',
+                                        'text-amber-700',
+                                        'Covered',
+                                    ],
                                 ];
                                 [$cardClass, $iconBg, $textColor, $label] = $statusStyles[$period->computedStatus];
                             @endphp
@@ -82,10 +88,26 @@
                                             class="text-xs {{ $textColor === 'text-gray-500' ? 'text-gray-700' : $textColor }} font-bold">{{ \Carbon\Carbon::parse($period->start_time)->format('H:i') }}</span>
                                     </div>
                                     <div>
-                                        <h3 class="text-sm font-bold text-gray-800">{{ $period->subject }}</h3>
-                                        <p class="text-xs text-gray-500">
-                                            {{ $period->classRoom->name }}-{{ $period->classRoom->section }} •
-                                            {{ $period->room ?? 'No room set' }}</p>
+                                        <div>
+                                            <h3 class="text-sm font-bold text-gray-800">{{ $period->subject }}</h3>
+                                            <p class="text-xs text-gray-500">
+                                                {{ $period->classRoom->name }}-{{ $period->classRoom->section }} •
+                                                {{ $period->room ?? 'No room set' }}</p>
+
+                                            @if ($period->coveredBy)
+                                                <p class="text-xs text-amber-600 font-semibold mt-0.5">
+                                                    <i class="bi bi-arrow-repeat"></i> Covered by
+                                                    {{ $period->coveredBy->substituteTeacher->name }}
+                                                </p>
+                                            @endif
+
+                                            @if ($period->substitutingFor)
+                                                <p class="text-xs text-blue-600 font-semibold mt-0.5">
+                                                    <i class="bi bi-person-check"></i> Substituting for
+                                                    {{ $period->substitutingFor }}
+                                                </p>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                                 <span

@@ -74,6 +74,10 @@ Route::get('/admin/student/{student}', [AdminController::class, 'showStudentProf
 
 Route::post('/admin/classes/{classRoom}/promote', [AdminController::class, 'promoteClass'])->name('admin.classes.promote');
 Route::post('/admin/students/{student}/promote', [AdminController::class, 'promoteStudent'])->name('admin.students.promote');
+
+Route::post('/admin/substitutions', [AdminController::class, 'assignSubstitute'])->name('admin.substitutions.store');
+Route::delete('/admin/substitutions/{substitution}', [AdminController::class, 'removeSubstitute'])->name('admin.substitutions.destroy');
+
 });
 
 

@@ -16,6 +16,7 @@
                         class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition text-white shadow-md shadow-blue-600/10">
                         <i class="bi bi-plus-lg"></i> Assign Period
                     </button>
+
                     <button onclick="toggleSidebar()" class="hamburger-btn lg:hidden" aria-label="Open menu">
                         <i class="fa-solid fa-bars"></i>
                     </button>
@@ -128,6 +129,7 @@
                                         <th class="p-4">Subject</th>
                                         <th class="p-4">Teacher</th>
                                         <th class="p-4">Room</th>
+                                        <th class="p-4">Substitute</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-sm text-gray-600 divide-y divide-gray-100">
@@ -142,6 +144,33 @@
                                             <td class="p-4">{{ $s->subject }}</td>
                                             <td class="p-4 text-gray-500">{{ $s->teacher->name ?? 'Unknown' }}</td>
                                             <td class="p-4 text-gray-500">{{ $s->room ?? '—' }}</td>
+                                            <td class="p-4">
+                                                @if ($substitutions->has($s->id))
+                                                    @foreach ($substitutions[$s->id] as $sub)
+                                                        <div class="text-xs">
+                                                            <span
+                                                                class="text-amber-600 font-semibold">{{ $sub->substituteTeacher->name }}</span>
+                                                            <span class="text-gray-400">on
+                                                                {{ $sub->date->format('M d') }}</span>
+                                                            <form
+                                                                action="{{ route('admin.substitutions.destroy', $sub->id) }}"
+                                                                method="POST" class="inline"
+                                                                onsubmit="return confirm('Remove this substitution?');">
+                                                                @csrf @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="text-red-400 hover:text-red-600 ml-1"><i
+                                                                        class="bi bi-x-circle"></i></button>
+                                                            </form>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                                <button
+                                                    onclick="openSubstituteModal({{ $s->id }}, '{{ $s->subject }}', '{{ $s->teacher->name ?? '' }}')"
+                                                    class="text-blue-500 hover:text-blue-700 text-xs mt-1"
+                                                    title="Assign Substitute">
+                                                    <i class="bi bi-person-plus"></i> Sub
+                                                </button>
+                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -159,6 +188,27 @@
             </div>
         </main>
     </div>
+
+    @if (session('success'))
+        <div id="successToast"
+            class="fixed top-5 right-5 z-[200] max-w-sm bg-green-50 border border-green-200 text-green-700 text-sm font-medium px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 opacity-0 -translate-y-2 transition-all duration-300">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+                const toast = document.getElementById('successToast');
+                requestAnimationFrame(() => {
+                    toast.classList.remove('opacity-0', '-translate-y-2');
+                    toast.classList.add('opacity-100', 'translate-y-0');
+                });
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', '-translate-y-2');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3500);
+            });
+        </script>
+    @endif
 
     <!-- ─── SCHEDULE MODAL (Light) ─── -->
     <div id="scheduleModal"
@@ -208,7 +258,8 @@
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-semibold text-gray-500">Subject</label>
-                    <input type="text" name="subject" id="scheduleSubject" placeholder="e.g. Mathematics" required
+                    <input type="text" name="subject" id="scheduleSubject" placeholder="e.g. Mathematics"
+                        required
                         class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition">
                 </div>
 
@@ -258,6 +309,57 @@
                     <button type="submit" id="scheduleSubmitBtn"
                         class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-lg shadow-blue-600/10">
                         Assign Period
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="substituteModal"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-[#090d16] bg-opacity-80 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200 ease-out"
+        role="dialog" aria-modal="true">
+        <div
+            class="w-full max-w-[420px] bg-[#111c2a] rounded-2xl shadow-2xl border border-slate-800 overflow-hidden transform opacity-0 scale-95 translate-y-4 transition-all duration-200 ease-out">
+            <div class="p-5 flex justify-between items-center border-b border-slate-800/60 bg-[#142032]">
+                <h3 class="text-base font-bold flex items-center gap-2 text-white">
+                    <i class="bi bi-person-plus text-blue-400"></i> Assign Substitute
+                </h3>
+                <button onclick="toggleModal('substituteModal')" class="text-gray-400 hover:text-white transition">
+                    <i class="bi bi-x-lg text-sm"></i>
+                </button>
+            </div>
+            <form action="{{ route('admin.substitutions.store') }}" method="POST" class="p-6 space-y-4">
+                @csrf
+                <input type="hidden" name="schedule_id" id="subScheduleId">
+                <p class="text-sm text-gray-300">
+                    Covering <span id="subSubjectName" class="font-bold text-white"></span>
+                    (usually <span id="subOriginalTeacher" class="font-bold text-white"></span>)
+                </p>
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-400">Date</label>
+                    <input type="date" name="date" required
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-400">Substitute Teacher</label>
+                    <select name="substitute_teacher_id" required
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/80 transition">
+                        <option value="">Select teacher...</option>
+                        @foreach ($teachers as $teacher)
+                            <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-gray-400">Reason (optional)</label>
+                    <input type="text" name="reason" placeholder="e.g. Sick leave"
+                        class="w-full bg-[#090d16] border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/80 transition">
+                </div>
+                <div class="pt-3 flex justify-end gap-3 border-t border-slate-800/40">
+                    <button type="button" onclick="toggleModal('substituteModal')"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold border border-slate-800 bg-[#172232] text-gray-300 hover:bg-slate-800 hover:text-white transition">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-lg shadow-blue-600/10">
+                        Assign
                     </button>
                 </div>
             </form>
@@ -367,5 +469,26 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
+
+        function openSubstituteModal(scheduleId, subject, originalTeacher) {
+            document.getElementById('subScheduleId').value = scheduleId;
+            document.getElementById('subSubjectName').textContent = subject;
+            document.getElementById('subOriginalTeacher').textContent = originalTeacher || 'Unassigned';
+            toggleModal('substituteModal');
+        }
+
+        function showErrorToast(message) {
+            const toast = document.getElementById('errorToast');
+            const msg = document.getElementById('errorToastMsg');
+            msg.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        @if (session('error'))
+            window.addEventListener('DOMContentLoaded', () => {
+                showErrorToast(@json(session('error')));
+            });
+        @endif
     </script>
 </x-layout>
