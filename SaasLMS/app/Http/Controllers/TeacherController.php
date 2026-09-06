@@ -14,16 +14,14 @@ use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
-   public function dashboard()
+public function dashboard()
 {
     $teacher = Auth::user();
 
-    // Use teacher_id (lead mentor) instead of the pivot table, since that's what admin actually assigns
     $classes = ClassRoom::where('teacher_id', $teacher->id)->get();
 
     $students = User::where('role', 'student')
-        ->whereIn('class', $classes->pluck('name'))
-        ->whereIn('section', $classes->pluck('section'))
+        ->whereIn('class_room_id', $classes->pluck('id'))
         ->get();
 
     $today = Carbon::today();

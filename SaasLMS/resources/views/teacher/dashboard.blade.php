@@ -64,7 +64,7 @@
             </div>
 
             <!-- ─── STUDENT REGISTRY TABLE ─── -->
-            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden w-full mb-8">
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm  w-full mb-8">
                 <div
                     class="p-4 bg-gray-50 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
@@ -77,11 +77,11 @@
                     </div>
                 </div>
 
-                <div class="w-full overflow-x-auto block">
-                    <table class="w-full text-left border-collapse whitespace-nowrap min-w-[650px]">
-                        <thead>
+                <div class="w-full overflow-x-auto overflow-y-auto h-96 block">
+                    <table class="w-full text-left border-collapse whitespace-nowrap ">
+                        <thead class="sticky top-0">
                             <tr
-                                class="text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/80 border-b border-gray-200">
+                                class="text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200">
                                 <th class="p-4">Student</th>
                                 <th class="p-4">Class</th>
                                 <th class="p-4">Attendance Rate</th>
