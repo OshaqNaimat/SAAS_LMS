@@ -20,6 +20,23 @@
     </div>
 
     <div class="sidebar-spacer"></div>
+    @php
+        $org = Auth::user()->organization;
+    @endphp
+
+    <div class="px-3 mb-3">
+        <div class="border border-slate-800/60 bg-slate-900/40 rounded-xl p-3 space-y-1.5">
+            <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Institute Contact</div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300 truncate">
+                <i class="bi bi-envelope-fill text-blue-400 text-xs"></i>
+                <span class="truncate">{{ $org->contact_email ?? 'Not set' }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-[11px] text-gray-300 truncate">
+                <i class="bi bi-telephone-fill text-blue-400 text-xs"></i>
+                <span class="truncate">{{ $org->contact_phone ?? 'Not set' }}</span>
+            </div>
+        </div>
+    </div>
 
     <div class="sidebar-footer">
         <div
