@@ -32,4 +32,8 @@ class Schedule extends Model
 {
     return ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][$this->day_of_week] ?? '';
 }
+public function substitutions()
+{
+    return $this->hasMany(Substitution::class);
+}
 }

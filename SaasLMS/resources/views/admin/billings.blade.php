@@ -219,6 +219,8 @@
                         <option value="Exam Fee">Exam Fee</option>
                         <option value="Admission Fee">Admission Charges</option>
                         <option value="Sports / Lab">Lab & Sports Equipment Charges</option>
+                        <option value="Notes / Study Material">Notes / Study Material Fee</option>
+
                     </select>
                 </div>
 

@@ -327,6 +327,7 @@ public function saveBatchAttendance(Request $request)
 
 public function attendanceIndex()
 {
+
     $today = Carbon::today();
 
     $students = User::where('role', 'student')->get();

@@ -11,7 +11,7 @@
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">Daily Timetable</h1>
                     <p class="text-sm text-gray-500">
-                        {{ ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'][$selectedDay] }},
+                        {{ ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][$selectedDay] }},
                         {{ now()->format('d F Y') }}</p>
                 </div>
                 <div class="flex gap-2">

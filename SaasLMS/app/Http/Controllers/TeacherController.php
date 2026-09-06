@@ -110,7 +110,6 @@ public function timetable(Request $request)
     return view('teacher.Schedule', compact('periods', 'selectedDay', 'totalToday', 'workloadHours'));
 }
 
-
 public function saveAttendance(Request $request)
 {
     $request->validate([
@@ -119,7 +118,13 @@ public function saveAttendance(Request $request)
         'attendance.*' => 'required|in:present,absent,approved_leave',
     ]);
 
-    $today = Carbon::today();
+    $teacher = Auth::user();
+    $today = Carbon::today()->toDateString();
+
+    $allowedClasses = $this->getTeacherClassesForAttendance($teacher->id, $today);
+    if (!$allowedClasses->contains('id', (int) $request->class_id)) {
+        abort(403, 'You are not authorized to mark attendance for this class today.');
+    }
 
     foreach ($request->attendance as $studentId => $status) {
         Attendance::updateOrCreate(
@@ -141,6 +146,41 @@ private function getTeacherClasses($teacherId)
             ->orWhereIn('id', $scheduledClassIds)
             ->get();
     }
+    private function getTeacherClassesForAttendance($teacherId, $date)
+{
+    $dayOfWeek = Carbon::parse($date)->dayOfWeekIso;
+
+    // Start with the teacher's normal classes
+    $classes = $this->getTeacherClasses($teacherId);
+
+    // Class room IDs where THIS teacher's period was substituted away today
+    // (they taught it originally, but someone else is covering it on this date)
+    $substitutedAwayClassIds = Schedule::where('teacher_id', $teacherId)
+        ->where('day_of_week', $dayOfWeek)
+        ->whereHas('substitutions', fn ($q) => $q->where('date', $date))
+        ->pluck('class_room_id');
+
+    // Remove those from the original teacher's list
+    $classes = $classes->reject(fn ($c) => $substitutedAwayClassIds->contains($c->id));
+
+    // Class rooms where THIS teacher is substituting for someone else today
+    $coveringClassIds = Substitution::where('substitute_teacher_id', $teacherId)
+        ->where('date', $date)
+        ->whereHas('schedule', fn ($q) => $q->where('day_of_week', $dayOfWeek))
+        ->with('schedule.classRoom')
+        ->get()
+        ->pluck('schedule.classRoom')
+        ->filter();
+
+    // Merge in the classes they're covering (avoid duplicates)
+    foreach ($coveringClassIds as $c) {
+        if (!$classes->contains('id', $c->id)) {
+            $classes->push($c);
+        }
+    }
+
+    return $classes->values();
+}
 
     public function classesIndex()
     {
@@ -157,7 +197,8 @@ private function getTeacherClasses($teacherId)
         $teacher = Auth::user();
 
         // 1. Fetch assigned classes
-        $classes = $this->getTeacherClasses($teacher->id);
+     $today = Carbon::today()->toDateString();
+$classes = $this->getTeacherClassesForAttendance($teacher->id, $today);
 
         // 2. Select default or requested class
         $selectedClassId = $request->get('class_id', $classes->first()->id ?? null);
