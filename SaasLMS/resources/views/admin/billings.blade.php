@@ -163,7 +163,7 @@
                         <thead>
                             <tr
                                 class="text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50/80 border-b border-gray-200">
-                                <th class="p-4">Voucher ID</th>
+                                <th class="p-4">Date</th>
                                 <th class="p-4">Student & Roll Context</th>
                                 <th class="p-4">Fee Breakdown Heading</th>
                                 <th class="p-4">Payment Method</th>
@@ -199,17 +199,26 @@
             <form action="{{ route('admin.billing.store') }}" method="POST" class="p-6 space-y-4">
                 @csrf
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-500">Student Roll Number</label>
-                        <input type="text" name="roll_number" placeholder="e.g. 123" required
-                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition">
+                    <div class="space-y-1.5 col-span-2">
+                        <label class="block text-xs font-semibold text-gray-500">Student</label>
+                        <select name="student_id" id="paymentStudentSelect" required
+                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition">
+                            <option value="">Select Student...</option>
+                            @foreach ($students as $student)
+                                <option value="{{ $student->id }}" data-roll="{{ $student->roll_number }}"
+                                    data-name="{{ $student->name }}">
+                                    {{ $student->name }} (Roll: {{ $student->roll_number }})
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-gray-500">Student Name</label>
-                        <input type="text" name="student_name" placeholder="e.g. Ali Ahmed" required
-                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition">
+                        <label class="block text-xs font-semibold text-gray-500">Payment Date</label>
+                        <input type="date" name="payment_date" required value="{{ now()->toDateString() }}"
+                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition">
                     </div>
                 </div>
+
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-semibold text-gray-500">Fee Category / Description</label>

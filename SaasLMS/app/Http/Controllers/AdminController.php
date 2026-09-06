@@ -14,6 +14,7 @@ use App\Models\Payment;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Schedule;
 use App\Models\Substitution;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -76,7 +77,11 @@ public function storeStudent(Request $request)
     $request->validate([
         'name'          => 'required|string|max:255',
         'father_name'   => 'required|string|max:255',
-        'roll_number'   => 'required|string|unique:users,roll_number',
+        'roll_number'   => [
+            'required',
+            'string',
+            Rule::unique('users', 'roll_number')->where('organization_id', $orgId),
+        ],
         'class_room_id' => 'required|exists:class_rooms,id',
         'password'      => 'required|string|min:4',
         'joining_date'  => 'required|date',
@@ -546,6 +551,14 @@ private function arrayToCsv($rows)
 }
 public function billingIndex(Request $request)
 {
+       $orgId = Auth::user()->organization_id;
+
+$students = User::where('role', 'student')
+    ->where('organization_id', $orgId)
+    ->orderByRaw('CAST(roll_number AS UNSIGNED) ASC')
+    ->get(['id', 'name', 'roll_number']);
+
+    $query = Payment::query();
     $query = Payment::query();
 
     if ($request->filled('search')) {
@@ -598,7 +611,7 @@ public function billingIndex(Request $request)
 
     return view('admin.billings', compact(
         'payments', 'totalCollected', 'outstanding', 'pendingCount', 'overdueCount',
-        'collectedPct', 'bankPct', 'cashPct', 'categoryTotals', 'channelTotals'
+        'collectedPct', 'bankPct', 'cashPct', 'categoryTotals', 'channelTotals' , 'students'
     ));
 }
 
@@ -607,18 +620,18 @@ public function storePayment(Request $request)
     $orgId = Auth::user()->organization_id;
 
     $request->validate([
-        'roll_number'  => 'required|string',
-        'student_name' => 'required|string|max:255',
+        'student_id'   => 'required|exists:users,id',
         'category'     => 'required|string',
         'channel'      => 'required|string',
         'amount'       => 'required|integer|min:1',
         'status'       => 'required|in:cleared,pending,overdue',
+        'payment_date' => 'required|date',
     ]);
 
-    $student = User::where('roll_number', $request->roll_number)
+    $student = User::where('id', $request->student_id)
         ->where('role', 'student')
         ->where('organization_id', $orgId)
-        ->first();
+        ->firstOrFail();
 
     $voucherId = '#VCH-' . now()->format('Y') . '-' . str_pad(
         Payment::where('organization_id', $orgId)->count() + 9041, 4, '0', STR_PAD_LEFT
@@ -626,15 +639,16 @@ public function storePayment(Request $request)
 
     Payment::create([
         'voucher_id'      => $voucherId,
-        'student_id'      => $student->id ?? null,
-        'student_name'    => $request->student_name,
-        'roll_number'     => $request->roll_number,
+        'student_id'      => $student->id,
+        'student_name'    => $student->name,
+        'roll_number'     => $student->roll_number,
         'category'        => $request->category,
         'channel'         => $request->channel,
         'amount'          => $request->amount,
         'status'          => $request->status,
+        'payment_date'    => $request->payment_date,
         'recorded_by'     => Auth::id(),
-        'organization_id' => $orgId,   // ← this line must be present
+        'organization_id' => $orgId,
     ]);
 
     return back()->with('success', 'Payment recorded successfully!');

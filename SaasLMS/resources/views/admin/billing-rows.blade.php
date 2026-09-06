@@ -1,6 +1,8 @@
 @forelse($payments as $payment)
     <tr class="hover:bg-gray-50">
-        <td class="p-4 font-mono text-xs text-blue-600 font-semibold">{{ $payment->voucher_id }}</td>
+        <td class="p-4 font-mono text-xs text-gray-600 font-semibold">
+            {{ \Carbon\Carbon::parse($payment->payment_date)->format('d M Y') }}
+        </td>
         <td class="p-4">
             <div class="flex flex-col">
                 <span class="font-semibold text-gray-800">{{ $payment->student_name }}</span>

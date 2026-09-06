@@ -387,21 +387,27 @@
                             <div class="form-group">
                                 <label class="block font-medium mb-1 text-sm text-gray-300">Student Name</label>
                                 <input type="text" name="name" placeholder="Enter student name" required
+                                    value="{{ old('name') }}"
                                     class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
                             </div>
                             <div class="form-group">
                                 <label class="block font-medium mb-1 text-sm text-gray-300">Father Name</label>
                                 <input type="text" name="father_name" placeholder="Enter father's name" required
+                                    value="{{ old('father_name') }}"
                                     class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div class="form-group">
-                                <label class="block font-medium mb-1 text-sm text-gray-300">Student Roll
-                                    No.</label>
+                                <label class="block font-medium mb-1 text-sm text-gray-300">Student Roll No.</label>
                                 <input type="text" name="roll_number" placeholder="Enter roll number" required
-                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500">
+                                    value="{{ old('roll_number') }}"
+                                    class="w-full bg-[#090d16] border border-slate-800 text-white rounded p-2 text-sm focus:outline-none focus:border-blue-500 @error('roll_number') border-red-500 @enderror">
+                                @error('roll_number')
+                                    <p class="text-red-400 text-xs mt-1">This roll number is already assigned to another
+                                        student.</p>
+                                @enderror
                             </div>
                             <div class="form-group">
                                 <label class="block font-medium mb-1 text-sm text-gray-300">Class</label>
@@ -563,6 +569,11 @@
                     searchResults.classList.remove('show');
                 }
             });
+            @if ($errors->any() && old('role') === 'student')
+                window.addEventListener('DOMContentLoaded', () => {
+                    openModal('projectModal');
+                });
+            @endif
         </script>
     </div>
 
