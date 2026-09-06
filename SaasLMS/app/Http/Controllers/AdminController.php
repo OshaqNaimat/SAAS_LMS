@@ -215,13 +215,20 @@ public function classesIndex()
 {
     $orgId = Auth::user()->organization_id;
 
-    $classes = ClassRoom::with('teacher')->where('organization_id', $orgId)->latest()->get();
+    $classes = ClassRoom::with('teacher')
+        ->where('organization_id', $orgId)
+        ->get()
+        ->sortBy(function ($class) {
+            preg_match('/\d+/', $class->name, $matches);
+            return isset($matches[0]) ? (int) $matches[0] : PHP_INT_MAX;
+        })
+        ->values();
+
     $teachers = User::where('organization_id', $orgId)->where('role', 'teacher')->get();
 
     $totalClasses = $classes->count();
     $overcrowded = $classes->filter(fn ($c) => $c->studentCount() >= $c->max_seats)->count();
 
-    // Real average attendance across all students in this org, last 30 days
     $studentIds = User::where('organization_id', $orgId)->where('role', 'student')->pluck('id');
     $totalRecords = Attendance::whereIn('user_id', $studentIds)->where('date', '>=', now()->subDays(30))->count();
     $presentRecords = Attendance::whereIn('user_id', $studentIds)->where('date', '>=', now()->subDays(30))->where('status', 'present')->count();
@@ -229,7 +236,6 @@ public function classesIndex()
 
     return view('admin.classes', compact('classes', 'teachers', 'totalClasses', 'overcrowded', 'avgAttendance'));
 }
-
 
 public function storeClass(Request $request)
 {
