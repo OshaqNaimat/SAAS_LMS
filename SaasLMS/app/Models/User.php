@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -47,6 +49,27 @@ class User extends Authenticatable
     }
    public function attendanceRate($days = 30)
 {
+     $today = Carbon::today();
+
+    $students = User::where('role', 'student')->get();
+    $teachers = User::where('role', 'teacher')->get();
+
+    // Ensure every student/teacher has a row for today, defaulting to present,
+    // so history/percentages reflect the full roster, not just explicitly-marked users.
+    $allUserIds = $students->pluck('id')->merge($teachers->pluck('id'));
+    $alreadyMarkedIds = Attendance::where('date', $today)->whereIn('user_id', $allUserIds)->pluck('user_id');
+    $unmarkedIds = $allUserIds->diff($alreadyMarkedIds);
+
+    foreach ($unmarkedIds as $userId) {
+        Attendance::create([
+            'user_id' => $userId,
+            'date' => $today,
+            'status' => 'present',
+        ]);
+    }
+
+    // Today's attendance keyed by user_id for quick lookup
+    $todayRecords = Attendance::where('date', $today)->get()->keyBy('user_id');
     $total = \App\Models\Attendance::where('user_id', $this->id)
         ->where('date', '>=', now()->subDays($days))
         ->count();
