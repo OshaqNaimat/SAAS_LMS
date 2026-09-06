@@ -35,9 +35,11 @@
         {{-- <a href="/teacher-announcements" class="nav-item {{ request()->is('teacher-announcements') ? 'active' : '' }}">
             <i class="bi bi-megaphone-fill"></i> Class Noticeboard
         </a> --}}
+
     </div>
 
     <div class="sidebar-spacer"></div>
+
     @php
         $org = Auth::user()->organization;
     @endphp
@@ -47,11 +49,11 @@
             <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Institute Contact</div>
             <div class="flex items-center gap-2 text-[11px] text-gray-300 truncate">
                 <i class="bi bi-envelope-fill text-emerald-400 text-xs"></i>
-                <span class="truncate">{{ $org->contact_email ?? 'Not set' }}</span>
+                <span class="truncate">{{ $org->email ?? 'Not set' }}</span>
             </div>
             <div class="flex items-center gap-2 text-[11px] text-gray-300 truncate">
                 <i class="bi bi-telephone-fill text-emerald-400 text-xs"></i>
-                <span class="truncate">{{ $org->contact_phone ?? 'Not set' }}</span>
+                <span class="truncate">{{ $org->phone ?? 'Not set' }}</span>
             </div>
         </div>
     </div>
@@ -110,12 +112,16 @@
         <span>Classes</span>
     </a>
 
-    <a href="/teacher-announcements"
+    {{-- <a href="/teacher-announcements"
         class="teacher-bottom-item {{ request()->is('teacher-announcements') ? 'active' : '' }}">
         <i class="bi bi-megaphone-fill"></i>
         <span>Notices</span>
-    </a>
+    </a> --}}
 
+    <button type="button" class="teacher-bottom-item" onclick="toggleContactSheet()">
+        <i class="bi bi-info-circle-fill"></i>
+        <span>Contact</span>
+    </button>
     <form action="/logout" method="POST" class="teacher-bottom-item logout-item">
         @csrf
         <button type="submit">
@@ -125,6 +131,20 @@
     </form>
 </nav>
 
+<div id="contactSheetOverlay" class="contact-sheet-overlay" onclick="toggleContactSheet()"></div>
+<div id="contactSheet" class="contact-sheet">
+    <div class="contact-sheet-handle"></div>
+    <h4 class="text-sm font-bold text-white mb-3">Institute Contact</h4>
+    @php $org = Auth::user()->organization; @endphp
+    <div class="flex items-center gap-2 text-xs text-gray-300 mb-2">
+        <i class="bi bi-envelope-fill text-emerald-400"></i>
+        <span>{{ $org->contact_email ?? 'Not set' }}</span>
+    </div>
+    <div class="flex items-center gap-2 text-xs text-gray-300">
+        <i class="bi bi-telephone-fill text-emerald-400"></i>
+        <span>{{ $org->contact_phone ?? 'Not set' }}</span>
+    </div>
+</div>
 <style>
     /* ─── Mobile Bottom Nav ─── */
     .teacher-bottom-nav {
@@ -242,4 +262,59 @@
             padding-bottom: 0 !important;
         }
     }
+
+    .contact-sheet-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 150;
+    }
+
+    .contact-sheet-overlay.show {
+        display: block;
+    }
+
+    .contact-sheet {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #0f172a;
+        border-top: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 16px 16px 0 0;
+        padding: 12px 20px 24px;
+        z-index: 151;
+        transform: translateY(100%);
+        transition: transform 0.25s ease-out;
+    }
+
+    .contact-sheet.show {
+        display: block;
+        transform: translateY(0);
+    }
+
+    .contact-sheet-handle {
+        width: 36px;
+        height: 4px;
+        background: rgba(148, 163, 184, 0.3);
+        border-radius: 2px;
+        margin: 0 auto 14px;
+    }
+
+    @media (min-width: 1024px) {
+
+        .contact-sheet-overlay,
+        .contact-sheet {
+            display: none !important;
+        }
+    }
 </style>
+
+<script>
+    function toggleContactSheet() {
+        document.getElementById('contactSheet').classList.toggle('show');
+        document.getElementById('contactSheetOverlay').classList.toggle('show');
+    }
+</script>
