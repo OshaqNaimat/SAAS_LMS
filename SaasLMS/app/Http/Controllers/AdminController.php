@@ -684,23 +684,28 @@ public function updatePayment(Request $request, Payment $payment)
 
     return response()->json(['success' => true, 'message' => 'Status updated successfully!']);
 }
-
 public function scheduleIndex()
 {
- $orgId = Auth::user()->organization_id;
+    $orgId = Auth::user()->organization_id;
 
     $schedules = Schedule::where('organization_id', $orgId)
         ->with(['teacher', 'classRoom'])
         ->orderBy('day_of_week')->orderBy('period_number')->get();
 
     $teachers = User::where('role', 'teacher')->where('organization_id', $orgId)->get();
-    $classes = ClassRoom::where('organization_id', $orgId)->get();
+
+    $classes = ClassRoom::where('organization_id', $orgId)
+        ->get()
+        ->sortBy(function ($class) {
+            preg_match('/\d+/', $class->name, $matches);
+            return isset($matches[0]) ? (int) $matches[0] : PHP_INT_MAX;
+        })
+        ->values();
 
     $scheduleGrid = $schedules->groupBy('day_of_week')->map(fn($d) => $d->keyBy('period_number'));
     $maxPeriod = $schedules->max('period_number') ?? 8;
     $schedulesByClass = $schedules->groupBy('class_room_id');
 
-    // upcoming/active substitutions, keyed by schedule_id for easy lookup in the view
     $substitutions = Substitution::where('organization_id', $orgId)
         ->where('date', '>=', now()->toDateString())
         ->with('substituteTeacher')
@@ -712,7 +717,6 @@ public function scheduleIndex()
         'scheduleGrid', 'maxPeriod', 'substitutions'
     ));
 }
-
 public function storeSchedule(Request $request)
 {
     $orgId = Auth::user()->organization_id;
