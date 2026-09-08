@@ -966,7 +966,7 @@ public function promoteStudent(Request $request, User $student)
 }
 public function assignSubstitute(Request $request)
 {
-    $orgId = Auth::user()->organization_id;
+   $orgId = Auth::user()->organization_id;
 
     $request->validate([
         'schedule_id' => 'required|exists:schedules,id',
@@ -975,9 +975,15 @@ public function assignSubstitute(Request $request)
         'reason' => 'nullable|string|max:255',
     ]);
 
-    // Get schedule first
-    $schedule = Schedule::find($request->schedule_id);
+    $schedule = Schedule::where('id', $request->schedule_id)->where('organization_id', $orgId)->firstOrFail();
 
+    // Ensure the chosen date actually falls on this period's weekday
+    $requestedDayOfWeek = \Carbon\Carbon::parse($request->date)->dayOfWeekIso;
+    if ($requestedDayOfWeek !== (int) $schedule->day_of_week) {
+        return back()->withInput()->with('error',
+            "This period only occurs on {$schedule->dayName()}s. Please pick a {$schedule->dayName()} date."
+        );
+    }
     if (!$schedule) {
         return redirect()
             ->route('admin.schedule')
