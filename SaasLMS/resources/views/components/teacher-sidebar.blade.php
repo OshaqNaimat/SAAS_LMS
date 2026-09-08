@@ -49,11 +49,11 @@
             <div class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Institute Contact</div>
             <div class="flex items-center gap-2 text-[11px] text-gray-300 truncate">
                 <i class="bi bi-envelope-fill text-emerald-400 text-xs"></i>
-                <span class="truncate">{{ $org->email ?? 'Not set' }}</span>
+                <span class="truncate">{{ $org->contact_email ?? 'Not set' }}</span>
             </div>
             <div class="flex items-center gap-2 text-[11px] text-gray-300 truncate">
                 <i class="bi bi-telephone-fill text-emerald-400 text-xs"></i>
-                <span class="truncate">{{ $org->phone ?? 'Not set' }}</span>
+                <span class="truncate">{{ $org->contact_phone ?? 'Not set' }}</span>
             </div>
         </div>
     </div>

@@ -1082,4 +1082,35 @@ public function removeSubstitute(Substitution $substitution)
         ->route('admin.schedule')
         ->with('success', 'Substitution removed. Original teacher restored.');
 }
+public function substitutionsIndex()
+{
+    $orgId = Auth::user()->organization_id;
+
+    $teachers = User::where('organization_id', $orgId)->where('role', 'teacher')->get();
+
+    // Per-teacher stats
+    $stats = $teachers->map(function ($teacher) use ($orgId) {
+        $timesCovering = Substitution::where('organization_id', $orgId)
+            ->where('substitute_teacher_id', $teacher->id)
+            ->count();
+
+        $timesCovered = Substitution::where('organization_id', $orgId)
+            ->whereHas('schedule', fn ($q) => $q->where('teacher_id', $teacher->id))
+            ->count();
+
+        return [
+            'teacher' => $teacher,
+            'times_covering' => $timesCovering, // covered for someone else
+            'times_covered' => $timesCovered,   // their own class got covered
+        ];
+    })->sortByDesc(fn ($s) => $s['times_covering'] + $s['times_covered'])->values();
+
+    // Full chronological log
+    $log = Substitution::where('organization_id', $orgId)
+        ->with(['schedule.classRoom', 'schedule.teacher', 'substituteTeacher'])
+        ->orderByDesc('date')
+        ->get();
+
+    return view('admin.substitutions', compact('stats', 'log'));
+}
 };
