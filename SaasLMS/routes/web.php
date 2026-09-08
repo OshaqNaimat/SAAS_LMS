@@ -78,6 +78,7 @@ Route::post('/admin/students/{student}/promote', [AdminController::class, 'promo
 Route::post('/admin/substitutions', [AdminController::class, 'assignSubstitute'])->name('admin.substitutions.store');
 Route::delete('/admin/substitutions/{substitution}', [AdminController::class, 'removeSubstitute'])->name('admin.substitutions.destroy');
 
+Route::get('/admin/substitutions-stats', [AdminController::class, 'substitutionsIndex'])->name('admin.substitutions.index');
 });
 
 

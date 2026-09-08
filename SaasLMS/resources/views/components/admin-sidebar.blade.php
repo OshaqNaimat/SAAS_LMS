@@ -13,11 +13,14 @@
         <a class="nav-item" href="/admin-faculty"><i class="bi bi-people-fill"></i> Faculty</a>
         <a class="nav-item" href="/admin-classes-control"><i class="bi bi-mortarboard-fill"></i> Classes</a>
         <a class="nav-item" href="/admin-attendence-control"><i class="bi bi-calendar-check-fill"></i> Attendance</a>
-        <a class="nav-item" href="/admin-schedule-control"><i class="bi bi-calendar2-week-fill"></i> Schedule</a>
     </div>
 
     <div class="sidebar-section">
         <div class="sidebar-label">Management</div>
+        <a class="nav-item" href="/admin-schedule-control"><i class="bi bi-calendar2-week-fill"></i> Schedule</a>
+        <a class="nav-item" href="{{ route('admin.substitutions.index') }}">
+            <i class="bi bi-arrow-left-right"></i> Substitutions
+        </a>
         <a class="nav-item" href="/admin-billings-control"><i class="bi bi-credit-card-fill"></i> Billing</a>
         <a class="nav-item" href="/admin-setting"><i class="bi bi-gear-fill"></i> Settings</a>
     </div>
