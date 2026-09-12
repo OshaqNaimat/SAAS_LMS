@@ -72,7 +72,7 @@
                         <p class="text-xs text-gray-500 mt-0.5">Real-time performance metrics and tracking indexes</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="text" placeholder="Search Student name / Roll ID..."
+                        <input type="text" id="studentSearchInput" placeholder="Search Student name / Roll ID..."
                             class="bg-white border border-gray-300 rounded-xl px-3 py-1.5 text-xs text-gray-800 focus:outline-none focus:border-emerald-500 transition w-52 placeholder-gray-400">
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                                         ->take(2)
                                         ->implode('');
                                 @endphp
-                                <tr class="hover:bg-gray-50 transition">
+                                <tr class="hover:bg-gray-50 transition student-row">
                                     <td class="p-4">
                                         <div class="flex items-center gap-3">
                                             <div
@@ -177,5 +177,17 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
+        const studentSearchInput = document.getElementById('studentSearchInput');
+
+        if (studentSearchInput) {
+            studentSearchInput.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                const rows = document.querySelectorAll('.student-row');
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(query) ? '' : 'none';
+                });
+            });
+        }
     </script>
 </x-layout>

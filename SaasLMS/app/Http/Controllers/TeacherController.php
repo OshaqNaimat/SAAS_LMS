@@ -18,7 +18,7 @@ public function dashboard()
 {
     $teacher = Auth::user();
 
-    $classes = ClassRoom::where('teacher_id', $teacher->id)->get();
+    $classes = $this->getTeacherClasses($teacher->id);
 
     $students = User::where('role', 'student')
         ->whereIn('class_room_id', $classes->pluck('id'))
