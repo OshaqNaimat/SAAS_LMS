@@ -123,26 +123,47 @@
                             @method('PUT')
                             <div class="space-y-1.5">
                                 <label class="block text-xs font-semibold text-gray-500">Current Login Password</label>
-                                <input type="password" name="current_password" placeholder="••••••••••••"
-                                    class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
-                                    required>
+                                <div class="relative">
+                                    <input type="password" name="current_password" id="currentPassword"
+                                        placeholder="••••••••••••"
+                                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 pr-11 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
+                                        required>
+                                    <button type="button" onclick="togglePasswordVisibility('currentPassword', this)"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-500">New Account
                                         Password</label>
-                                    <input type="password" name="new_password" placeholder="Min. 8 characters"
-                                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
-                                        required minlength="8">
+                                    <div class="relative">
+                                        <input type="password" name="new_password" id="newPassword"
+                                            placeholder="Min. 8 characters"
+                                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 pr-11 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
+                                            required minlength="8">
+                                        <button type="button" onclick="togglePasswordVisibility('newPassword', this)"
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-gray-500">Confirm Security
                                         Mask</label>
-                                    <input type="password" name="new_password_confirmation"
-                                        placeholder="Match new password"
-                                        class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
-                                        required minlength="8">
+                                    <div class="relative">
+                                        <input type="password" name="new_password_confirmation"
+                                            id="newPasswordConfirmation" placeholder="Match new password"
+                                            class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 pr-11 text-sm text-gray-800 focus:outline-none focus:border-blue-500 transition"
+                                            required minlength="8">
+                                        <button type="button"
+                                            onclick="togglePasswordVisibility('newPasswordConfirmation', this)"
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -237,5 +258,19 @@
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) closeSidebar();
         });
+
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        }
     </script>
 </x-layout>
