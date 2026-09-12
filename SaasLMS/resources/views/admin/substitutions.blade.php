@@ -1,4 +1,5 @@
 <x-layout>
+
     <div class="flex h-screen relative">
         <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
         <x-admin-sidebar />
