@@ -17,7 +17,7 @@
             </div>
 
             <!-- ─── PER-TEACHER SUMMARY ─── -->
-            <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200 mb-8">
+            <div class="bg-white rounded-2xl shadow-sm  border border-gray-200 mb-8">
                 <div class="p-4 bg-gray-50 border-b border-gray-200">
                     <h3 class="font-bold text-base text-gray-800">Teacher Summary</h3>
                 </div>
@@ -65,7 +65,7 @@
             </div>
 
             <!-- ─── FULL LOG ─── -->
-            <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
+            <div class="bg-white rounded-2xl shadow-sm  border border-gray-200">
                 <div class="p-4 bg-gray-50 border-b border-gray-200">
                     <h3 class="font-bold text-base text-gray-800">Substitution Log</h3>
                 </div>

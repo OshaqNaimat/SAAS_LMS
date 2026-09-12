@@ -13,7 +13,7 @@
                     <i id="brandIcon" class="bi bi-building"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-gray-900">Name <span
+                    <h1 class="text-xl font-bold tracking-tight text-gray-900">School <span
                             class="text-blue-600">Name</span>
                     </h1>
                 </div>
@@ -87,8 +87,8 @@
             </div>
 
             <div class="text-center text-[11px] text-gray-400">
-                Protected by secondary institutional encryption masks.<br>
-                &copy; 2026 Apex Global Systems. All privileges cataloged.
+                Protected by Developer Oshaq Naimat<br>
+                &copy; 2026 All privileges cataloged.
             </div>
         </div>
     </div>
